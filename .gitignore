@@ -1,2 +1,4 @@
 /.vscode
 /go.exe
+/data.bin
+/src/data.bin
