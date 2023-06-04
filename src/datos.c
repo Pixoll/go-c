@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -61,4 +62,15 @@ void guardarDatos() {
 void guardarNombre(char *nombre) {
     strcpy(datos.nombre, nombre);
     guardarDatos();
+}
+
+bool validarNombre(char *nombre) {
+    const int size = strlen(nombre);
+    for (int i = 0; i < size; i++) {
+        const char c = nombre[i];
+        // Letra, número o guion bajo
+        if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c == '_') continue;
+        return false;
+    }
+    return true;
 }

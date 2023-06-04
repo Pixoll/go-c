@@ -7,6 +7,7 @@
 
 // Archivos locales
 #include "datos.h"
+#include "util.h"
 
 const int sizes[] = {9, 13, 19};
 const int numeroTableros = sizeof(sizes) / sizeof(sizes[0]);
@@ -41,10 +42,15 @@ int main() {
 void obtenerNombre() {
     if (strlen(obtenerDatos().nombre)) return;
 
-    wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres alfanuméricos.\n", NOMBRE_MAX);
+    wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX);
     char nombre[NOMBRE_MAX + 1];
-    fgets(nombre, NOMBRE_MAX, stdin);
-    strtok(nombre, "\n");
+    strget(nombre, NOMBRE_MAX + 1);
+
+    while (!validarNombre(nombre)) {
+        wprintf(L"Nombre inválido. Intenta de nuevo: ");
+        strget(nombre, NOMBRE_MAX + 1);
+    }
+
     guardarNombre(nombre);
 }
 
