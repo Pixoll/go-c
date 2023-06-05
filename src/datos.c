@@ -69,7 +69,7 @@ bool validarNombre(char *nombre) {
     for (int i = 0; i < size; i++) {
         const char c = nombre[i];
         // Letra, número o guion bajo
-        if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c == '_') continue;
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_') continue;
         return false;
     }
     return true;
