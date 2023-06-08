@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,8 +9,7 @@
 
 #define NOMBRE_MAX 32
 
-char cwd[PATH_MAX];
-char rutaArchivo[PATH_MAX];
+const char *rutaArchivo = "./data.bin";
 FILE *archivo;
 
 typedef struct Datos {
@@ -21,19 +19,6 @@ typedef struct Datos {
 Datos datos;
 
 void setupDatos() {
-    if (getcwd(cwd, PATH_MAX) == NULL) {
-        perror("getcwd() error");
-        exit(1);
-    }
-
-    strcpy(rutaArchivo, cwd);
-    const char *nombreArchivo = "/data.bin";
-    if (strlen(rutaArchivo) + strlen(nombreArchivo) > PATH_MAX) {
-        perror("exceded maximum path length");
-        exit(1);
-    }
-
-    strcat(rutaArchivo, nombreArchivo);
     archivo = fopen(rutaArchivo, LEER);
     if (archivo == NULL) {
         archivo = fopen(rutaArchivo, ESCRIBIR);
