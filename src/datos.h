@@ -5,12 +5,12 @@
 #define _DATOS_DEFINIDO
 #define NOMBRE_MAX 32
 
-typedef struct Datos {
+typedef struct Config {
     char nombre[NOMBRE_MAX];
-} Datos;
+} Config;
 
 void setupDatos();
-Datos obtenerDatos();
+Config obtenerConfig();
 void guardarNombre(char *nombre);
 bool validarNombre(char *nombre);
 

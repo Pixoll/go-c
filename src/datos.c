@@ -9,43 +9,43 @@
 
 #define NOMBRE_MAX 32
 
-const char *rutaArchivo = "./data.bin";
-FILE *archivo;
+const char *rutaConfig = "./config.bin";
+FILE *archivoConfig;
 
-typedef struct Datos {
+typedef struct Config {
     char nombre[NOMBRE_MAX];
-} Datos;
+} Config;
 
-Datos datos;
+Config config;
 
 void setupDatos() {
-    archivo = fopen(rutaArchivo, LEER);
-    if (archivo == NULL) {
-        archivo = fopen(rutaArchivo, ESCRIBIR);
-        fclose(archivo);
+    archivoConfig = fopen(rutaConfig, LEER);
+    if (archivoConfig == NULL) {
+        archivoConfig = fopen(rutaConfig, ESCRIBIR);
+        fclose(archivoConfig);
         return;
     }
 
-    fread(&datos, sizeof(datos), 1, archivo);
-    fclose(archivo);
+    fread(&config, sizeof(config), 1, archivoConfig);
+    fclose(archivoConfig);
 }
 
-Datos obtenerDatos() {
-    return datos;
+Config obtenerConfig() {
+    return config;
 }
 
 void guardarDatos() {
-    archivo = fopen(rutaArchivo, LEER_ESCRIBIR);
-    const int saved = fwrite(&datos, sizeof(datos), 1, archivo);
+    archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
+    const int saved = fwrite(&config, sizeof(config), 1, archivoConfig);
     if (!saved) {
         perror("error while saving");
         exit(1);
     }
-    fclose(archivo);
+    fclose(archivoConfig);
 }
 
 void guardarNombre(char *nombre) {
-    strcpy(datos.nombre, nombre);
+    strcpy(config.nombre, nombre);
     guardarDatos();
 }
 

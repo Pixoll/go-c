@@ -30,7 +30,7 @@ int main() {
 
     obtenerNombre();
 
-    printf("Hola %s!", obtenerDatos().nombre);
+    printf("Hola %s!", obtenerConfig().nombre);
     printf("\n");
 
     const int size = selectTablero();
@@ -40,7 +40,7 @@ int main() {
 }
 
 void obtenerNombre() {
-    if (strlen(obtenerDatos().nombre)) return;
+    if (strlen(obtenerConfig().nombre)) return;
 
     wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX);
     char nombre[NOMBRE_MAX + 1];
