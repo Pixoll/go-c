@@ -3,15 +3,20 @@
 #ifndef _DATOS_DEFINIDO
 
 #define _DATOS_DEFINIDO
-#define NOMBRE_MAX 32
+/**
+ * Máximo de 32 caracteres, 1 extra para el nulo
+ */
+#define NOMBRE_MAX 33
 
-typedef struct Config {
+typedef struct GoConfig {
     char nombre[NOMBRE_MAX];
-} Config;
+    int test;
+} GoConfig;
+
+extern GoConfig config;
 
 void setupDatos();
-Config obtenerConfig();
-void guardarNombre(char *nombre);
+void guardarDatos();
 bool validarNombre(char *nombre);
 
 #endif

@@ -30,7 +30,7 @@ int main() {
 
     obtenerNombre();
 
-    printf("Hola %s!", obtenerConfig().nombre);
+    printf("Hola %s!", config.nombre);
     printf("\n");
 
     const int size = selectTablero();
@@ -40,18 +40,19 @@ int main() {
 }
 
 void obtenerNombre() {
-    if (strlen(obtenerConfig().nombre)) return;
+    if (strlen(config.nombre)) return;
 
-    wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX);
-    char nombre[NOMBRE_MAX + 1];
-    strget(nombre, NOMBRE_MAX + 1);
+    wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
+    char nombre[NOMBRE_MAX];
+    strget(nombre, NOMBRE_MAX);
 
     while (!validarNombre(nombre)) {
         wprintf(L"Nombre inválido. Intenta de nuevo: ");
-        strget(nombre, NOMBRE_MAX + 1);
+        strget(nombre, NOMBRE_MAX);
     }
 
-    guardarNombre(nombre);
+    strcpy(config.nombre, nombre);
+    guardarDatos();
 }
 
 int selectTablero() {

@@ -1,3 +1,5 @@
+#include "datos.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,46 +9,32 @@
 #define ESCRIBIR "wb"
 #define LEER_ESCRIBIR "rb+"
 
-#define NOMBRE_MAX 32
-
 const char *rutaConfig = "./config.bin";
 FILE *archivoConfig;
 
-typedef struct Config {
-    char nombre[NOMBRE_MAX];
-} Config;
-
-Config config;
+const size_t configSize = sizeof(GoConfig);
+GoConfig config;
 
 void setupDatos() {
     archivoConfig = fopen(rutaConfig, LEER);
-    if (archivoConfig == NULL) {
+    if (!archivoConfig) {
         archivoConfig = fopen(rutaConfig, ESCRIBIR);
         fclose(archivoConfig);
         return;
     }
 
-    fread(&config, sizeof(config), 1, archivoConfig);
+    fread(&config, configSize, 1, archivoConfig);
     fclose(archivoConfig);
-}
-
-Config obtenerConfig() {
-    return config;
 }
 
 void guardarDatos() {
     archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
-    const int saved = fwrite(&config, sizeof(config), 1, archivoConfig);
+    const int saved = fwrite(&config, configSize, 1, archivoConfig);
     if (!saved) {
         perror("error while saving");
         exit(1);
     }
     fclose(archivoConfig);
-}
-
-void guardarNombre(char *nombre) {
-    strcpy(config.nombre, nombre);
-    guardarDatos();
 }
 
 bool validarNombre(char *nombre) {
