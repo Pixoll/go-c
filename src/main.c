@@ -52,7 +52,7 @@ void obtenerNombre() {
     }
 
     strcpy(config.nombre, nombre);
-    guardarDatos();
+    guardarConfig();
 }
 
 int selectTablero() {

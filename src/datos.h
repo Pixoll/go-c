@@ -16,7 +16,7 @@ typedef struct GoConfig {
 extern GoConfig config;
 
 void setupDatos();
-void guardarDatos();
+void guardarConfig();
 bool validarNombre(char *nombre);
 
 #endif

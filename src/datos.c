@@ -27,7 +27,7 @@ void setupDatos() {
     fclose(archivoConfig);
 }
 
-void guardarDatos() {
+void guardarConfig() {
     archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
     const int saved = fwrite(&config, configSize, 1, archivoConfig);
     if (!saved) {
