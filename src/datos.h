@@ -10,7 +10,6 @@
 
 typedef struct GoConfig {
     char nombre[NOMBRE_MAX];
-    int test;
 } GoConfig;
 
 extern GoConfig config;
