@@ -2,23 +2,13 @@
 #include <stdlib.h>
 
 int tablero() {
-    int n, e, tablero;
-
+    int tablero;
     printf("1.9x9\t2.13x13\t3.19x19\n");
     scanf("%d", &tablero);
 
-    if (tablero == 1) {
-        n = 9;
-    }
-    if (tablero == 2) {
-        n = 13;
-    }
-    if (tablero == 3) {
-        n = 19;
-    }
-    int lista[n * n];
+    const int n = tablero == 1 ? 9 : tablero == 2 ? 13 : 19;
+
     int a[n][n];
-    e = '-';
     a[0][0] = '+';
     a[0][n - 1] = '+';
     a[n - 1][n - 1] = '+';
@@ -39,8 +29,7 @@ int tablero() {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             if (j < n - 1) {
-                printf("%c", a[i][j]);
-                printf("%c", e);
+                printf("%c-", a[i][j]);
             } else {
                 printf("%c", a[i][j]);
             }
@@ -57,8 +46,9 @@ int tablero() {
             b[i][j] = 0;
         }
     }
-    while (c < 100) {  // condicion de victoria
-        printf("\nincertar cordenada:\n");
+
+    while (c < 100) {  // condición de victoria
+        printf("\ninsertar coordenada:\n");
         printf("x:\t");
         scanf("%d", &cx);
         printf("y:\t");
@@ -81,8 +71,7 @@ int tablero() {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (j < n - 1) {
-                    printf("%c", a[i][j]);
-                    printf("%c", e);
+                    printf("%c-", a[i][j]);
                 } else {
                     printf("%c", a[i][j]);
                 }
@@ -94,5 +83,6 @@ int tablero() {
 
         c += 1;
     }
+
     return 0;
 }
