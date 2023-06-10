@@ -2,36 +2,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int tablero() {
-    int tablero;
-    printf("1.9x9\t2.13x13\t3.19x19\n");
-    scanf("%d", &tablero);
-
-    const int n = tablero == 1 ? 9 : tablero == 2 ? 13
-                                                  : 19;
-
-    int a[n][n];
+int tablero(int size) {
+    int a[size][size];
     a[0][0] = '+';
-    a[0][n - 1] = '+';
-    a[n - 1][n - 1] = '+';
-    a[n - 1][0] = '+';
+    a[0][size - 1] = '+';
+    a[size - 1][size - 1] = '+';
+    a[size - 1][0] = '+';
 
-    for (int j = 1; j < n - 1; j++)
+    for (int j = 1; j < size - 1; j++)
         a[0][j] = '+';
 
-    for (int j = 1; j < n - 1; j++)
-        a[n - 1][j] = '+';
+    for (int j = 1; j < size - 1; j++)
+        a[size - 1][j] = '+';
 
-    for (int i = 1; i < n - 1; i++) {
+    for (int i = 1; i < size - 1; i++) {
         a[i][0] = L'¦';
-        for (int j = 1; j < n - 1; j++)
+        for (int j = 1; j < size - 1; j++)
             a[i][j] = L'¦';
-        a[i][n - 1] = L'¦';
+        a[i][size - 1] = L'¦';
     }
 
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (j < n - 1)
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (j < size - 1)
                 printf("%c-", a[i][j]);
             else
                 printf("%c", a[i][j]);
@@ -43,12 +36,13 @@ int tablero() {
 
     int cx, cy;
     bool turnoNegras = true;
-    int b[n][n];
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
+    int b[size][size];
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             b[i][j] = 0;
 
     while (turnoNegras < 100) {  // condición de victoria
+        printf("Turno de %s\n", turnoNegras ? "negras" : "blancas");
         printf("\ninsertar coordenada:\n");
         printf("x:\t");
         scanf("%d", &cx);
@@ -66,9 +60,9 @@ int tablero() {
         }
         a[cy - 1][cx - 1] = turnoNegras ? 'O' : '@';
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (j < n - 1)
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (j < size - 1)
                     printf("%c-", a[i][j]);
                 else
                     printf("%c", a[i][j]);

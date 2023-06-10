@@ -1,0 +1,1 @@
+int tablero(int size);
