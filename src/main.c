@@ -33,7 +33,8 @@ int main() {
     wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
     printf("\n");
 
-    tablero(size);
+    crearTablero(size);
+    jugarTablero();
 
     return 0;
 }
