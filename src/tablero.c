@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "util.h"
+
 int tablero(int size) {
     int a[size][size];
     a[0][0] = '+';
@@ -59,6 +61,9 @@ int tablero(int size) {
             b[cy - 1][cx - 1] += 1;
         }
         a[cy - 1][cx - 1] = turnoNegras ? 'O' : '@';
+
+        limpiarConsola();
+        printTitulo();
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
