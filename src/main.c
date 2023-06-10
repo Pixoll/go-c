@@ -7,6 +7,7 @@
 
 // Archivos locales
 #include "datos.h"
+#include "tablero.h"
 #include "util.h"
 
 const int sizes[] = {9, 13, 19};
@@ -35,7 +36,10 @@ int main() {
 
     const int size = selectTablero();
     wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
-    scanf("%d", &size);
+    printf("\n");
+
+    tablero(size);
+
     return 0;
 }
 
