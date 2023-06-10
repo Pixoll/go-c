@@ -14,6 +14,13 @@ typedef struct GoConfig {
 
 extern GoConfig config;
 
+typedef unsigned short t_char;
+
+typedef struct GoPartida {
+    int size;
+    t_char **tablero;
+} GoPartida;
+
 void setupDatos();
 void guardarConfig();
 bool validarNombre(char *nombre);

@@ -10,6 +10,8 @@
 #define LEER_ESCRIBIR "rb+"
 
 const char *rutaConfig = "./config.bin";
+const char *rutaPartidas = "./partidas.bin";
+
 FILE *archivoConfig;
 
 const size_t configSize = sizeof(GoConfig);
