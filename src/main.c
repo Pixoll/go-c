@@ -23,12 +23,7 @@ void setup() {
 
 int main() {
     setup();
-
-    printf("##################################\n");
-    printf("#               GO               #\n");
-    printf("##################################\n");
-    printf("\n");
-
+    printTitulo();
     obtenerNombre();
 
     printf("Hola %s!", config.nombre);

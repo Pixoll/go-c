@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void printTitulo() {
+    printf("##################################\n");
+    printf("#               GO               #\n");
+    printf("##################################\n");
+    printf("\n");
+}
+
 char *strget(char *buffer, int max) {
     int size = 0;
     for (int i = 0; i < max - 1; i++) {
