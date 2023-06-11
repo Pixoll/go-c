@@ -38,7 +38,7 @@ void guardarConfig() {
     FILE *archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
     const int saved = fwrite(&config, configSize, 1, archivoConfig);
     if (!saved) {
-        perror("error while saving");
+        perror("Error al intentar guardar");
         exit(1);
     }
     fclose(archivoConfig);
@@ -49,7 +49,7 @@ void guardarPartida(GoPartida partida) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
     const int saved = fwrite(&partida, partidaSize, 1, archivoPartidas);
     if (!saved) {
-        perror("error while saving");
+        perror("Error al intentar guardar");
         exit(1);
     }
     fclose(archivoPartidas);
