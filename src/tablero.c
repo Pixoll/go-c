@@ -41,31 +41,33 @@ void printTablero() {
 void jugarTablero() {
     printTablero();
 
-    int cx, cy, turno = 0, size = partida.size;
+    const int size = partida.size;
+    int turno = 0;
     bool turnoNegras = true;
-    int b[size][size];
+    short ocupadas[size][size];
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            b[i][j] = 0;
+            ocupadas[i][j] = 0;
 
     while (turno < 100) {  // condición de victoria
+        int x, y;
         printf("\tTurno de %s\n\n", turnoNegras ? "negras" : "blancas");
         printf("Insertar coordenada:\n");
         printf("x: ");
-        scanf("%d", &cx);
+        scanf("%d", &x);
         printf("y: ");
-        scanf("%d", &cy);
+        scanf("%d", &y);
 
-        b[cy - 1][cx - 1] += 1;
-        while (1 < b[cy - 1][cx - 1]) {
+        ocupadas[y - 1][x - 1] = 1;
+        while (1 < ocupadas[y - 1][x - 1]) {
             printf("Esa casilla ya esta ocupada!\n");
             printf("x: ");
-            scanf("%d", &cx);
+            scanf("%d", &x);
             printf("y: ");
-            scanf("%d", &cy);
-            b[cy - 1][cx - 1] += 1;
+            scanf("%d", &y);
+            ocupadas[y - 1][x - 1] = 1;
         }
-        partida.tablero[cy - 1][cx - 1] = turnoNegras ? 'O' : '@';
+        partida.tablero[y - 1][x - 1] = turnoNegras ? 'O' : '@';
 
         limpiarConsola();
         printTitulo();
