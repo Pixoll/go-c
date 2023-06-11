@@ -15,17 +15,13 @@ void crearTablero(int size) {
     partida.tablero[size - 1][size - 1] = '+';
     partida.tablero[size - 1][0] = '+';
 
-    for (int j = 1; j < size - 1; j++)
-        partida.tablero[0][j] = '+';
-
-    for (int j = 1; j < size - 1; j++)
-        partida.tablero[size - 1][j] = '+';
-
     for (int i = 1; i < size - 1; i++) {
+        partida.tablero[size - 1][i] = '+';
+        partida.tablero[0][i] = '+';
         partida.tablero[i][0] = L'¦';
+        partida.tablero[i][size - 1] = L'¦';
         for (int j = 1; j < size - 1; j++)
             partida.tablero[i][j] = L'¦';
-        partida.tablero[i][size - 1] = L'¦';
     }
 }
 
