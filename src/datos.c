@@ -46,7 +46,7 @@ void guardarConfig() {
 
 // TODO: Por ahora solo puede almacenar una, añadir funcionalidad para añadir multiples y editar existentes
 void guardarPartida(GoPartida partida) {
-    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+    FILE *archivoPartidas = fopen(rutaPartidas, ANEXAR);
     const int saved = fwrite(&partida, partidaSize, 1, archivoPartidas);
     if (!saved) {
         perror("Error al intentar guardar");
