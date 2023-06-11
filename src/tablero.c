@@ -44,10 +44,10 @@ void jugarTablero() {
     const int size = partida.size;
     int turno = 0;
     bool turnoNegras = true;
-    short ocupadas[size][size];
+    bool ocupadas[size][size];
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            ocupadas[i][j] = 0;
+            ocupadas[i][j] = false;
 
     while (turno < 100) {  // condición de victoria
         int x, y;
@@ -58,14 +58,14 @@ void jugarTablero() {
         printf("y: ");
         scanf("%d", &y);
 
-        while (ocupadas[y - 1][x - 1] == 1) {
+        while (ocupadas[y - 1][x - 1] == true) {
             printf("Esa casilla ya esta ocupada!\n");
             printf("x: ");
             scanf("%d", &x);
             printf("y: ");
             scanf("%d", &y);
         }
-        ocupadas[y - 1][x - 1] = 1;
+        ocupadas[y - 1][x - 1] = true;
         partida.tablero[y - 1][x - 1] = turnoNegras ? 'O' : '@';
 
         limpiarConsola();
