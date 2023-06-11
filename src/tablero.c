@@ -5,61 +5,50 @@
 #include "datos.h"
 #include "util.h"
 
-t_char **tablero;
-int tableroSize;
+GoPartida partida;
 
 void crearTablero(int size) {
-    tableroSize = size;
-    // declarar espacio usado
-    tablero = malloc(size * sizeof(t_char *));
-    for (int i = 0; i < size; i++)
-        tablero[i] = malloc(size * sizeof(t_char));
+    partida.size = size;
 
-    tablero[0][0] = '+';
-    tablero[0][size - 1] = '+';
-    tablero[size - 1][size - 1] = '+';
-    tablero[size - 1][0] = '+';
+    partida.tablero[0][0] = '+';
+    partida.tablero[0][size - 1] = '+';
+    partida.tablero[size - 1][size - 1] = '+';
+    partida.tablero[size - 1][0] = '+';
 
     for (int j = 1; j < size - 1; j++)
-        tablero[0][j] = '+';
+        partida.tablero[0][j] = '+';
 
     for (int j = 1; j < size - 1; j++)
-        tablero[size - 1][j] = '+';
+        partida.tablero[size - 1][j] = '+';
 
     for (int i = 1; i < size - 1; i++) {
-        tablero[i][0] = L'¦';
+        partida.tablero[i][0] = L'¦';
         for (int j = 1; j < size - 1; j++)
-            tablero[i][j] = L'¦';
-        tablero[i][size - 1] = L'¦';
+            partida.tablero[i][j] = L'¦';
+        partida.tablero[i][size - 1] = L'¦';
     }
 }
 
 void printTablero() {
-    for (int i = 0; i < tableroSize; i++) {
-        for (int j = 0; j < tableroSize; j++)
-            printf(j < tableroSize - 1 ? "%c-" : "%c", tablero[i][j]);
+    for (int i = 0; i < partida.size; i++) {
+        for (int j = 0; j < partida.size; j++)
+            printf(j < partida.size - 1 ? "%c-" : "%c", partida.tablero[i][j]);
         printf("\n");
     }
     printf("\n");
 }
 
-void destruirTablero() {
-    for (int i = 0; i < tableroSize; i++)
-        free(tablero[i]);
-    free(tablero);
-}
-
 void jugarTablero() {
     printTablero();
 
-    int cx, cy;
+    int cx, cy, turno = 0, size = partida.size;
     bool turnoNegras = true;
-    int b[tableroSize][tableroSize];
-    for (int i = 0; i < tableroSize; i++)
-        for (int j = 0; j < tableroSize; j++)
+    int b[size][size];
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             b[i][j] = 0;
 
-    while (turnoNegras < 100) {  // condición de victoria
+    while (turno < 100) {  // condición de victoria
         printf("\tTurno de %s\n\n", turnoNegras ? "negras" : "blancas");
         printf("Insertar coordenada:\n");
         printf("x: ");
@@ -76,14 +65,14 @@ void jugarTablero() {
             scanf("%d", &cy);
             b[cy - 1][cx - 1] += 1;
         }
-        tablero[cy - 1][cx - 1] = turnoNegras ? 'O' : '@';
+        partida.tablero[cy - 1][cx - 1] = turnoNegras ? 'O' : '@';
 
         limpiarConsola();
         printTitulo();
         printTablero();
 
         turnoNegras = !turnoNegras;
+        turno++;
     }
 
-    destruirTablero();
 }
