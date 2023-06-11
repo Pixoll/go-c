@@ -12,14 +12,13 @@
 
 const char *rutaConfig = "./config.bin";
 const char *rutaPartidas = "./partidas.bin";
-FILE *archivoConfig;
 
 const size_t configSize = sizeof(GoConfig);
 const size_t partidaSize = sizeof(GoPartida);
 GoConfig config;
 
 void setupDatos() {
-    archivoConfig = fopen(rutaConfig, LEER);
+    FILE *archivoConfig = fopen(rutaConfig, LEER);
     if (!archivoConfig) {
         archivoConfig = fopen(rutaConfig, ESCRIBIR);
         fclose(archivoConfig);
@@ -36,7 +35,7 @@ void setupDatos() {
 }
 
 void guardarConfig() {
-    archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
+    FILE *archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
     const int saved = fwrite(&config, configSize, 1, archivoConfig);
     if (!saved) {
         perror("error while saving");
