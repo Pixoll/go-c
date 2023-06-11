@@ -75,4 +75,5 @@ void jugarTablero() {
         turno++;
     }
 
+    guardarPartida(partida);
 }
