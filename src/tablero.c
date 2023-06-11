@@ -58,15 +58,14 @@ void jugarTablero() {
         printf("y: ");
         scanf("%d", &y);
 
-        ocupadas[y - 1][x - 1] = 1;
-        while (1 < ocupadas[y - 1][x - 1]) {
+        while (ocupadas[y - 1][x - 1] == 1) {
             printf("Esa casilla ya esta ocupada!\n");
             printf("x: ");
             scanf("%d", &x);
             printf("y: ");
             scanf("%d", &y);
-            ocupadas[y - 1][x - 1] = 1;
         }
+        ocupadas[y - 1][x - 1] = 1;
         partida.tablero[y - 1][x - 1] = turnoNegras ? 'O' : '@';
 
         limpiarConsola();
