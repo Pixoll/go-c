@@ -9,26 +9,28 @@ GoPartida partida;
 
 void crearTablero(int size) {
     partida.size = size;
+    const int max = size - 1;
 
     partida.tablero[0][0] = '+';
-    partida.tablero[0][size - 1] = '+';
-    partida.tablero[size - 1][size - 1] = '+';
-    partida.tablero[size - 1][0] = '+';
+    partida.tablero[0][max] = '+';
+    partida.tablero[max][max] = '+';
+    partida.tablero[max][0] = '+';
 
-    for (int i = 1; i < size - 1; i++) {
-        partida.tablero[size - 1][i] = '+';
+    for (int i = 1; i < max; i++) {
+        partida.tablero[max][i] = '+';
         partida.tablero[0][i] = '+';
         partida.tablero[i][0] = L'¦';
-        partida.tablero[i][size - 1] = L'¦';
-        for (int j = 1; j < size - 1; j++)
+        partida.tablero[i][max] = L'¦';
+        for (int j = 1; j < max; j++)
             partida.tablero[i][j] = L'¦';
     }
 }
 
 void printTablero() {
-    for (int i = 0; i < partida.size; i++) {
-        for (int j = 0; j < partida.size; j++)
-            printf(j < partida.size - 1 ? "%c-" : "%c", partida.tablero[i][j]);
+    const int size = partida.size;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++)
+            printf(j < size - 1 ? "%c-" : "%c", partida.tablero[i][j]);
         printf("\n");
     }
     printf("\n");
@@ -53,16 +55,20 @@ void jugarTablero() {
         scanf("%d", &x);
         printf("y: ");
         scanf("%d", &y);
+        x--;
+        y--;
 
-        while (ocupadas[y - 1][x - 1] == true) {
+        while (ocupadas[x][y] == true) {
             printf("Esa casilla ya esta ocupada!\n");
             printf("x: ");
             scanf("%d", &x);
             printf("y: ");
             scanf("%d", &y);
+            x--;
+            y--;
         }
-        ocupadas[y - 1][x - 1] = true;
-        partida.tablero[y - 1][x - 1] = turnoNegras ? 'O' : '@';
+        ocupadas[x][y] = true;
+        partida.tablero[x][y] = turnoNegras ? 'O' : '@';
 
         limpiarConsola();
         printTitulo();
