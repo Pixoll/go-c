@@ -23,11 +23,16 @@ void setupDatos() {
     if (!archivoConfig) {
         archivoConfig = fopen(rutaConfig, ESCRIBIR);
         fclose(archivoConfig);
-        return;
+    } else {
+        fread(&config, configSize, 1, archivoConfig);
+        fclose(archivoConfig);
     }
 
-    fread(&config, configSize, 1, archivoConfig);
-    fclose(archivoConfig);
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+    if (!archivoPartidas) {
+        archivoPartidas = fopen(rutaPartidas, ESCRIBIR);
+        fclose(archivoPartidas);
+    }
 }
 
 void guardarConfig() {
@@ -43,12 +48,6 @@ void guardarConfig() {
 // TODO: Por ahora solo puede almacenar una, añadir funcionalidad para añadir multiples y editar existentes
 void guardarPartida(GoPartida partida) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
-    if (!archivoPartidas) {
-        archivoPartidas = fopen(rutaPartidas, ESCRIBIR);
-        fclose(archivoPartidas);
-        archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
-    }
-
     const int saved = fwrite(&partida, partidaSize, 1, archivoPartidas);
     if (!saved) {
         perror("error while saving");
