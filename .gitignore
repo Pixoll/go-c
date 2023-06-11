@@ -1,4 +1,6 @@
 /.vscode
 /go.exe
 /config.bin
+/partidas.bin
 /src/config.bin
+/src/partidas.bin
