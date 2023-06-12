@@ -9,7 +9,6 @@ extern int tableroSize;
 
 int crearTablero(int size);
 void printTablero();
-void destruirTablero();
 void jugarTablero();
 
 #endif
