@@ -64,11 +64,9 @@ int selectTablero() {
 
     int size;
     wprintf(L"Ingrese el tamaño aquí: ");
-    scanf("%d", &size);
 
-    while (size < 1 || size > numeroTableros) {
+    while (!getInt(&size) || size < 1 || size > numeroTableros) {
         wprintf(L"Tamaño inválido. Intente de nuevo: ");
-        scanf("%d", &size);
     }
 
     return sizes[size - 1];

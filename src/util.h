@@ -4,6 +4,7 @@
 
 void printTitulo();
 char *strget(char *buffer, int size);
+bool getInt(int *n);
 void limpiarConsola();
 
 #endif
