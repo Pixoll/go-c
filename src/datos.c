@@ -8,7 +8,6 @@
 #define LEER "rb"
 #define ESCRIBIR "wb"
 #define LEER_ESCRIBIR "rb+"
-#define ANEXAR "ab+"
 
 const char *rutaConfig = "./config.bin";
 const char *rutaPartidas = "./partidas.bin";
@@ -36,19 +35,25 @@ void setupDatos() {
 
 void guardarConfig() {
     FILE *archivoConfig = fopen(rutaConfig, LEER_ESCRIBIR);
-    const int saved = fwrite(&config, configSize, 1, archivoConfig);
-    if (!saved) {
+    const int guardado = fwrite(&config, configSize, 1, archivoConfig);
+    if (!guardado) {
         perror("Error al intentar guardar");
         exit(1);
     }
     fclose(archivoConfig);
 }
 
-// TODO: Por ahora solo puede almacenar una, añadir funcionalidad para añadir multiples y editar existentes
 void guardarPartida(GoPartida partida) {
-    FILE *archivoPartidas = fopen(rutaPartidas, ANEXAR);
-    const int saved = fwrite(&partida, partidaSize, 1, archivoPartidas);
-    if (!saved) {
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+    GoPartida partidaGuardada;
+    if (fseek(archivoPartidas, -partidaSize, SEEK_END) == 0) {
+        fread(&partidaGuardada, partidaSize, 1, archivoPartidas);
+        if (partidaGuardada.terminada)
+            fseek(archivoPartidas, 0, SEEK_END);
+    }
+
+    const int guardado = fwrite(&partida, partidaSize, 1, archivoPartidas);
+    if (!guardado) {
         perror("Error al intentar guardar");
         exit(1);
     }
