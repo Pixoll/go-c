@@ -45,8 +45,8 @@ void guardarConfig() {
 
 void guardarPartida(GoPartida partida) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
-    GoPartida partidaGuardada;
     if (fseek(archivoPartidas, -partidaSize, SEEK_END) == 0) {
+        GoPartida partidaGuardada;
         fread(&partidaGuardada, partidaSize, 1, archivoPartidas);
         if (partidaGuardada.terminada)
             fseek(archivoPartidas, 0, SEEK_END);
