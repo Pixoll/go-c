@@ -13,8 +13,8 @@
 const char *rutaConfig = "./config.bin";
 const char *rutaPartidas = "./partidas.bin";
 
-const size_t configSize = sizeof(GoConfig);
-const size_t partidaSize = sizeof(GoPartida);
+const int configSize = sizeof(GoConfig);
+const int partidaSize = sizeof(GoPartida);
 GoConfig config;
 
 void setupDatos() {
