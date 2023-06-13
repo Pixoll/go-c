@@ -54,8 +54,11 @@ int main() {
 void printBienvenida() {
     limpiarConsola();
     printTitulo();
-    wchar_t bienvenido[13 + NOMBRE_MAX];
-    swprintf(bienvenido, 13 + NOMBRE_MAX, L"¡Bienvenido %s!", config.nombre);
+
+    const int sizeBienvenida = 13 + NOMBRE_MAX;
+    wchar_t bienvenido[sizeBienvenida];
+    swprintf(bienvenido, sizeBienvenida, L"¡Bienvenid@ %s!", config.nombre);
+
     wprintCentro(bienvenido, 50);
     printf("\n");
 }
