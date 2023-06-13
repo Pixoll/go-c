@@ -10,9 +10,16 @@
 #include "tablero.h"
 #include "util.h"
 
+#define MENU_JUGAR 0
+#define MENU_REGLAS 1
+#define MENU_CONFIG 2
+#define MENU_STATS 3
+#define MENUS 4
 
-const int tableroSizes[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
+const wchar_t *menus[MENUS] = {L"Jugar", L"Reglas", L"Configuración", L"Estadísticas"};
+const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
+int obtenerMenu();
 int selectTablero();
 void obtenerNombre();
 
@@ -26,15 +33,36 @@ int main() {
     printTitulo();
 
     obtenerNombre();
-    printf("Hola %s!\n\n", config.nombre);
+    printf("\t\tBienvenido %s!\n\n", config.nombre);
 
-    const int size = selectTablero();
-    wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
+    const int menu = obtenerMenu();
+    if (menu == MENU_JUGAR) {
+        const int size = selectTablero();
+        wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
-    crearTablero(size);
-    jugarTablero();
+        crearTablero(size);
+        jugarTablero();
+        return 0;
+    }
 
     return 0;
+}
+
+int obtenerMenu() {
+    for (int i = 0; i < MENUS; i++)
+        wprintf(L"%d. %ls\n", i + 1, menus[i]);
+
+    int menu;
+    wprintf(L"\nSelecciona el menú: ");
+
+    while (!getInt(&menu) || menu < 1 || menu > MENUS) {
+        wprintf(L"Menú inválido. Intenta de nuevo: ");
+    }
+
+    limpiarConsola();
+    printTitulo();
+
+    return menu - 1;
 }
 
 void obtenerNombre() {
@@ -54,18 +82,18 @@ void obtenerNombre() {
 }
 
 int selectTablero() {
-    wprintf(L"Seleccione el tamaño del tablero.\n");
+    wprintf(L"Selecciona el tamaño del tablero.\n");
     for (int i = 0; i < TABLEROS; i++) {
-        const int size = tableroSizes[i];
+        const int size = tableros[i];
         printf("%d. %dx%d\n", i + 1, size, size);
     }
 
     int size;
-    wprintf(L"Ingrese el tamaño aquí: ");
+    wprintf(L"Ingresa el tamaño aquí: ");
 
     while (!getInt(&size) || size < 1 || size > TABLEROS) {
-        wprintf(L"Tamaño inválido. Intente de nuevo: ");
+        wprintf(L"Tamaño inválido. Intenta de nuevo: ");
     }
 
-    return tableroSizes[size - 1];
+    return tableros[size - 1];
 }
