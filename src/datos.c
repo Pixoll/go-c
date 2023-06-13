@@ -43,14 +43,23 @@ void guardarConfig() {
     fclose(archivoConfig);
 }
 
-void guardarPartida(GoPartida partida) {
-    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+const GoPartida *ultimaPartida() {
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER);
     if (fseek(archivoPartidas, -partidaSize, SEEK_END) == 0) {
-        GoPartida partidaGuardada;
-        fread(&partidaGuardada, partidaSize, 1, archivoPartidas);
-        if (partidaGuardada.terminada)
-            fseek(archivoPartidas, 0, SEEK_END);
+        GoPartida ultimaPartida;
+        fread(&ultimaPartida, partidaSize, 1, archivoPartidas);
+        fclose(archivoPartidas);
+        const GoPartida *puntero = &ultimaPartida;
+        return puntero;
     }
+    return NULL;
+}
+
+void guardarPartida(GoPartida partida) {
+    const GoPartida *partidaGuardada = ultimaPartida();
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+    if (partidaGuardada != NULL && partidaGuardada->terminada)
+        fseek(archivoPartidas, 0, SEEK_END);
 
     const int guardado = fwrite(&partida, partidaSize, 1, archivoPartidas);
     if (!guardado) {

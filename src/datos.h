@@ -20,6 +20,7 @@ typedef unsigned short t_char;
 typedef struct GoPartida {
     bool terminada;
     bool victoria;
+    bool turnoNegras;
     int puntajeJugador;
     int puntajeMaquina;
     int size;
@@ -28,6 +29,7 @@ typedef struct GoPartida {
 
 void setupDatos();
 void guardarConfig();
+const GoPartida *ultimaPartida();
 void guardarPartida(GoPartida partida);
 // void cargarPartida();
 bool validarNombre(char *nombre);
