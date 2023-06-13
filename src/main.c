@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -35,14 +36,23 @@ int main() {
     obtenerNombre();
     printf("\t\tBienvenido %s!\n\n", config.nombre);
 
-    const int menu = obtenerMenu();
-    if (menu == MENU_JUGAR) {
-        const int size = selectTablero();
-        wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
+    while (true) {
+        const int menu = obtenerMenu();
+        if (menu == MENU_JUGAR) {
+            const int size = selectTablero();
+            if (size == -1) {
+                limpiarConsola();
+                printTitulo();
+                printf("\t\tBienvenido %s!\n\n", config.nombre);
+                continue;
+            }
 
-        crearTablero(size);
-        jugarTablero();
-        return 0;
+            wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
+
+            crearTablero(size);
+            jugarTablero();
+            break;
+        }
     }
 
     return 0;
@@ -87,13 +97,15 @@ int selectTablero() {
         const int size = tableros[i];
         printf("%d. %dx%d\n", i + 1, size, size);
     }
+    wprintf(L"4. Volver al menú principal.\n");
 
     int size;
     wprintf(L"Ingresa el tamaño aquí: ");
 
-    while (!getInt(&size) || size < 1 || size > TABLEROS) {
+    while (!getInt(&size) || size < 1 || size > TABLEROS + 1) {
         wprintf(L"Tamaño inválido. Intenta de nuevo: ");
     }
 
+    if (size == TABLEROS + 1) return -1;
     return tableros[size - 1];
 }
