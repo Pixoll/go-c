@@ -97,7 +97,7 @@ int selectTablero() {
         const int size = tableros[i];
         printf("%d. %dx%d\n", i + 1, size, size);
     }
-    wprintf(L"4. Volver al menú principal.\n");
+    wprintf(L"4. Volver al menú principal\n\n");
 
     int size;
     wprintf(L"Ingresa el tamaño aquí: ");
