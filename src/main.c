@@ -20,6 +20,7 @@
 const wchar_t *menus[MENUS] = {L"Jugar", L"Reglas", L"Configuración", L"Estadísticas"};
 const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
+void printBienvenida();
 int obtenerMenu();
 int selectTablero();
 void obtenerNombre();
@@ -31,22 +32,14 @@ void setup() {
 
 int main() {
     setup();
-    printTitulo();
-
     obtenerNombre();
-    printf("\t\tBienvenido %s!\n\n", config.nombre);
 
     while (true) {
+        printBienvenida();
         const int menu = obtenerMenu();
         if (menu == MENU_JUGAR) {
             const int size = selectTablero();
-            if (size == -1) {
-                limpiarConsola();
-                printTitulo();
-                printf("\t\tBienvenido %s!\n\n", config.nombre);
-                continue;
-            }
-
+            if (size == -1) continue;
             wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
             crearTablero(size);
@@ -56,6 +49,15 @@ int main() {
     }
 
     return 0;
+}
+
+void printBienvenida() {
+    limpiarConsola();
+    printTitulo();
+    wchar_t bienvenido[13 + NOMBRE_MAX];
+    swprintf(bienvenido, 13 + NOMBRE_MAX, L"¡Bienvenido %s!", config.nombre);
+    wprintCentro(bienvenido, 50);
+    printf("\n");
 }
 
 int obtenerMenu() {
@@ -97,7 +99,7 @@ int selectTablero() {
         const int size = tableros[i];
         printf("%d. %dx%d\n", i + 1, size, size);
     }
-    wprintf(L"4. Volver al menú principal\n\n");
+    wprintf(L"%d. Volver al menú principal\n\n", TABLEROS + 1);
 
     int size;
     wprintf(L"Ingresa el tamaño aquí: ");

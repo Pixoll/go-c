@@ -1,8 +1,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define INT_STR_MAX 12
+#define TITULO_LEN 50
 
 char *strrepeat(char fill, int size) {
     char *buffer = malloc(sizeof(char) * (size + 1));
@@ -13,11 +15,33 @@ char *strrepeat(char fill, int size) {
 }
 
 void printTitulo() {
-    const char *fila = strrepeat('#', 50);
+    const char *fila = strrepeat('#', TITULO_LEN);
     const char *espacio = strrepeat(' ', 23);
     printf("%s\n", fila);
     printf("#%sGO%s#\n", espacio, espacio);
     printf("%s\n\n", fila);
+}
+
+void wprintCentro(wchar_t *texto, int sizeLinea) {
+    const int sizeTexto = wcslen(texto);
+    if (sizeTexto > sizeLinea) {
+        wprintf(L"%ls\n", texto);
+        return;
+    }
+
+    const char *espacio = strrepeat(' ', (sizeLinea - sizeTexto) / 2);
+    wprintf(L"%s%ls\n", espacio, texto);
+}
+
+void printCentro(char *texto, int sizeLinea) {
+    const int sizeTexto = strlen(texto);
+    if (sizeTexto > sizeLinea) {
+        printf("%s\n", texto);
+        return;
+    }
+
+    const char *espacio = strrepeat(' ', (sizeLinea - sizeTexto) / 2);
+    printf("%s%s\n", espacio, texto);
 }
 
 char *strget(char *buffer, int max) {

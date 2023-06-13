@@ -2,6 +2,10 @@
 
 #define _UTIL_DEFINIDO
 
+#define TITULO_LEN 50
+
+void wprintCentro(wchar_t *texto, int sizeLinea);
+void printCentro(char *texto, int sizeLinea);
 void printTitulo();
 char *strrepeat(char fill, int size);
 char *strget(char *buffer, int size);
