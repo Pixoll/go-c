@@ -4,11 +4,20 @@
 
 #define INT_STR_MAX 12
 
+char *strrepeat(char fill, int size) {
+    char *buffer = malloc(sizeof(char) * (size + 1));
+    for (int i = 0; i < size; i++)
+        buffer[i] = fill;
+    buffer[size] = '\0';
+    return buffer;
+}
+
 void printTitulo() {
-    printf("##################################\n");
-    printf("#               GO               #\n");
-    printf("##################################\n");
-    printf("\n");
+    const char *fila = strrepeat('#', 50);
+    const char *espacio = strrepeat(' ', 23);
+    printf("%s\n", fila);
+    printf("#%sGO%s#\n", espacio, espacio);
+    printf("%s\n\n", fila);
 }
 
 char *strget(char *buffer, int max) {

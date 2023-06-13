@@ -3,6 +3,7 @@
 #define _UTIL_DEFINIDO
 
 void printTitulo();
+char *strrepeat(char fill, int size);
 char *strget(char *buffer, int size);
 bool getInt(int *n);
 void limpiarConsola();
