@@ -10,8 +10,8 @@
 #include "tablero.h"
 #include "util.h"
 
-const int sizes[] = {9, 13, 19};
-const int numeroTableros = sizeof(sizes) / sizeof(sizes[0]);
+
+const int tableroSizes[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
 int selectTablero();
 void obtenerNombre();
@@ -24,14 +24,12 @@ void setup() {
 int main() {
     setup();
     printTitulo();
-    obtenerNombre();
 
-    printf("Hola %s!", config.nombre);
-    printf("\n");
+    obtenerNombre();
+    printf("Hola %s!\n\n", config.nombre);
 
     const int size = selectTablero();
-    wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
-    printf("\n");
+    wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
     crearTablero(size);
     jugarTablero();
@@ -57,17 +55,17 @@ void obtenerNombre() {
 
 int selectTablero() {
     wprintf(L"Seleccione el tamaño del tablero.\n");
-    for (int i = 0; i < numeroTableros; i++) {
-        const int size = sizes[i];
+    for (int i = 0; i < TABLEROS; i++) {
+        const int size = tableroSizes[i];
         printf("%d. %dx%d\n", i + 1, size, size);
     }
 
     int size;
     wprintf(L"Ingrese el tamaño aquí: ");
 
-    while (!getInt(&size) || size < 1 || size > numeroTableros) {
+    while (!getInt(&size) || size < 1 || size > TABLEROS) {
         wprintf(L"Tamaño inválido. Intente de nuevo: ");
     }
 
-    return sizes[size - 1];
+    return tableroSizes[size - 1];
 }
