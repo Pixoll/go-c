@@ -7,6 +7,8 @@
 
 GoPartida partida;
 
+void porCantidad(); //void de funcion
+
 void crearTablero(int size)
 {
     partida.size = size;
@@ -77,6 +79,25 @@ void jugarTablero()
         turnoNegras = !turnoNegras;
         turno++;
     }
-
+    
     guardarPartida(partida);
+}
+// funcion que determina un puntaje inicial dependiendo de la cantidad de fichas en mesa de cada jugador
+//falta incroporar puntaje por captura (a espera de parte de capturas)
+//analizar si incorporar puntuacion por area o modificar la regla japonesa en beneficio del programa
+void porCantidad(){
+    int pj=0;
+    int pm=0;
+    for(int i=1; i<partida.size+1; i++){
+        for(int j=1; j<partida.size+1; j++){
+            if (partida.tablero[i][j]==88){
+                pj++;
+            }
+            else if (partida.tablero[i][j]==79){
+                pm++;
+            }
+        }
+    }
+    partida.puntajeJugador=pj;
+    partida.puntajeMaquina=pm;
 }
