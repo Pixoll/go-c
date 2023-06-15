@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <wchar.h>
 
 #ifndef _DATOS_DEFINIDO
 
@@ -20,16 +21,14 @@ typedef struct GoConfig {
 
 extern GoConfig config;
 
-typedef unsigned short t_char;
-
 typedef struct GoPartida {
     bool terminada;
     bool victoria;
-    bool turnoNegras;
+    bool turnoJugador;
     int puntajeJugador;
     int puntajeMaquina;
     int size;
-    t_char tablero[TABLERO_MAX][TABLERO_MAX];
+    wchar_t tablero[TABLERO_MAX][TABLERO_MAX];
 } GoPartida;
 
 void setupDatos();

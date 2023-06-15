@@ -7,10 +7,12 @@
 
 GoPartida partida;
 
-void porCantidad(); //void de funcion
+#define CELDA_J 'X'
+#define CELDA_M 'O'
 
-void crearTablero(int size)
-{
+void puntajePorCantidad();
+
+void crearTablero(int size) {
     partida.size = size;
     const int max = size;
 
@@ -19,8 +21,7 @@ void crearTablero(int size)
     partida.tablero[max][max] = '+';
     partida.tablero[max][1] = '+';
 
-    for (int i = 2; i < max; i++)
-    {
+    for (int i = 2; i < max; i++) {
         partida.tablero[max][i] = '+';
         partida.tablero[1][i] = '+';
         partida.tablero[i][1] = L'¦';
@@ -30,74 +31,67 @@ void crearTablero(int size)
     }
 }
 
-void printTablero()
-{
+void printTablero() {
     const int size = partida.size;
-    for (int i = 1; i < size+1; i++)
-    {
-        for (int j = 1; j < size+1; j++)
-            printf(j+1 < size +1 ? "%c-" : "%c", partida.tablero[i][j]);
+    for (int i = 1; i < size + 1; i++) {
+        for (int j = 1; j < size + 1; j++)
+            printf(j + 1 < size + 1 ? "%c-" : "%c", partida.tablero[i][j]);
         printf("\n");
     }
     printf("\n");
 }
 
-bool turnoNegras = true;
-
-void jugarTablero()
-{
+void jugarTablero() {
     printTablero();
-    int x, y;
     const int size = partida.size;
     int turno = 0;
+    partida.turnoJugador = true;
     bool ocupadas[size][size];
-    for (int i = 1; i < size+1; i++)
-        for (int j = 1; j < size+1; j++)
+    for (int i = 1; i < size + 1; i++)
+        for (int j = 1; j < size + 1; j++)
             ocupadas[i][j] = false;
-    while (turno < 100)
-    { // condición de victoria
-        printf("\tTurno de %s\n\n", turnoNegras ? "negras" : "blancas");
+
+    while (turno < 100) {  // condición de victoria
+        int x, y;
+        printf("\tTurno de %s\n\n", partida.turnoJugador ? "negras" : "blancas");
         printf("Insertar coordenada:\n");
         printf("x: ");
         scanf("%d", &x);
         printf("y: ");
         scanf("%d", &y);
 
-        while (ocupadas[x][y] == true)
-        {
+        while (ocupadas[x][y] == true) {
             printf("Esa casilla ya esta ocupada!\n");
             printf("x: ");
             scanf("%d", &x);
             printf("y: ");
             scanf("%d", &y);
         }
+
         ocupadas[x][y] = true;
-        partida.tablero[x][y] = turnoNegras ? 'X' : 'O';
+        partida.tablero[x][y] = partida.turnoJugador ? CELDA_J : CELDA_M;
+
         limpiarConsola();
         printTitulo();
         printTablero();
-        turnoNegras = !turnoNegras;
+
+        partida.turnoJugador = !partida.turnoJugador;
         turno++;
     }
-    
+
+    puntajePorCantidad();
     guardarPartida(partida);
 }
-// funcion que determina un puntaje inicial dependiendo de la cantidad de fichas en mesa de cada jugador
-//falta incroporar puntaje por captura (a espera de parte de capturas)
-//analizar si incorporar puntuacion por area o modificar la regla japonesa en beneficio del programa
-void porCantidad(){
-    int pj=0;
-    int pm=0;
-    for(int i=1; i<partida.size+1; i++){
-        for(int j=1; j<partida.size+1; j++){
-            if (partida.tablero[i][j]==88){
-                pj++;
-            }
-            else if (partida.tablero[i][j]==79){
-                pm++;
-            }
+
+// función que determina un puntaje inicial dependiendo de la cantidad de fichas en mesa de cada jugador
+// falta incorporar puntaje por captura (a espera de parte de capturas)
+// analizar si incorporar puntuación por area o modificar la regla japonesa en beneficio del programa
+void puntajePorCantidad() {
+    for (int i = 1; i < partida.size + 1; i++) {
+        for (int j = 1; j < partida.size + 1; j++) {
+            const wchar_t celda = partida.tablero[i][j];
+            if (celda == CELDA_J) partida.puntajeJugador++;
+            if (celda == CELDA_M) partida.puntajeMaquina++;
         }
     }
-    partida.puntajeJugador=pj;
-    partida.puntajeMaquina=pm;
 }
