@@ -1,12 +1,9 @@
+#include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-
-// Consola en español
-#include <locale.h>
 #include <wchar.h>
 
-// Archivos locales
 #include "datos.h"
 #include "tablero.h"
 #include "util.h"
@@ -21,9 +18,9 @@ const wchar_t *menus[MENUS] = {L"Jugar", L"Reglas", L"Configuración", L"Estadí
 const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
 void printBienvenida();
-int obtenerMenu();
-int selectTablero();
 void obtenerNombre();
+int obtenerMenu();
+int obtenerTableroSize();
 
 void setup() {
     setupDatos();
@@ -38,7 +35,7 @@ int main() {
         printBienvenida();
         const int menu = obtenerMenu();
         if (menu == MENU_JUGAR) {
-            const int size = selectTablero();
+            const int size = obtenerTableroSize();
             if (size == -1) continue;
             wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
@@ -96,8 +93,7 @@ void obtenerNombre() {
     guardarConfig();
 }
 
-int selectTablero() {
-    wprintf(L"Selecciona el tamaño del tablero.\n");
+int obtenerTableroSize() {
     for (int i = 0; i < TABLEROS; i++) {
         const int size = tableros[i];
         printf("%d. %dx%d\n", i + 1, size, size);
@@ -105,7 +101,7 @@ int selectTablero() {
     wprintf(L"%d. Volver al menú principal\n\n", TABLEROS + 1);
 
     int size;
-    wprintf(L"Ingresa el tamaño aquí: ");
+    wprintf(L"Selecciona el tamaño del tablero: ");
 
     while (!getInt(&size) || size < 1 || size > TABLEROS + 1) {
         wprintf(L"Tamaño inválido. Intenta de nuevo: ");
