@@ -33,9 +33,10 @@ typedef struct GoPartida {
 
 void setupDatos();
 void guardarConfig();
+bool validarNombre(char *nombre);
 const GoPartida *ultimaPartida();
 void guardarPartida(GoPartida partida);
 // void cargarPartida();
-bool validarNombre(char *nombre);
+void borrarTodasPartidas();
 
 #endif

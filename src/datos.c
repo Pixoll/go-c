@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define LEER "rb"
-#define ESCRIBIR "wb"
+#define CREAR "wb"
 #define LEER_ESCRIBIR "rb+"
 
 const char *rutaConfig = "./config.bin";
@@ -19,7 +19,7 @@ GoConfig config;
 void setupDatos() {
     FILE *archivoConfig = fopen(rutaConfig, LEER);
     if (!archivoConfig) {
-        archivoConfig = fopen(rutaConfig, ESCRIBIR);
+        archivoConfig = fopen(rutaConfig, CREAR);
         fclose(archivoConfig);
     } else {
         fread(&config, configSize, 1, archivoConfig);
@@ -28,7 +28,7 @@ void setupDatos() {
 
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
     if (!archivoPartidas) {
-        archivoPartidas = fopen(rutaPartidas, ESCRIBIR);
+        archivoPartidas = fopen(rutaPartidas, CREAR);
         fclose(archivoPartidas);
     }
 }
@@ -41,6 +41,17 @@ void guardarConfig() {
         exit(1);
     }
     fclose(archivoConfig);
+}
+
+bool validarNombre(char *nombre) {
+    const int size = strlen(nombre);
+    for (int i = 0; i < size; i++) {
+        const char c = nombre[i];
+        // Letra, número o guion bajo
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_') continue;
+        return false;
+    }
+    return true;
 }
 
 const GoPartida *ultimaPartida() {
@@ -69,13 +80,10 @@ void guardarPartida(GoPartida partida) {
     fclose(archivoPartidas);
 }
 
-bool validarNombre(char *nombre) {
-    const int size = strlen(nombre);
-    for (int i = 0; i < size; i++) {
-        const char c = nombre[i];
-        // Letra, número o guion bajo
-        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_') continue;
-        return false;
-    }
-    return true;
+void borrarTodasPartidas() {
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER);
+    if (archivoPartidas == NULL) return;
+    fclose(archivoPartidas);
+    archivoPartidas = fopen(rutaPartidas, CREAR);
+    fclose(archivoPartidas);
 }
