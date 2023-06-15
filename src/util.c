@@ -14,6 +14,13 @@ char *strrepeat(char fill, int size) {
     return buffer;
 }
 
+char *strempty(char *buffer) {
+    const int size = strlen(buffer);
+    for (int i = 0; i < size; i++)
+        buffer[i] = '\0';
+    return buffer;
+}
+
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
     const char *espacio = strrepeat(' ', 23);
