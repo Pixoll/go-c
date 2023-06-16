@@ -23,13 +23,33 @@ char *strempty(char *buffer) {
 }
 
 /* No modifica el buffer original! */
-char *strpadleft(char *buffer, int max, char fill) {
+char *strpadright(char *buffer, int max, char fill) {
     const int size = strlen(buffer);
     if (size >= max) return buffer;
     char *resultado = malloc((max + 1) * sizeof(char));
     resultado[0] = '\0';
-    strcat(resultado, strrepeat(fill, max - size));
     strcat(resultado, buffer);
+    strcat(resultado, strrepeat(fill, max - size));
+    resultado[max] = '\0';
+    return resultado;
+}
+
+wchar_t *wcsrepeat(wchar_t fill, int size) {
+    wchar_t *buffer = malloc(sizeof(wchar_t) * (size + 1));
+    for (int i = 0; i < size; i++)
+        buffer[i] = fill;
+    buffer[size] = '\0';
+    return buffer;
+}
+
+/* No modifica el buffer original! */
+wchar_t *wcspadright(wchar_t *buffer, int max, wchar_t fill) {
+    const int size = wcslen(buffer);
+    if (size >= max) return buffer;
+    wchar_t *resultado = malloc((max + 1) * sizeof(wchar_t));
+    resultado[0] = '\0';
+    wcscat(resultado, buffer);
+    wcscat(resultado, wcsrepeat(fill, max - size));
     resultado[max] = '\0';
     return resultado;
 }
