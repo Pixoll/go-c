@@ -26,7 +26,9 @@ typedef struct GoPartida {
     bool victoria;
     bool turnoNegras;
     int puntajeJugador;
-    int puntajeMaquina;
+    /* Vacío si es la máquina */
+    char oponente[NOMBRE_MAX];
+    int puntajeOponente;
     unsigned long fecha;
     int size;
     wchar_t tablero[TABLERO_MAX][TABLERO_MAX];

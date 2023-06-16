@@ -93,7 +93,7 @@ void puntajePorCantidad() {
         for (int j = 1; j < partida.size + 1; j++) {
             const wchar_t celda = partida.tablero[i][j];
             if (celda == CELDA_J) partida.puntajeJugador++;
-            if (celda == CELDA_M) partida.puntajeMaquina++;
+            if (celda == CELDA_M) partida.puntajeOponente++;
         }
     }
 }
