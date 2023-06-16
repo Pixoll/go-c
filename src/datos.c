@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -56,14 +57,13 @@ bool validarNombre(char *nombre) {
 
 const GoPartida *ultimaPartida() {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
-    if (fseek(archivoPartidas, -partidaSize, SEEK_END) == 0) {
-        GoPartida ultimaPartida;
-        fread(&ultimaPartida, partidaSize, 1, archivoPartidas);
-        fclose(archivoPartidas);
-        const GoPartida *puntero = &ultimaPartida;
-        return puntero;
-    }
-    return NULL;
+    if (fseek(archivoPartidas, -partidaSize, SEEK_END) != 0) return NULL;
+
+    GoPartida ultimaPartida;
+    fread(&ultimaPartida, partidaSize, 1, archivoPartidas);
+    fclose(archivoPartidas);
+    const GoPartida *puntero = &ultimaPartida;
+    return puntero;
 }
 
 void guardarPartida(GoPartida partida) {
@@ -78,6 +78,28 @@ void guardarPartida(GoPartida partida) {
         exit(1);
     }
     fclose(archivoPartidas);
+}
+
+TodasGoPartidas obtenerTodasPartidas() {
+    TodasGoPartidas todasPartidas = {0};
+    todasPartidas.partidas = malloc(partidaSize);
+    unsigned long int size = 0;
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER);
+    if (archivoPartidas == NULL) return todasPartidas;
+
+    fseek(archivoPartidas, 0, SEEK_END);
+    const long max = ftello(archivoPartidas);
+    fseek(archivoPartidas, 0, SEEK_SET);
+    while (size < max) {
+        GoPartida partida;
+        fread(&partida, partidaSize, 1, archivoPartidas);
+        size += partidaSize;
+        todasPartidas.partidas = realloc(todasPartidas.partidas, size);
+        todasPartidas.partidas[todasPartidas.numero++] = partida;
+    }
+
+    fclose(archivoPartidas);
+    return todasPartidas;
 }
 
 void borrarTodasPartidas() {

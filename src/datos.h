@@ -31,12 +31,18 @@ typedef struct GoPartida {
     wchar_t tablero[TABLERO_MAX][TABLERO_MAX];
 } GoPartida;
 
+typedef struct TodasGoPartidas {
+    int numero;
+    GoPartida *partidas;
+} TodasGoPartidas;
+
 void setupDatos();
 void guardarConfig();
 bool validarNombre(char *nombre);
 const GoPartida *ultimaPartida();
 void guardarPartida(GoPartida partida);
 // void cargarPartida();
+TodasGoPartidas obtenerTodasPartidas();
 void borrarTodasPartidas();
 
 #endif
