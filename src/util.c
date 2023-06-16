@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+// signo + 10 dígitos + nulo
 #define INT_STR_MAX 12
 #define TITULO_LEN 50
 
@@ -52,6 +53,15 @@ wchar_t *wcspadright(wchar_t *buffer, int max, wchar_t fill) {
     wcscat(resultado, wcsrepeat(fill, max - size));
     resultado[max] = '\0';
     return resultado;
+}
+
+wchar_t *strtowcs(char *buffer) {
+    const int size = strlen(buffer);
+    wchar_t *transformado = malloc((size + 1) * sizeof(wchar_t));
+    for (int i = 0; i < size; i++)
+        transformado[i] = buffer[i];
+    transformado[size] = '\0';
+    return transformado;
 }
 
 void printTitulo() {
@@ -112,6 +122,13 @@ bool getInt(int *n) {
     }
     *n = atoi(buffer);
     return true;
+}
+
+char *intATexto(int n) {
+    char *buffer = malloc(INT_STR_MAX * sizeof(char));
+    itoa(n, buffer, 10);
+    buffer = realloc(buffer, strlen(buffer) + 1);
+    return buffer;
 }
 
 void limpiarConsola() {

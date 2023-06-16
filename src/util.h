@@ -13,7 +13,9 @@ char *strget(char *buffer, int size);
 char *strpadright(char *buffer, int n, char fill);
 wchar_t *wcsrepeat(wchar_t fill, int size);
 wchar_t *wcspadright(wchar_t *buffer, int max, wchar_t fill);
+wchar_t *strtowcs(char *buffer);
 bool getInt(int *n);
+char *intATexto(int n);
 void limpiarConsola();
 unsigned long now();
 
