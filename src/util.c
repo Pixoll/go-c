@@ -22,6 +22,18 @@ char *strempty(char *buffer) {
     return buffer;
 }
 
+/* No modifica el buffer original! */
+char *strpadleft(char *buffer, int max, char fill) {
+    const int size = strlen(buffer);
+    if (size >= max) return buffer;
+    char *resultado = malloc((max + 1) * sizeof(char));
+    resultado[0] = '\0';
+    strcat(resultado, strrepeat(fill, max - size));
+    strcat(resultado, buffer);
+    resultado[max] = '\0';
+    return resultado;
+}
+
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
     const char *espacio = strrepeat(' ', 23);
@@ -88,7 +100,7 @@ void limpiarConsola() {
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-    system("cls");
+    // system("cls");
 #endif
 }
 

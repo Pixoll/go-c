@@ -10,6 +10,7 @@ void printTitulo();
 char *strrepeat(char fill, int size);
 char *strempty(char *buffer);
 char *strget(char *buffer, int size);
+char *strpadleft(char *buffer, int n, char fill);
 bool getInt(int *n);
 void limpiarConsola();
 unsigned long now();
