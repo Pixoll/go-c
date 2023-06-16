@@ -27,6 +27,7 @@ typedef struct GoPartida {
     bool turnoNegras;
     int puntajeJugador;
     int puntajeMaquina;
+    unsigned long fecha;
     int size;
     wchar_t tablero[TABLERO_MAX][TABLERO_MAX];
 } GoPartida;

@@ -79,6 +79,8 @@ void jugarTablero() {
         turno++;
     }
 
+    partida.fecha = now();
+
     puntajePorCantidad();
     guardarPartida(partida);
 }

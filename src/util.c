@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define INT_STR_MAX 12
 #define TITULO_LEN 50
@@ -89,4 +90,8 @@ void limpiarConsola() {
 #if defined(_WIN32) || defined(_WIN64)
     system("cls");
 #endif
+}
+
+unsigned long now() {
+    return time(0);
 }

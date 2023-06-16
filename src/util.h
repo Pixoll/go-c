@@ -12,5 +12,6 @@ char *strempty(char *buffer);
 char *strget(char *buffer, int size);
 bool getInt(int *n);
 void limpiarConsola();
+unsigned long now();
 
 #endif
