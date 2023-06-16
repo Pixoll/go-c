@@ -45,15 +45,15 @@ void jugarTablero() {
     printTablero();
     const int size = partida.size;
     int turno = 0;
-    partida.turnoJugador = true;
+    partida.turnoNegras = true;
     bool ocupadas[size][size];
     for (int i = 1; i < size + 1; i++)
         for (int j = 1; j < size + 1; j++)
             ocupadas[i][j] = false;
 
-    while (turno < 100) {  // condición de victoria
+    while (turno < 10) {  // condición de victoria
         int x, y;
-        printf("\tTurno de %s\n\n", partida.turnoJugador ? "negras" : "blancas");
+        printf("\tTurno de %s\n\n", partida.turnoNegras ? "negras" : "blancas");
         printf("Insertar coordenada:\n");
         printf("x: ");
         scanf("%d", &x);
@@ -69,13 +69,13 @@ void jugarTablero() {
         }
 
         ocupadas[x][y] = true;
-        partida.tablero[x][y] = partida.turnoJugador ? CELDA_J : CELDA_M;
+        partida.tablero[x][y] = partida.turnoNegras ? CELDA_J : CELDA_M;
 
         limpiarConsola();
         printTitulo();
         printTablero();
 
-        partida.turnoJugador = !partida.turnoJugador;
+        partida.turnoNegras = !partida.turnoNegras;
         turno++;
     }
 

@@ -24,7 +24,7 @@ extern GoConfig config;
 typedef struct GoPartida {
     bool terminada;
     bool victoria;
-    bool turnoJugador;
+    bool turnoNegras;
     int puntajeJugador;
     int puntajeMaquina;
     int size;
