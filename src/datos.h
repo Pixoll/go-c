@@ -44,7 +44,7 @@ bool validarNombre(char *nombre);
 const GoPartida *ultimaPartida();
 void guardarPartida(GoPartida partida);
 // void cargarPartida();
-TodasGoPartidas obtenerTodasPartidas();
+TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas);
 void borrarTodasPartidas();
 
 #endif

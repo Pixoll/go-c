@@ -80,7 +80,7 @@ void guardarPartida(GoPartida partida) {
     fclose(archivoPartidas);
 }
 
-TodasGoPartidas obtenerTodasPartidas() {
+TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas) {
     TodasGoPartidas todasPartidas = {0};
     todasPartidas.partidas = malloc(partidaSize);
     unsigned long int size = 0;
@@ -94,7 +94,9 @@ TodasGoPartidas obtenerTodasPartidas() {
         GoPartida partida;
         fread(&partida, partidaSize, 1, archivoPartidas);
         size += partidaSize;
-        todasPartidas.partidas = realloc(todasPartidas.partidas, size);
+        if (soloTerminadas && !partida.terminada) continue;
+
+        todasPartidas.partidas = realloc(todasPartidas.partidas, (todasPartidas.numero + 1) * partidaSize);
         todasPartidas.partidas[todasPartidas.numero++] = partida;
     }
 
