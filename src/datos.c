@@ -67,8 +67,8 @@ const GoPartida *ultimaPartida() {
 }
 
 void guardarPartida(GoPartida partida) {
-    const GoPartida *partidaGuardada = ultimaPartida();
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+    const GoPartida *partidaGuardada = ultimaPartida();
     if (partidaGuardada != NULL && partidaGuardada->terminada)
         fseek(archivoPartidas, 0, SEEK_END);
 
