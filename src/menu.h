@@ -17,6 +17,8 @@ enum CONFIG_MENU {
     CONFIG_BORRAR_TODO,
 };
 
+#define STATS 6
+
 #define VOLVER -1
 #define SALIR -2
 

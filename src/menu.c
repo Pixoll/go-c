@@ -3,6 +3,7 @@
 #include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
 
@@ -21,6 +22,15 @@ const wchar_t *configs[CONFIGS] = {
     L"Borrar partidas guardadas",
     L"Borrar todos los datos guardados (reinicia el juego)",
 };
+const wchar_t *stats[STATS] = {
+    L"Fecha",
+    L"Tablero",
+    L"Oponente",
+    L"P. Jugador",
+    L"P. Oponente",
+    L"P. Neto",
+};
+const int statsPad = 12;
 const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
 void printBienvenida() {
@@ -85,12 +95,36 @@ int ejecutarMenuConfig() {
 }
 
 int ejecutarMenuStats() {
-    const TodasGoPartidas todasPartidas = obtenerTodasPartidas();
+    const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
     const int numero = todasPartidas.numero;
     const GoPartida *partidas = todasPartidas.partidas;
+
+    if (numero == 0) {
+        wprintf(L"Aún no tienes alguna partida guardada.\n");
+        return VOLVER;
+    }
+
+    printf("   ");
+    for (int i = 0; i < STATS; i++)
+        wprintf(wcspadright((wchar_t *)stats[i], statsPad, ' '));
+    printf("\n");
+
     for (int i = 0; i < numero; i++) {
-        const GoPartida partida = partidas[i];
-        wprintf(L"Partida %d. Tamaño: %d\n", i + 1, partida.size);
+        GoPartida partida = partidas[i];
+        char tablero[6];
+        sprintf(tablero, "%dx%d", partida.size, partida.size);
+        wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
+
+        wprintf(
+            L"%d. %s%s%ls%s%s%s\n",
+            i + 1,
+            strpadright("test", statsPad, ' '),
+            strpadright(tablero, statsPad, ' '),
+            wcspadright(oponente, statsPad, ' '),
+            strpadright(intATexto(partida.puntajeJugador), statsPad, ' '),
+            strpadright(intATexto(partida.puntajeOponente), statsPad, ' '),
+            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), statsPad, ' ')
+        );
     }
 
     return VOLVER;
