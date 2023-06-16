@@ -22,9 +22,13 @@ int main() {
             if (orden == VOLVER) continue;
             break;
         }
-
         if (menu == MENU_CONFIG) {
             const int orden = ejecutarMenuConfig();
+            if (orden == VOLVER) continue;
+            break;
+        }
+        if (menu == MENU_STATS) {
+            const int orden = ejecutarMenuStats();
             if (orden == VOLVER) continue;
             break;
         }

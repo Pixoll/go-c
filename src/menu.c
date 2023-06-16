@@ -84,6 +84,18 @@ int ejecutarMenuConfig() {
     return VOLVER;
 }
 
+int ejecutarMenuStats() {
+    const TodasGoPartidas todasPartidas = obtenerTodasPartidas();
+    const int numero = todasPartidas.numero;
+    const GoPartida *partidas = todasPartidas.partidas;
+    for (int i = 0; i < numero; i++) {
+        const GoPartida partida = partidas[i];
+        wprintf(L"Partida %d. Tamaño: %d\n", i + 1, partida.size);
+    }
+
+    return VOLVER;
+}
+
 int obtenerTableroSize() {
     for (int i = 0; i < TABLEROS; i++) {
         const int size = tableros[i];

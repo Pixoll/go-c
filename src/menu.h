@@ -11,7 +11,7 @@ enum MENU {
 };
 
 #define CONFIGS 3
-enum MENU_CONFIG {
+enum CONFIG_MENU {
     CONFIG_NOMBRE,
     CONFIG_BORRAR_PARTIDAS,
     CONFIG_BORRAR_TODO,
@@ -25,5 +25,6 @@ void obtenerNombre();
 int obtenerMenu();
 int ejecutarMenuJugar();
 int ejecutarMenuConfig();
+int ejecutarMenuStats();
 
 #endif
