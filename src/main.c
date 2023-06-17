@@ -1,6 +1,5 @@
 #include <locale.h>
 #include <stdio.h>
-#include <wchar.h>
 
 #include "datos.h"
 #include "menu.h"

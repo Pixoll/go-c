@@ -1,11 +1,9 @@
 #include "menu.h"
 
-#include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "datos.h"
 #include "tablero.h"
