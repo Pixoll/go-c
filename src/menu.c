@@ -159,7 +159,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
 
     printf(strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
-        wprintf(wcspadright((wchar_t *)stats[i], STATS_PAD, ' '));
+        wprintf(wcspadright(stats[i], STATS_PAD, ' '));
     printf("\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
