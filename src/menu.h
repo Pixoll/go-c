@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #ifndef _MENU_DEFINIDO
 
 #define _MENU_DEFINIDO
@@ -26,7 +24,6 @@ enum CONFIG_MENU {
 #define SALIR -2
 
 void printBienvenida();
-bool obtenerNombre();
 int obtenerMenu();
 int ejecutarMenuJugar();
 int ejecutarMenuConfig();

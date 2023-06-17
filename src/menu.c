@@ -33,6 +33,8 @@ const wchar_t *stats[STATS] = {
 
 const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
+bool obtenerNombre();
+
 void printBienvenida() {
     limpiarConsola();
     printTitulo();
