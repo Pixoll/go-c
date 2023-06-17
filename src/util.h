@@ -5,7 +5,7 @@
 
 #define _UTIL_DEFINIDO
 
-#define TITULO_LEN 74
+#define TITULO_LEN 80
 
 void wprintCentro(wchar_t *texto, int sizeLinea);
 void printCentro(char *texto, int sizeLinea);
@@ -23,5 +23,6 @@ char *intATexto(int n);
 int intDigits(int n);
 void limpiarConsola();
 unsigned long now();
+char *obtenerFecha(unsigned long ms);
 
 #endif

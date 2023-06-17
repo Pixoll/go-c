@@ -9,9 +9,25 @@
 // signo + 10 dígitos + nulo
 #define INT_STR_MAX 12
 #define TITULO_PAD TITULO_LEN / 2 - 2
+#define YEAR_0 1900
+
+const char meses[12][4] = {
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+};
 
 char *strrepeat(char fill, int size) {
-    char *buffer = malloc(sizeof(char) * (size + 1));
+    char *buffer = malloc(size + 1);
     for (int i = 0; i < size; i++)
         buffer[i] = fill;
     buffer[size] = '\0';
@@ -29,7 +45,7 @@ char *strempty(char *buffer) {
 char *strpadleft(char *buffer, int max, char fill) {
     const int size = strlen(buffer);
     if (size >= max) return buffer;
-    char *resultado = malloc((max + 1) * sizeof(char));
+    char *resultado = malloc(max + 1);
     resultado[0] = '\0';
     strcat(resultado, strrepeat(fill, max - size));
     strcat(resultado, buffer);
@@ -41,7 +57,7 @@ char *strpadleft(char *buffer, int max, char fill) {
 char *strpadright(char *buffer, int max, char fill) {
     const int size = strlen(buffer);
     if (size >= max) return buffer;
-    char *resultado = malloc((max + 1) * sizeof(char));
+    char *resultado = malloc(max + 1);
     resultado[0] = '\0';
     strcat(resultado, buffer);
     strcat(resultado, strrepeat(fill, max - size));
@@ -139,14 +155,14 @@ bool getInt(int *n) {
 }
 
 char *intATexto(int n) {
-    char *buffer = malloc(INT_STR_MAX * sizeof(char));
+    char *buffer = malloc(INT_STR_MAX);
     itoa(n, buffer, 10);
     buffer = realloc(buffer, strlen(buffer) + 1);
     return buffer;
 }
 
 int intDigits(int n) {
-    char *buffer = malloc(INT_STR_MAX * sizeof(char));
+    char *buffer = malloc(INT_STR_MAX);
     itoa(n, buffer, 10);
     const int digits = strlen(buffer);
     free(buffer);
@@ -163,6 +179,16 @@ void limpiarConsola() {
 #endif
 }
 
+// Para no tener que pedir <time.h>
 unsigned long now() {
     return time(0);
+}
+
+// Si ms 0 devuelve fecha actual
+char *obtenerFecha(unsigned long ms) {
+    const time_t tms = ms == 0 ? now() : ms;
+    struct tm *tiempo = localtime(&tms);
+    char *fecha = malloc(11);
+    sprintf(fecha, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
+    return fecha;
 }

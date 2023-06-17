@@ -30,7 +30,9 @@ const wchar_t *stats[STATS] = {
     L"P. Oponente",
     L"P. Neto",
 };
-const int statsPad = 12;
+
+#define STATS_PAD 13
+
 const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
 void printBienvenida() {
@@ -157,7 +159,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
 
     printf(strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
-        wprintf(wcspadright((wchar_t *)stats[i], statsPad, ' '));
+        wprintf(wcspadright((wchar_t *)stats[i], STATS_PAD, ' '));
     printf("\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
@@ -169,12 +171,12 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
         wprintf(
             L"%s. %s%s%ls%s%s%s\n",
             strpadleft(intATexto(i + 1), idPad, ' '),
-            strpadright("test", statsPad, ' '),
-            strpadright(tablero, statsPad, ' '),
-            wcspadright(oponente, statsPad, ' '),
-            strpadright(intATexto(partida.puntajeJugador), statsPad, ' '),
-            strpadright(intATexto(partida.puntajeOponente), statsPad, ' '),
-            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), statsPad, ' '));
+            strpadright(obtenerFecha(partida.fecha), STATS_PAD, ' '),
+            strpadright(tablero, STATS_PAD, ' '),
+            wcspadright(oponente, STATS_PAD, ' '),
+            strpadright(intATexto(partida.puntajeJugador), STATS_PAD, ' '),
+            strpadright(intATexto(partida.puntajeOponente), STATS_PAD, ' '),
+            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), STATS_PAD, ' '));
     }
 }
 
