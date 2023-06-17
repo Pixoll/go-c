@@ -189,3 +189,15 @@ char *obtenerFecha(unsigned long ms) {
     sprintf(fecha, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
     return fecha;
 }
+
+bool confirmar(const wchar_t *action) {
+    wprintf(L"¿Estás segur@ que quieres %ls? (y/n): ", action);
+    char confirmado;
+    scanf("%c", &confirmado);
+    while (confirmado != 'y' && confirmado != 'n' && confirmado != 'Y' && confirmado != 'N') {
+        wprintf(L"Opción inválida. Ingresa \"y\" o \"n\": ");
+        scanf("%c", &confirmado);
+    }
+    getchar();
+    return confirmado == 'y' || confirmado == 'Y';
+}

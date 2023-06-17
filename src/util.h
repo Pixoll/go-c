@@ -24,5 +24,6 @@ int intDigits(int n);
 void limpiarConsola();
 unsigned long now();
 char *obtenerFecha(unsigned long ms);
+bool confirmar(const wchar_t *action);
 
 #endif

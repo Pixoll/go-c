@@ -1,4 +1,5 @@
 #include <locale.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "datos.h"
@@ -12,22 +13,41 @@ void setup() {
 int main() {
     setup();
 
+    int menu = -1;
+    bool repetir = false;
     while (1) {
-        printBienvenida();
-        const int menu = obtenerMenu();
+        printBienvenida(repetir);
+        repetir = false;
+        if (menu == -1) menu = obtenerMenu();
+
         if (menu == MENU_JUGAR) {
             const int orden = ejecutarMenuJugar();
-            if (orden == VOLVER) continue;
+            if (orden == VOLVER) {
+                menu = -1;
+                continue;
+            }
             // break;
         }
+
         if (menu == MENU_CONFIG) {
             const int orden = ejecutarMenuConfig();
-            if (orden == VOLVER) continue;
+            if (orden == REPETIR) {
+                repetir = true;
+                continue;
+            }
+            if (orden == VOLVER) {
+                menu = -1;
+                continue;
+            }
             break;
         }
+
         if (menu == MENU_STATS) {
             const int orden = ejecutarMenuStats();
-            if (orden == VOLVER) continue;
+            if (orden == VOLVER) {
+                menu = -1;
+                continue;
+            }
             break;
         }
     }
