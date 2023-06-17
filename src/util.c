@@ -24,6 +24,18 @@ char *strempty(char *buffer) {
 }
 
 /* No modifica el buffer original! */
+char *strpadleft(char *buffer, int max, char fill) {
+    const int size = strlen(buffer);
+    if (size >= max) return buffer;
+    char *resultado = malloc((max + 1) * sizeof(char));
+    resultado[0] = '\0';
+    strcat(resultado, strrepeat(fill, max - size));
+    strcat(resultado, buffer);
+    resultado[max] = '\0';
+    return resultado;
+}
+
+/* No modifica el buffer original! */
 char *strpadright(char *buffer, int max, char fill) {
     const int size = strlen(buffer);
     if (size >= max) return buffer;
@@ -129,6 +141,14 @@ char *intATexto(int n) {
     itoa(n, buffer, 10);
     buffer = realloc(buffer, strlen(buffer) + 1);
     return buffer;
+}
+
+int intDigits(int n) {
+    char *buffer = malloc(INT_STR_MAX * sizeof(char));
+    itoa(n, buffer, 10);
+    const int digits = strlen(buffer);
+    free(buffer);
+    return digits;
 }
 
 void limpiarConsola() {

@@ -149,13 +149,15 @@ int ejecutarMenuStats() {
 void printStats(const TodasGoPartidas todasPartidas, int page) {
     const int numero = todasPartidas.numero;
     const GoPartida *partidas = todasPartidas.partidas;
-    printf("   ");
-    for (int i = 0; i < STATS; i++)
-        wprintf(wcspadright((wchar_t *)stats[i], statsPad, ' '));
-    printf("\n");
 
     const int inicio = page * STATS_POR_PAGE;
     const int fin = inicio + STATS_POR_PAGE;
+    const int idPad = intDigits(__max(fin, numero));
+
+    printf(strrepeat(' ', idPad + 2));
+    for (int i = 0; i < STATS; i++)
+        wprintf(wcspadright((wchar_t *)stats[i], statsPad, ' '));
+    printf("\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
@@ -164,8 +166,8 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
         wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
 
         wprintf(
-            L"%d. %s%s%ls%s%s%s\n",
-            i + 1,
+            L"%s. %s%s%ls%s%s%s\n",
+            strpadleft(intATexto(i + 1), idPad, ' '),
             strpadright("test", statsPad, ' '),
             strpadright(tablero, statsPad, ' '),
             wcspadright(oponente, statsPad, ' '),
