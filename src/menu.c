@@ -36,6 +36,11 @@ const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 void printBienvenida() {
     limpiarConsola();
     printTitulo();
+    const bool nuevo = obtenerNombre();
+    if (nuevo) {
+        limpiarConsola();
+        printTitulo();
+    }
 
     const wchar_t *formato = L"¡Bienvenid@ %s!";
     const int sizeBienvenida = wcslen(formato) - 3 + NOMBRE_MAX;
@@ -89,6 +94,11 @@ int ejecutarMenuConfig() {
     }
     if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
         borrarTodasPartidas();
+        return VOLVER;
+    }
+    if (menuConfig == CONFIG_BORRAR_TODO) {
+        borrarTodasPartidas();
+        borrarConfig();
         return VOLVER;
     }
 
@@ -212,8 +222,8 @@ int obtenerConfig() {
     return menuConfig - 1;
 }
 
-void obtenerNombre() {
-    if (strlen(config.nombre)) return;
+bool obtenerNombre() {
+    if (strlen(config.nombre)) return false;
 
     wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
     char nombre[NOMBRE_MAX];
@@ -226,4 +236,5 @@ void obtenerNombre() {
 
     strcpy(config.nombre, nombre);
     guardarConfig();
+    return true;
 }

@@ -11,7 +11,6 @@ void setup() {
 
 int main() {
     setup();
-    obtenerNombre();
 
     while (1) {
         printBienvenida();
