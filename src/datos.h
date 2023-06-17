@@ -40,6 +40,7 @@ typedef struct TodasGoPartidas {
 
 void setupDatos();
 void guardarConfig();
+void borrarConfig();
 bool validarNombre(char *nombre);
 const GoPartida *ultimaPartida();
 void guardarPartida(GoPartida partida);

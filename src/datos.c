@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "util.h"
+
 #define LEER "rb"
 #define CREAR "wb"
 #define LEER_ESCRIBIR "rb+"
@@ -41,6 +43,10 @@ void guardarConfig() {
         exit(1);
     }
     fclose(archivoConfig);
+}
+
+void borrarConfig() {
+    strempty(config.nombre);
 }
 
 bool validarNombre(char *nombre) {
