@@ -37,11 +37,12 @@ void printBienvenida() {
     limpiarConsola();
     printTitulo();
 
-    const int sizeBienvenida = 13 + NOMBRE_MAX;
+    const wchar_t *formato = L"¡Bienvenid@ %s!";
+    const int sizeBienvenida = wcslen(formato) - 3 + NOMBRE_MAX;
     wchar_t bienvenido[sizeBienvenida];
-    swprintf(bienvenido, sizeBienvenida, L"¡Bienvenid@ %s!", config.nombre);
+    swprintf(bienvenido, sizeBienvenida, formato, config.nombre);
 
-    wprintCentro(bienvenido, 50);
+    wprintCentro(bienvenido, TITULO_LEN);
     printf("\n");
 }
 

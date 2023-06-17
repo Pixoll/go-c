@@ -1,8 +1,11 @@
+#include <stdbool.h>
+#include <stdio.h>
+
 #ifndef _UTIL_DEFINIDO
 
 #define _UTIL_DEFINIDO
 
-#define TITULO_LEN 50
+#define TITULO_LEN 74
 
 void wprintCentro(wchar_t *texto, int sizeLinea);
 void printCentro(char *texto, int sizeLinea);

@@ -1,3 +1,5 @@
+#include "util.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +8,7 @@
 
 // signo + 10 dígitos + nulo
 #define INT_STR_MAX 12
-#define TITULO_LEN 50
+#define TITULO_PAD TITULO_LEN / 2 - 2
 
 char *strrepeat(char fill, int size) {
     char *buffer = malloc(sizeof(char) * (size + 1));
@@ -78,7 +80,7 @@ wchar_t *strtowcs(char *buffer) {
 
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
-    const char *espacio = strrepeat(' ', 23);
+    const char *espacio = strrepeat(' ', TITULO_PAD);
     printf("%s\n", fila);
     printf("#%sGO%s#\n", espacio, espacio);
     printf("%s\n\n", fila);
