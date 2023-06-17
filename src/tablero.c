@@ -14,6 +14,8 @@ void puntajePorCantidad();
 
 void crearTablero(int size) {
     partida.size = size;
+    partida.puntajeJugador = 0;
+    partida.puntajeOponente = 0;
     const int max = size;
 
     partida.tablero[1][1] = '+';
