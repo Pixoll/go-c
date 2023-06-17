@@ -19,37 +19,21 @@ int main() {
         printBienvenida(repetir);
         repetir = false;
         if (menu == -1) menu = obtenerMenu();
+        const int orden = menu == MENU_JUGAR    ? ejecutarMenuJugar()
+                          : menu == MENU_CONFIG ? ejecutarMenuConfig()
+                          : menu == MENU_STATS  ? ejecutarMenuStats()
+                                                : 0;
 
-        if (menu == MENU_JUGAR) {
-            const int orden = ejecutarMenuJugar();
-            if (orden == VOLVER) {
-                menu = -1;
-                continue;
-            }
-            // break;
+        if (orden == REPETIR) {
+            repetir = true;
+            continue;
         }
-
-        if (menu == MENU_CONFIG) {
-            const int orden = ejecutarMenuConfig();
-            if (orden == REPETIR) {
-                repetir = true;
-                continue;
-            }
-            if (orden == VOLVER) {
-                menu = -1;
-                continue;
-            }
-            break;
+        if (orden == VOLVER) {
+            menu = -1;
+            continue;
         }
-
-        if (menu == MENU_STATS) {
-            const int orden = ejecutarMenuStats();
-            if (orden == VOLVER) {
-                menu = -1;
-                continue;
-            }
-            break;
-        }
+        if (orden == SALIR) break;
+        menu = -1;
     }
 
     return 0;
