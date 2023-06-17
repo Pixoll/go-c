@@ -94,22 +94,70 @@ int ejecutarMenuConfig() {
     return VOLVER;
 }
 
+void printStats(const TodasGoPartidas todasPartidas, int page);
+
 int ejecutarMenuStats() {
     const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
-    const int numero = todasPartidas.numero;
     const GoPartida *partidas = todasPartidas.partidas;
+    const int numero = todasPartidas.numero;
+    const int pages = numero == STATS_POR_PAGE ? 1 : numero / STATS_POR_PAGE + 1;
 
-    if (numero == 0) {
+    if (numero > 0)
+        printStats(todasPartidas, 0);
+    else
         wprintf(L"Aún no tienes alguna partida guardada.\n");
-        return VOLVER;
+
+    int i = 1, next = -1, page = 0;
+    if (pages > 1) {
+        wprintf(L"\n%d. Página siguiente", i++);
+        next = i;
+    }
+    wprintf(L"\n%d. Volver al menú principal\n", i);
+
+    int opcion;
+    wprintf(L"\nSelecciona la opción: ");
+
+    while (!getInt(&opcion) || opcion < 1 || opcion > i) {
+        wprintf(L"Opción inválida. Intenta de nuevo: ");
     }
 
+    while (opcion != i) {
+        limpiarConsola();
+        printTitulo();
+        printStats(todasPartidas, i == next ? ++page : --page);
+        next = -1;
+
+        int i = 1;
+        if (page != 0)
+            wprintf(L"\n%d. Página anterior", i++);
+        if (page != pages - 1) {
+            wprintf(L"\n%d. Página siguiente", i++);
+            next = i;
+        }
+
+        wprintf(L"\n%d. Volver al menú principal\n", i);
+        wprintf(L"\nSelecciona la opción: ");
+
+        while (!getInt(&opcion) || opcion < 1 || opcion > i) {
+            wprintf(L"Opción inválida. Intenta de nuevo: ");
+        }
+    }
+
+    return VOLVER;
+}
+
+void printStats(const TodasGoPartidas todasPartidas, int page) {
+    const int numero = todasPartidas.numero;
+    const GoPartida *partidas = todasPartidas.partidas;
     printf("   ");
     for (int i = 0; i < STATS; i++)
         wprintf(wcspadright((wchar_t *)stats[i], statsPad, ' '));
     printf("\n");
 
-    for (int i = 0; i < numero; i++) {
+    const int inicio = page * STATS_POR_PAGE;
+    const int fin = inicio + STATS_POR_PAGE;
+
+    for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
         char tablero[6];
         sprintf(tablero, "%dx%d", partida.size, partida.size);
@@ -123,11 +171,8 @@ int ejecutarMenuStats() {
             wcspadright(oponente, statsPad, ' '),
             strpadright(intATexto(partida.puntajeJugador), statsPad, ' '),
             strpadright(intATexto(partida.puntajeOponente), statsPad, ' '),
-            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), statsPad, ' ')
-        );
+            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), statsPad, ' '));
     }
-
-    return VOLVER;
 }
 
 int obtenerTableroSize() {

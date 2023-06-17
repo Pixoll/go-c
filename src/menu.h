@@ -18,6 +18,7 @@ enum CONFIG_MENU {
 };
 
 #define STATS 6
+#define STATS_POR_PAGE 25
 
 #define VOLVER -1
 #define SALIR -2
