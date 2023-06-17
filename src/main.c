@@ -20,7 +20,7 @@ int main() {
         if (menu == MENU_JUGAR) {
             const int orden = ejecutarMenuJugar();
             if (orden == VOLVER) continue;
-            break;
+            // break;
         }
         if (menu == MENU_CONFIG) {
             const int orden = ejecutarMenuConfig();
