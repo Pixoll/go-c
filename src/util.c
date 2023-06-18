@@ -127,7 +127,20 @@ void wprintConLineLimit(wchar_t *texto, int limit) {
     for (int i = 0; i <= wcslen(texto); i++) {
         const wchar_t wc = texto[i];
         if (wc == '\n') lineaSize = 0;
-        if (lineaSize != 0 && lineaSize % limit == 0) printf("\n");
+        if (lineaSize != 0 && lineaSize % limit == 0) {
+            int j = i;
+            for (j; j >= 0; j--) {
+                if (texto[j - 1] == ' ') break;
+                printf("\b");
+            }
+            for (int k = j; k < i; k++)
+                printf(" ");
+            printf("\n");
+            for (j; j < i; j++) {
+                wprintf(L"%lc", texto[j]);
+                lineaSize++;
+            }
+        }
         wprintf(L"%lc", wc);
         lineaSize++;
     }
@@ -195,7 +208,7 @@ void limpiarConsola() {
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-    system("cls");
+    // system("cls");
 #endif
 }
 
