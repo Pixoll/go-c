@@ -208,7 +208,7 @@ void limpiarConsola() {
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-    // system("cls");
+    system("cls");
 #endif
 }
 
