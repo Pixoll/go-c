@@ -213,12 +213,12 @@ void limpiarConsola() {
 }
 
 // Para no tener que pedir <time.h>
-unsigned long now() {
+long long now() {
     return time(0);
 }
 
 // Si ms 0 devuelve fecha actual
-char *obtenerFecha(unsigned long ms) {
+char *obtenerFecha(long long ms) {
     const time_t tms = ms == 0 ? now() : ms;
     struct tm *tiempo = localtime(&tms);
     char *fecha = malloc(11);
