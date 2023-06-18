@@ -31,6 +31,7 @@ enum MENU_FLAG {
 void printBienvenida(bool repetirFlag);
 int obtenerMenu();
 int ejecutarMenuJugar();
+int ejecutarMenuReglas();
 int ejecutarMenuConfig();
 int ejecutarMenuStats();
 

@@ -9,6 +9,8 @@
 #include "tablero.h"
 #include "util.h"
 
+const char *rutaReglas = "./reglas.txt";
+
 const wchar_t *menus[MENUS] = {
     L"Jugar",
     L"Reglas",
@@ -91,6 +93,26 @@ int ejecutarMenuJugar() {
 
     crearTablero(size);
     jugarTablero();
+    return VOLVER;
+}
+
+int ejecutarMenuReglas() {
+    FILE *archivoReglas = fopen(rutaReglas, "r");
+    fseek(archivoReglas, 0, SEEK_END);
+    const long max = ftello(archivoReglas) + 1;
+    fseek(archivoReglas, 0, SEEK_SET);
+
+    char reglas[max];
+    fread(reglas, 1, max, archivoReglas);
+    fclose(archivoReglas);
+
+    printCentro("-== REGLAS DE GO ==-\n", TITULO_LEN);
+    wprintf(strtowcs(reglas));
+
+    wprintf(L"\n\nPresiona ENTER para volver al menú principal.");
+    char c = 0;
+    while (c != '\n') scanf("%c", &c);
+
     return VOLVER;
 }
 

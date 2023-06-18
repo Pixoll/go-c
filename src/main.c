@@ -20,6 +20,7 @@ int main() {
         repetir = false;
         if (menu == -1) menu = obtenerMenu();
         const int orden = menu == MENU_JUGAR    ? ejecutarMenuJugar()
+                          : menu == MENU_REGLAS ? ejecutarMenuReglas()
                           : menu == MENU_CONFIG ? ejecutarMenuConfig()
                           : menu == MENU_STATS  ? ejecutarMenuStats()
                                                 : VOLVER;
