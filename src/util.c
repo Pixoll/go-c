@@ -122,6 +122,17 @@ void wprintCentro(wchar_t *texto, int sizeLinea) {
     wprintf(L"%s%ls\n", espacio, texto);
 }
 
+void wprintConLineLimit(wchar_t *texto, int limit) {
+    int lineaSize = 0;
+    for (int i = 0; i <= wcslen(texto); i++) {
+        const wchar_t wc = texto[i];
+        if (wc == '\n') lineaSize = 0;
+        if (lineaSize != 0 && lineaSize % limit == 0) printf("\n");
+        wprintf(L"%lc", wc);
+        lineaSize++;
+    }
+}
+
 void printCentro(char *texto, int sizeLinea) {
     const int sizeTexto = strlen(texto);
     if (sizeTexto > sizeLinea) {

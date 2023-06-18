@@ -8,6 +8,7 @@
 #define TITULO_LEN 80
 
 void wprintCentro(wchar_t *texto, int sizeLinea);
+void wprintConLineLimit(wchar_t *texto, int limit);
 void printCentro(char *texto, int sizeLinea);
 void printTitulo();
 char *strrepeat(char fill, int size);

@@ -107,7 +107,7 @@ int ejecutarMenuReglas() {
     fclose(archivoReglas);
 
     printCentro("-== REGLAS DE GO ==-\n", TITULO_LEN);
-    wprintf(strtowcs(reglas));
+    wprintConLineLimit(strtowcs(reglas), TITULO_LEN);
 
     wprintf(L"\n\nPresiona ENTER para volver al menú principal.");
     char c = 0;
