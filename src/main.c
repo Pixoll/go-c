@@ -22,18 +22,14 @@ int main() {
         const int orden = menu == MENU_JUGAR    ? ejecutarMenuJugar()
                           : menu == MENU_CONFIG ? ejecutarMenuConfig()
                           : menu == MENU_STATS  ? ejecutarMenuStats()
-                                                : 0;
+                                                : VOLVER;
 
-        if (orden == REPETIR) {
-            repetir = true;
-            continue;
-        }
-        if (orden == VOLVER) {
+        if (orden == SALIR)
+            break;
+        else if (orden == VOLVER)
             menu = -1;
-            continue;
-        }
-        if (orden == SALIR) break;
-        menu = -1;
+        else if (orden == REPETIR)
+            repetir = true;
     }
 
     return 0;

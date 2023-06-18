@@ -91,7 +91,7 @@ int ejecutarMenuJugar() {
 
     crearTablero(size);
     jugarTablero();
-    return SALIR;
+    return VOLVER;
 }
 
 int obtenerConfig();
