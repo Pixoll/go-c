@@ -82,7 +82,7 @@ wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill) {
     return resultado;
 }
 
-wchar_t *strtowcs(char *buffer) {
+wchar_t *strtowcs(const char *buffer) {
     const int size = strlen(buffer);
     wchar_t *transformado = malloc((size + 1) * sizeof(wchar_t));
     int nuevoSize = 0;
@@ -111,7 +111,7 @@ void printTitulo() {
     printf("%s\n\n", fila);
 }
 
-void wprintCentro(wchar_t *texto, int sizeLinea) {
+void wprintCentro(const wchar_t *texto, int sizeLinea) {
     const int sizeTexto = wcslen(texto);
     if (sizeTexto > sizeLinea) {
         wprintf(L"%ls\n", texto);
@@ -122,7 +122,7 @@ void wprintCentro(wchar_t *texto, int sizeLinea) {
     wprintf(L"%s%ls\n", espacio, texto);
 }
 
-void wprintConLineLimit(wchar_t *texto, int limit) {
+void wprintConLineLimit(const wchar_t *texto, int limit) {
     int lineaSize = 0;
     for (int i = 0; i <= wcslen(texto); i++) {
         const wchar_t wc = texto[i];
@@ -146,7 +146,7 @@ void wprintConLineLimit(wchar_t *texto, int limit) {
     }
 }
 
-void printCentro(char *texto, int sizeLinea) {
+void printCentro(const char *texto, int sizeLinea) {
     const int sizeTexto = strlen(texto);
     if (sizeTexto > sizeLinea) {
         printf("%s\n", texto);
