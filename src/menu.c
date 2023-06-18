@@ -1,11 +1,9 @@
 #include "menu.h"
 
-#include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "datos.h"
 #include "tablero.h"
@@ -18,9 +16,9 @@ const wchar_t *menus[MENUS] = {
     L"Estadísticas",
 };
 const wchar_t *configs[CONFIGS] = {
-    L"Cambiar nombre",
+    L"Cambiar tu nombre de usuario",
     L"Borrar partidas guardadas",
-    L"Borrar todos los datos guardados (reinicia el juego)",
+    L"Borrar todos los datos guardados",
 };
 const wchar_t *stats[STATS] = {
     L"Fecha",
@@ -35,9 +33,28 @@ const wchar_t *stats[STATS] = {
 
 const int tableros[TABLEROS] = {TABLERO_S, TABLERO_M, TABLERO_L};
 
-void printBienvenida() {
+void obtenerNombre() {
+    if (strlen(config.nombre)) return;
+
+    wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
+    char nombre[NOMBRE_MAX];
+    strget(nombre, NOMBRE_MAX);
+
+    while (!validarNombre(nombre)) {
+        wprintf(L"Nombre inválido. Intenta de nuevo: ");
+        strget(nombre, NOMBRE_MAX);
+    }
+
+    strcpy(config.nombre, nombre);
+    guardarConfig();
+}
+
+void printBienvenida(bool repetirFlag) {
+    if (!repetirFlag) obtenerNombre();
     limpiarConsola();
     printTitulo();
+
+    if (repetirFlag) return;
 
     const wchar_t *formato = L"¡Bienvenid@ %s!";
     const int sizeBienvenida = wcslen(formato) - 3 + NOMBRE_MAX;
@@ -82,19 +99,26 @@ int obtenerConfig();
 int ejecutarMenuConfig() {
     const int menuConfig = obtenerConfig();
     if (menuConfig == VOLVER) return VOLVER;
-    wprintf(L"Configuración seleccionada: %ls\n\n", configs[menuConfig]);
 
     if (menuConfig == CONFIG_NOMBRE) {
         strempty(config.nombre);
         obtenerNombre();
-        return VOLVER;
-    }
-    if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
-        borrarTodasPartidas();
-        return VOLVER;
+        return REPETIR;
     }
 
-    return VOLVER;
+    if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
+        const bool confirmado = confirmar(wcslwr(wcsdup(configs[menuConfig])));
+        if (confirmado) borrarTodasPartidas();
+        return REPETIR;
+    }
+
+    if (menuConfig == CONFIG_BORRAR_TODO) {
+        const bool confirmado = confirmar(wcslwr(wcsdup(configs[menuConfig])));
+        if (!confirmado) return REPETIR;
+        borrarTodasPartidas();
+        borrarConfig();
+        return VOLVER;
+    }
 }
 
 void printStats(const TodasGoPartidas todasPartidas, int page);
@@ -159,7 +183,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
 
     printf(strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
-        wprintf(wcspadright((wchar_t *)stats[i], STATS_PAD, ' '));
+        wprintf(wcspadright(stats[i], STATS_PAD, ' '));
     printf("\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
@@ -212,20 +236,4 @@ int obtenerConfig() {
 
     if (menuConfig == CONFIGS + 1) return VOLVER;
     return menuConfig - 1;
-}
-
-void obtenerNombre() {
-    if (strlen(config.nombre)) return;
-
-    wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
-    char nombre[NOMBRE_MAX];
-    strget(nombre, NOMBRE_MAX);
-
-    while (!validarNombre(nombre)) {
-        wprintf(L"Nombre inválido. Intenta de nuevo: ");
-        strget(nombre, NOMBRE_MAX);
-    }
-
-    strcpy(config.nombre, nombre);
-    guardarConfig();
 }

@@ -41,10 +41,9 @@ char *strempty(char *buffer) {
     return buffer;
 }
 
-/* No modifica el buffer original! */
-char *strpadleft(char *buffer, int max, char fill) {
+char *strpadleft(const char *buffer, int max, char fill) {
     const int size = strlen(buffer);
-    if (size >= max) return buffer;
+    if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
     strcat(resultado, strrepeat(fill, max - size));
@@ -53,10 +52,9 @@ char *strpadleft(char *buffer, int max, char fill) {
     return resultado;
 }
 
-/* No modifica el buffer original! */
-char *strpadright(char *buffer, int max, char fill) {
+char *strpadright(const char *buffer, int max, char fill) {
     const int size = strlen(buffer);
-    if (size >= max) return buffer;
+    if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
     strcat(resultado, buffer);
@@ -73,10 +71,9 @@ wchar_t *wcsrepeat(wchar_t fill, int size) {
     return buffer;
 }
 
-/* No modifica el buffer original! */
-wchar_t *wcspadright(wchar_t *buffer, int max, wchar_t fill) {
+wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill) {
     const int size = wcslen(buffer);
-    if (size >= max) return buffer;
+    if (size >= max) return (wchar_t *)buffer;
     wchar_t *resultado = malloc((max + 1) * sizeof(wchar_t));
     resultado[0] = '\0';
     wcscat(resultado, buffer);
@@ -191,4 +188,16 @@ char *obtenerFecha(unsigned long ms) {
     char *fecha = malloc(11);
     sprintf(fecha, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
     return fecha;
+}
+
+bool confirmar(const wchar_t *action) {
+    wprintf(L"¿Estás segur@ que quieres %ls? (y/n): ", action);
+    char confirmado;
+    scanf("%c", &confirmado);
+    while (confirmado != 'y' && confirmado != 'n' && confirmado != 'Y' && confirmado != 'N') {
+        wprintf(L"Opción inválida. Ingresa \"y\" o \"n\": ");
+        scanf("%c", &confirmado);
+    }
+    getchar();
+    return confirmado == 'y' || confirmado == 'Y';
 }

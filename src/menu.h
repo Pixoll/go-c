@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #ifndef _MENU_DEFINIDO
 
 #define _MENU_DEFINIDO
@@ -20,11 +22,13 @@ enum CONFIG_MENU {
 #define STATS 6
 #define STATS_POR_PAGE 25
 
-#define VOLVER -1
-#define SALIR -2
+enum MENU_FLAG {
+    REPETIR = -3,
+    VOLVER,
+    SALIR,
+};
 
-void printBienvenida();
-void obtenerNombre();
+void printBienvenida(bool repetirFlag);
 int obtenerMenu();
 int ejecutarMenuJugar();
 int ejecutarMenuConfig();
