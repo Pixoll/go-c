@@ -85,9 +85,21 @@ wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill) {
 wchar_t *strtowcs(char *buffer) {
     const int size = strlen(buffer);
     wchar_t *transformado = malloc((size + 1) * sizeof(wchar_t));
-    for (int i = 0; i < size; i++)
-        transformado[i] = buffer[i];
-    transformado[size] = '\0';
+    int nuevoSize = 0;
+    for (int i = 0; i < size; i++) {
+        const char c = buffer[i];
+        if (c == '\b') break;
+        if (c >= 0) {
+            transformado[nuevoSize++] = c;
+            continue;
+        }
+
+        const unsigned char next = buffer[++i];
+        const wchar_t real = next == 166 ? next : next + 0100;
+        transformado[nuevoSize++] = real;
+    }
+
+    transformado[nuevoSize] = '\0';
     return transformado;
 }
 
