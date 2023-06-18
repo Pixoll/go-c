@@ -1,18 +1,18 @@
 1. DESCRIPCIÓN
 
-Se juega sobre un tablero inicialmente vació de 9x9, 13x13 o 19x19 lineas. Los dos jugadores (o un jugador y una máquina) que participan disponen de un abundante numero de piedras de color negro o blanco, respectivamente, que se van colocando sobre el tablero.
+    Se juega sobre un tablero inicialmente vació de 9x9, 13x13 o 19x19 lineas. Los dos jugadores (o un jugador y una máquina) que participan disponen de un abundante numero de piedras de color negro o blanco, respectivamente, que se van colocando sobre el tablero.
 
 2. OBJETIVO DEL JUEGO
 
-El objetivo básico del juego es utilizar las piedras propias para formar territorio rodeando regiones vacías del tablero. Realizar capturas no es el objetivo final, pero sirve para obtener dicho territorio. Gana quien alcanza la maxima puntuación, que básicamente se corresponde con el control de un mayor territorio.
+    El objetivo básico del juego es utilizar las piedras propias para formar territorio rodeando regiones vacías del tablero. Realizar capturas no es el objetivo final, pero sirve para obtener dicho territorio. Gana quien alcanza la maxima puntuación, que básicamente se corresponde con el control de un mayor territorio.
 
 3. INICIO DEL JUEGO
 
-Inicialmente el tablero esta vació. Comienza el jugador con piedras negras, y seguidamente el turno va cambiándose entre uno y otro alternativamente.
+    Inicialmente el tablero esta vació. Comienza el jugador con piedras negras, y seguidamente el turno va cambiándose entre uno y otro alternativamente.
 
 4. DESARROLLO DEL JUEGO
 
-Cada movimiento consiste en colocar una nueva piedra en una intersección libre del tablero de juego, nunca en mover las piedras ya colocadas en este.
+    Cada movimiento consiste en colocar una nueva piedra en una intersección libre del tablero de juego, nunca en mover las piedras ya colocadas en este.
 
 4.1. LIBERTADES Y TERRITORIO
 
@@ -22,28 +22,28 @@ b) Los grupos de intersecciones libres que se encuentran rodeadas de piedras de 
 
 4.2. CAPTURA DE PIEDRAS
 
-Un grupo de piedras es capturado cuando no tiene ninguna libertad, es decir, cuando es rodeado totalmente por piedras del jugador rival sin que el grupo de piedras capturado tenga ningún hueco libre en su interior. Por ejemplo (las blancas "O" serian capturadas):
+    Un grupo de piedras es capturado cuando no tiene ninguna libertad, es decir, cuando es rodeado totalmente por piedras del jugador rival sin que el grupo de piedras capturado tenga ningún hueco libre en su interior. Por ejemplo (las blancas "O" serian capturadas):
 
 ¦-¦-X-X-X-X-¦-¦
 ¦-X-O-O-O-O-X-¦
 ¦-X-X-O-O-X-¦-¦
 ¦-¦-X-X-X-¦-¦-¦
 
-En particular, una piedra aislada es capturada cuando es rodeada por 4 piedras rivales. Si la piedra se encuentra en un lateral o esquina del tablero, es suficiente con que sea rodeada respectivamente por 3 o 2 piedras rivales.
+    En particular, una piedra aislada es capturada cuando es rodeada por 4 piedras rivales. Si la piedra se encuentra en un lateral o esquina del tablero, es suficiente con que sea rodeada respectivamente por 3 o 2 piedras rivales.
 
 ¦-¦-X-¦-¦    +-X-O-X-+    ¦-¦-¦
 ¦-X-O-X-¦    ¦-¦-X-¦-¦    X-¦-¦
 ¦-¦-X-¦-¦    ¦-¦-¦-¦-¦    O-X-+
 
-Las piedras capturadas son retiradas del tablero.
+    Las piedras capturadas son retiradas del tablero.
 
 4.3. LIMITACIONES AL COLOCAR PIEDRAS
 
 a) SUICIDIO
 
-No esta permitido jugar una piedra en un punto donde quedaría sin libertades o formaría parte de una cadena que queda sin libertades, a menos que como resultado de la colocación de la piedra se realice alguna captura.
+    No esta permitido jugar una piedra en un punto donde quedaría sin libertades o formaría parte de una cadena que queda sin libertades, a menos que como resultado de la colocación de la piedra se realice alguna captura.
 
-En el ejemplo se muestra una posición en la que se aprecia claramente una intersección donde no puede colocarse una piedra blanca "O":
+    En el ejemplo se muestra una posición en la que se aprecia claramente una intersección donde no puede colocarse una piedra blanca "O":
 
 ¦-¦-X-X-¦
 ¦-X-O-¦-X
@@ -54,9 +54,9 @@ X-O-O-O-X
 
 b) KO
 
-No esta permitido realizar un movimiento que provoque que la partida vuelva a una situación previa. Esta regla se aplica frecuentemente en situaciones en las que una piedra que acaba de ser colocada realizando una captura podría ser a su vez capturada de inmediato colocando una nueva piedra en la misma posición que ocupaba la piedra recién capturada, lo cual podría provocar una situación cíclica.
+    No esta permitido realizar un movimiento que provoque que la partida vuelva a una situación previa. Esta regla se aplica frecuentemente en situaciones en las que una piedra que acaba de ser colocada realizando una captura podría ser a su vez capturada de inmediato colocando una nueva piedra en la misma posición que ocupaba la piedra recién capturada, lo cual podría provocar una situación cíclica.
 
-A continuación se aprecia una situación de ko:
+    A continuación se aprecia una situación de ko:
 
 +-X-+-X-O-+      +-X-O-+-O-+
 ¦-¦-X-O-¦-¦  ->  ¦-¦-X-O-¦-¦
@@ -64,28 +64,28 @@ A continuación se aprecia una situación de ko:
 
 5. FINAL DE LA PARTIDA
 
-La partida finaliza mediante un acuerdo entre ambos jugadores (o solo el jugador si esta contra una máquina). Cuando alguno de ellos cree que no es posible hacer mas territorio, capturar mas piedras enemigas o reducir el territorio del rival debe pasar en lugar de colocar una piedra en el tablero.
+    La partida finaliza mediante un acuerdo entre ambos jugadores (o solo el jugador si esta contra una máquina). Cuando alguno de ellos cree que no es posible hacer mas territorio, capturar mas piedras enemigas o reducir el territorio del rival debe pasar en lugar de colocar una piedra en el tablero.
 
-El protocolo de final de partida se inicia cuando ambos jugadores pasan consecutivamente.
+    El protocolo de final de partida se inicia cuando ambos jugadores pasan consecutivamente.
 
 5.1. PIEDRAS VIVAS Y MUERTAS
 
-Al finalizar, los jugadores deciden que piedras serian inevitablemente capturadas en caso de continuar la partida. A dichas piedras se las denomina piedras muertas, y son capturadas antes de contabilizar la puntuación.
+    Al finalizar, los jugadores deciden que piedras serian inevitablemente capturadas en caso de continuar la partida. A dichas piedras se las denomina piedras muertas, y son capturadas antes de contabilizar la puntuación.
 
-En el caso de que los jugadores no se pongan de acuerdo respecto a la decision de que piedras están vivas y muertas, el juego se reanuda.
+    En el caso de que los jugadores no se pongan de acuerdo respecto a la decision de que piedras están vivas y muertas, el juego se reanuda.
 
-Si en la reanudación inmediatamente los 2 jugadores pasan de nuevo sin colocar ninguna piedra, la contabilidad se realiza considerando que todas las piedras están vivas.
+    Si en la reanudación inmediatamente los 2 jugadores pasan de nuevo sin colocar ninguna piedra, la contabilidad se realiza considerando que todas las piedras están vivas.
 
 5.2. RECUENTO DE LA PUNTUACIÓN
 
 a) CONTABILIDAD POR AREA
 
-Cada jugador puntúa por cada piedra situada sobre el tablero y por cada intersección en territorio propio. Tiene la ventaja de ser mas fácil de entender al comenzar a practicar el juego, y de que el resultado no se ve influido por los posibles desacuerdos en el final de partida.
+    Cada jugador puntúa por cada piedra situada sobre el tablero y por cada intersección en territorio propio. Tiene la ventaja de ser mas fácil de entender al comenzar a practicar el juego, y de que el resultado no se ve influido por los posibles desacuerdos en el final de partida.
 
 b) CONTABILIDAD POR TERRITORIO
 
-Se cuenta un punto por cada captura realizada y por cada intersección de territorio.
+    Se cuenta un punto por cada captura realizada y por cada intersección de territorio.
 
 5.3. EN CASO DE EMPATE
 
-En caso de empate se le otorga la victoria al jugador de las fichas blancas.
+    En caso de empate se le otorga la victoria al jugador de las fichas blancas.
