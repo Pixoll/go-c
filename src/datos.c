@@ -71,7 +71,7 @@ const GoPartida *ultimaPartida() {
 void guardarPartida(GoPartida partida) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
     const GoPartida *partidaGuardada = ultimaPartida();
-    if (partidaGuardada != NULL && partidaGuardada->terminada)
+    if (partidaGuardada && partidaGuardada->terminada)
         fseek(archivoPartidas, 0, SEEK_END);
 
     const int guardado = fwrite(&partida, partidaSize, 1, archivoPartidas);
@@ -87,7 +87,7 @@ TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas) {
     todasPartidas.partidas = malloc(partidaSize);
     unsigned long int size = 0;
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
-    if (archivoPartidas == NULL) return todasPartidas;
+    if (!archivoPartidas) return todasPartidas;
 
     fseek(archivoPartidas, 0, SEEK_END);
     const long max = ftello(archivoPartidas);
@@ -108,7 +108,7 @@ TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas) {
 
 void borrarTodasPartidas() {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
-    if (archivoPartidas == NULL) return;
+    if (!archivoPartidas) return;
     fclose(archivoPartidas);
     archivoPartidas = fopen(rutaPartidas, CREAR);
     fclose(archivoPartidas);
