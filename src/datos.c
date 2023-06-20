@@ -20,19 +20,16 @@ GoConfig config;
 
 void setupDatos() {
     FILE *archivoConfig = fopen(rutaConfig, LEER);
-    if (!archivoConfig) {
+    if (!archivoConfig)
         archivoConfig = fopen(rutaConfig, CREAR);
-        fclose(archivoConfig);
-    } else {
+    else
         fread(&config, configSize, 1, archivoConfig);
-        fclose(archivoConfig);
-    }
+    fclose(archivoConfig);
 
-    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
-    if (!archivoPartidas) {
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER);
+    if (!archivoPartidas)
         archivoPartidas = fopen(rutaPartidas, CREAR);
-        fclose(archivoPartidas);
-    }
+    fclose(archivoPartidas);
 }
 
 void guardarConfig() {
