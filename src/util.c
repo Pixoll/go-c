@@ -1,12 +1,11 @@
 #include "util.h"
 
 #include <stdbool.h>
-// Para Linux
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <wchar.h>
 
 // signo + 10 dígitos + nulo
 #define INT_STR_MAX 12
@@ -105,6 +104,19 @@ wchar_t *strtowcs(const char *buffer) {
     return transformado;
 }
 
+wchar_t *wcslower(const wchar_t *buffer) {
+    const int size = wcslen(buffer);
+    wchar_t *resultado = malloc((size + 1) * sizeof(wchar_t));
+    for (int i = 0; i < size; i++) {
+        const wchar_t c = buffer[i];
+        if (c < 'A' || c > 'Z')
+            resultado[i] = c;
+        else
+            resultado[i] = c - ('a' - 'A');
+    }
+    return resultado;
+}
+
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
     const char *espacio = strrepeat(' ', TITULO_PAD);
@@ -186,14 +198,14 @@ bool getInt(int *n) {
 
 char *intATexto(int n) {
     char *buffer = malloc(INT_STR_MAX);
-    itoa(n, buffer, 10);
+    sprintf(buffer, "%d", n);
     buffer = realloc(buffer, strlen(buffer) + 1);
     return buffer;
 }
 
 int intDigits(int n) {
     char *buffer = malloc(INT_STR_MAX);
-    itoa(n, buffer, 10);
+    sprintf(buffer, "%d", n);
     const int digits = strlen(buffer);
     free(buffer);
     return digits;

@@ -129,17 +129,13 @@ int ejecutarMenuConfig() {
     }
 
     if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
-        wchar_t *configMinus = wcsdup(configs[menuConfig]);
-        const bool confirmado = confirmar(wcslwr(configMinus));
-        free(configMinus);
+        const bool confirmado = confirmar(wcslower(configs[menuConfig]));
         if (confirmado) borrarTodasPartidas();
         return REPETIR;
     }
 
     if (menuConfig == CONFIG_BORRAR_TODO) {
-        wchar_t *configMinus = wcsdup(configs[menuConfig]);
-        const bool confirmado = confirmar(wcslwr(configMinus));
-        free(configMinus);
+        const bool confirmado = confirmar(wcslower(configs[menuConfig]));
         if (!confirmado) return REPETIR;
         borrarTodasPartidas();
         borrarConfig();
@@ -208,7 +204,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     const int fin = inicio + STATS_POR_PAGE;
     const int idPad = intDigits(__max(fin, numero));
 
-    printf(strrepeat(' ', idPad + 2));
+    printf("%s", strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
         wprintf(wcspadright(stats[i], STATS_PAD, ' '));
     printf("\n");
