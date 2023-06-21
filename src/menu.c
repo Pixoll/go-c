@@ -47,7 +47,7 @@ void obtenerNombre() {
         strget(nombre, NOMBRE_MAX);
     }
 
-    strcpy_s(config.nombre, NOMBRE_MAX, nombre);
+    strcpy(config.nombre, nombre);
     guardarConfig();
 }
 
@@ -111,7 +111,7 @@ int ejecutarMenuReglas() {
 
     wprintf(L"\n\nPresiona ENTER para volver al menú principal.");
     char c = 0;
-    while (c != '\n') scanf_s("%c", &c);
+    while (c != '\n') scanf("%c", &c);
 
     return VOLVER;
 }
@@ -216,7 +216,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
         char tablero[6];
-        sprintf_s(tablero, 6, "%dx%d", partida.size, partida.size);
+        sprintf(tablero, "%dx%d", partida.size, partida.size);
         wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
 
         wprintf(

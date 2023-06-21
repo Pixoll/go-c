@@ -48,8 +48,8 @@ char *strpadleft(const char *buffer, int max, char fill) {
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
-    strcat_s(resultado, max + 1, strrepeat(fill, max - size));
-    strcat_s(resultado, max + 1, buffer);
+    strcat(resultado, strrepeat(fill, max - size));
+    strcat(resultado, buffer);
     resultado[max] = '\0';
     return resultado;
 }
@@ -59,8 +59,8 @@ char *strpadright(const char *buffer, int max, char fill) {
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
-    strcat_s(resultado, max + 1, buffer);
-    strcat_s(resultado, max + 1, strrepeat(fill, max - size));
+    strcat(resultado, buffer);
+    strcat(resultado, strrepeat(fill, max - size));
     resultado[max] = '\0';
     return resultado;
 }
@@ -158,7 +158,7 @@ char *strget(char *buffer, int max) {
     int size = 0;
     for (int i = 0; i < max - 1; i++) {
         char c;
-        scanf_s("%c", &c);
+        scanf("%c", &c);
         // detectó character inválido
         if (c == '\0') c = '?';
         if (c == '\n') break;
@@ -219,17 +219,17 @@ char *obtenerFecha(long long ms) {
     const time_t tms = ms == 0 ? now() : ms;
     struct tm *tiempo = localtime(&tms);
     char *fecha = malloc(12);
-    sprintf_s(fecha, 12, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
+    sprintf(fecha, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
     return fecha;
 }
 
 bool confirmar(const wchar_t *action) {
     wprintf(L"¿Estás segur@ que quieres %ls? (y/n): ", action);
     char confirmado;
-    scanf_s("%c", &confirmado);
+    scanf("%c", &confirmado);
     while (confirmado != 'y' && confirmado != 'n' && confirmado != 'Y' && confirmado != 'N') {
         wprintf(L"Opción inválida. Ingresa \"y\" o \"n\": ");
-        scanf_s("%c", &confirmado);
+        scanf("%c", &confirmado);
     }
     getchar();
     return confirmado == 'y' || confirmado == 'Y';
