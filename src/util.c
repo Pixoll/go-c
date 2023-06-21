@@ -47,8 +47,8 @@ char *strpadleft(const char *buffer, int max, char fill) {
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
-    strcat(resultado, strrepeat(fill, max - size));
-    strcat(resultado, buffer);
+    strncat(resultado, strrepeat(fill, max - size), max - size);
+    strncat(resultado, buffer, size);
     resultado[max] = '\0';
     return resultado;
 }
@@ -58,8 +58,8 @@ char *strpadright(const char *buffer, int max, char fill) {
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
-    strcat(resultado, buffer);
-    strcat(resultado, strrepeat(fill, max - size));
+    strncat(resultado, buffer, size);
+    strncat(resultado, strrepeat(fill, max - size),  max - size);
     resultado[max] = '\0';
     return resultado;
 }
@@ -198,14 +198,14 @@ bool getInt(int *n) {
 
 char *intATexto(int n) {
     char *buffer = malloc(INT_STR_MAX);
-    sprintf(buffer, "%d", n);
+    snprintf(buffer, INT_STR_MAX, "%d", n);
     buffer = realloc(buffer, strlen(buffer) + 1);
     return buffer;
 }
 
 int intDigits(int n) {
     char *buffer = malloc(INT_STR_MAX);
-    sprintf(buffer, "%d", n);
+    snprintf(buffer, INT_STR_MAX, "%d", n);
     const int digits = strlen(buffer);
     free(buffer);
     return digits;
@@ -231,7 +231,7 @@ char *obtenerFecha(long long ms) {
     const time_t tms = ms == 0 ? now() : ms;
     struct tm *tiempo = localtime(&tms);
     char *fecha = malloc(12);
-    sprintf(fecha, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
+    snprintf(fecha, 12, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
     return fecha;
 }
 

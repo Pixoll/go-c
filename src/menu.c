@@ -47,7 +47,7 @@ void obtenerNombre() {
         strget(nombre, NOMBRE_MAX);
     }
 
-    strcpy(config.nombre, nombre);
+    strncpy(config.nombre, nombre, NOMBRE_MAX);
     guardarConfig();
 }
 
@@ -212,7 +212,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
         char tablero[6];
-        sprintf(tablero, "%dx%d", partida.size, partida.size);
+        snprintf(tablero, 6, "%dx%d", partida.size, partida.size);
         wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
 
         wprintf(
