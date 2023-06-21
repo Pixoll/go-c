@@ -1,4 +1,6 @@
 #include <stdbool.h>
+// Para Linux
+#include <stddef.h>
 #include <stdio.h>
 
 #ifndef _UTIL_DEFINIDO
