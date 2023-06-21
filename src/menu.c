@@ -47,7 +47,7 @@ void obtenerNombre() {
         strget(nombre, NOMBRE_MAX);
     }
 
-    strcpy(config.nombre, nombre);
+    strcpy_s(config.nombre, NOMBRE_MAX, nombre);
     guardarConfig();
 }
 
@@ -129,25 +129,30 @@ int ejecutarMenuConfig() {
     }
 
     if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
-        const bool confirmado = confirmar(wcslwr(wcsdup(configs[menuConfig])));
+        wchar_t *configMinus = wcsdup(configs[menuConfig]);
+        const bool confirmado = confirmar(wcslwr(configMinus));
+        free(configMinus);
         if (confirmado) borrarTodasPartidas();
         return REPETIR;
     }
 
     if (menuConfig == CONFIG_BORRAR_TODO) {
-        const bool confirmado = confirmar(wcslwr(wcsdup(configs[menuConfig])));
+        wchar_t *configMinus = wcsdup(configs[menuConfig]);
+        const bool confirmado = confirmar(wcslwr(configMinus));
+        free(configMinus);
         if (!confirmado) return REPETIR;
         borrarTodasPartidas();
         borrarConfig();
         return VOLVER;
     }
+
+    return VOLVER;
 }
 
 void printStats(const TodasGoPartidas todasPartidas, int page);
 
 int ejecutarMenuStats() {
     const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
-    const GoPartida *partidas = todasPartidas.partidas;
     const int numero = todasPartidas.numero;
     const int pages = numero == STATS_POR_PAGE ? 1 : numero / STATS_POR_PAGE + 1;
 
@@ -211,7 +216,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
         char tablero[6];
-        sprintf(tablero, "%dx%d", partida.size, partida.size);
+        sprintf_s(tablero, 6, "%dx%d", partida.size, partida.size);
         wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
 
         wprintf(

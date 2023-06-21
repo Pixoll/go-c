@@ -46,8 +46,8 @@ char *strpadleft(const char *buffer, int max, char fill) {
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
-    strcat(resultado, strrepeat(fill, max - size));
-    strcat(resultado, buffer);
+    strcat_s(resultado, max + 1, strrepeat(fill, max - size));
+    strcat_s(resultado, max + 1, buffer);
     resultado[max] = '\0';
     return resultado;
 }
@@ -57,8 +57,8 @@ char *strpadright(const char *buffer, int max, char fill) {
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
-    strcat(resultado, buffer);
-    strcat(resultado, strrepeat(fill, max - size));
+    strcat_s(resultado, max + 1, buffer);
+    strcat_s(resultado, max + 1, strrepeat(fill, max - size));
     resultado[max] = '\0';
     return resultado;
 }
@@ -129,15 +129,16 @@ void wprintConLineLimit(const wchar_t *texto, int limit) {
         if (wc == '\n') lineaSize = 0;
         if (lineaSize != 0 && lineaSize % limit == 0) {
             int j = i;
-            for (j; j >= 0; j--) {
+            while (j >= 0) {
                 if (texto[j - 1] == ' ') break;
                 printf("\b");
+                j--;
             }
             for (int k = j; k < i; k++)
                 printf(" ");
             printf("\n");
-            for (j; j < i; j++) {
-                wprintf(L"%lc", texto[j]);
+            for (int k = j; k < i; k++) {
+                wprintf(L"%lc", texto[k]);
                 lineaSize++;
             }
         }
@@ -221,8 +222,8 @@ long long now() {
 char *obtenerFecha(long long ms) {
     const time_t tms = ms == 0 ? now() : ms;
     struct tm *tiempo = localtime(&tms);
-    char *fecha = malloc(11);
-    sprintf(fecha, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
+    char *fecha = malloc(12);
+    sprintf_s(fecha, 12, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
     return fecha;
 }
 
