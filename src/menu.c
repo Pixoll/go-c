@@ -111,7 +111,7 @@ int ejecutarMenuReglas() {
 
     wprintf(L"\n\nPresiona ENTER para volver al menú principal.");
     char c = 0;
-    while (c != '\n') scanf("%c", &c);
+    while (c != '\n') scanf_s("%c", &c);
 
     return VOLVER;
 }

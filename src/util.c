@@ -113,13 +113,10 @@ void printTitulo() {
 
 void wprintCentro(const wchar_t *texto, int sizeLinea) {
     const int sizeTexto = wcslen(texto);
-    if (sizeTexto > sizeLinea) {
+    if (sizeTexto > sizeLinea)
         wprintf(L"%ls\n", texto);
-        return;
-    }
-
-    const char *espacio = strrepeat(' ', (sizeLinea - sizeTexto) / 2);
-    wprintf(L"%s%ls\n", espacio, texto);
+    else
+        wprintf(L"%s%ls\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
 }
 
 void wprintConLineLimit(const wchar_t *texto, int limit) {
@@ -149,20 +146,17 @@ void wprintConLineLimit(const wchar_t *texto, int limit) {
 
 void printCentro(const char *texto, int sizeLinea) {
     const int sizeTexto = strlen(texto);
-    if (sizeTexto > sizeLinea) {
+    if (sizeTexto > sizeLinea)
         printf("%s\n", texto);
-        return;
-    }
-
-    const char *espacio = strrepeat(' ', (sizeLinea - sizeTexto) / 2);
-    printf("%s%s\n", espacio, texto);
+    else
+        printf("%s%s\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
 }
 
 char *strget(char *buffer, int max) {
     int size = 0;
     for (int i = 0; i < max - 1; i++) {
         char c;
-        scanf("%c", &c);
+        scanf_s("%c", &c);
         // detectó character inválido
         if (c == '\0') c = '?';
         if (c == '\n') break;
@@ -230,10 +224,10 @@ char *obtenerFecha(long long ms) {
 bool confirmar(const wchar_t *action) {
     wprintf(L"¿Estás segur@ que quieres %ls? (y/n): ", action);
     char confirmado;
-    scanf("%c", &confirmado);
+    scanf_s("%c", &confirmado);
     while (confirmado != 'y' && confirmado != 'n' && confirmado != 'Y' && confirmado != 'N') {
         wprintf(L"Opción inválida. Ingresa \"y\" o \"n\": ");
-        scanf("%c", &confirmado);
+        scanf_s("%c", &confirmado);
     }
     getchar();
     return confirmado == 'y' || confirmado == 'Y';

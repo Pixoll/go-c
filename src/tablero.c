@@ -61,16 +61,16 @@ void jugarTablero() {
         printf("\tTurno de %s\n\n", partida.turnoNegras ? "negras" : "blancas");
         printf("Insertar coordenada:\n");
         printf("x: ");
-        scanf("%d", &x);
+        scanf_s("%d", &x);
         printf("y: ");
-        scanf("%d", &y);
+        scanf_s("%d", &y);
 
         while (ocupadas[x][y] == true) {
             printf("Esa casilla ya esta ocupada!\n");
             printf("x: ");
-            scanf("%d", &x);
+            scanf_s("%d", &x);
             printf("y: ");
-            scanf("%d", &y);
+            scanf_s("%d", &y);
         }
         if(x==9 && y==9){ // sirve para terminar la partida (no sabia si habia otra forma)
             break;
