@@ -23,7 +23,7 @@ int main() {
                           : menu == MENU_REGLAS ? ejecutarMenuReglas()
                           : menu == MENU_CONFIG ? ejecutarMenuConfig()
                           : menu == MENU_STATS  ? ejecutarMenuStats()
-                                                : VOLVER;
+                                                : menu;  // solo puede ser SALIR
 
         if (orden == SALIR)
             break;

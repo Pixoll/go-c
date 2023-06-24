@@ -70,13 +70,16 @@ void printBienvenida(bool repetirFlag) {
 int obtenerMenu() {
     for (int i = 0; i < MENUS; i++)
         wprintf(L"%d. %ls\n", i + 1, menus[i]);
+    wprintf(L"%d. Salir del juego\n\n", MENUS + 1);
 
     int menu;
     wprintf(L"\nSelecciona el menú: ");
 
-    while (!getInt(&menu) || menu < 1 || menu > MENUS) {
+    while (!getInt(&menu) || menu < 1 || menu > MENUS + 1) {
         wprintf(L"Menú inválido. Intenta de nuevo: ");
     }
+
+    if (menu == MENUS + 1) return SALIR;
 
     limpiarConsola();
     printTitulo();
