@@ -90,7 +90,7 @@ TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas) {
     if (!archivoPartidas) return todasPartidas;
 
     fseek(archivoPartidas, 0, SEEK_END);
-    const long max = ftello(archivoPartidas);
+    const long max = ftell(archivoPartidas);
     fseek(archivoPartidas, 0, SEEK_SET);
     while (size < max) {
         GoPartida partida;

@@ -121,9 +121,9 @@ wchar_t *wcslower(const wchar_t *buffer) {
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
     const char *espacio = strrepeat(' ', TITULO_PAD);
-    printf("%s\n", fila);
-    printf("#%sGO%s#\n", espacio, espacio);
-    printf("%s\n\n", fila);
+    wprintf(L"%s\n", fila);
+    wprintf(L"#%sGO%s#\n", espacio, espacio);
+    wprintf(L"%s\n\n", fila);
 }
 
 void wprintCentro(const wchar_t *texto, int sizeLinea) {
@@ -143,12 +143,12 @@ void wprintConLineLimit(const wchar_t *texto, int limit) {
             int j = i;
             while (j >= 0) {
                 if (texto[j - 1] == ' ') break;
-                printf("\b");
+                wprintf(L"\b");
                 j--;
             }
             for (int k = j; k < i; k++)
-                printf(" ");
-            printf("\n");
+                wprintf(L" ");
+            wprintf(L"\n");
             for (int k = j; k < i; k++) {
                 wprintf(L"%lc", texto[k]);
                 lineaSize++;
@@ -162,9 +162,9 @@ void wprintConLineLimit(const wchar_t *texto, int limit) {
 void printCentro(const char *texto, int sizeLinea) {
     const int sizeTexto = strlen(texto);
     if (sizeTexto > sizeLinea)
-        printf("%s\n", texto);
+        wprintf(L"%s\n", texto);
     else
-        printf("%s%s\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
+        wprintf(L"%s%s\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
 }
 
 char *strget(char *buffer, int max) {

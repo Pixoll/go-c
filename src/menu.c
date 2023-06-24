@@ -66,7 +66,7 @@ void printBienvenida(bool repetirFlag) {
     swprintf(bienvenido, sizeBienvenida, formato, config.nombre);
 
     wprintCentro(bienvenido, TITULO_LEN);
-    printf("\n");
+    wprintf(L"\n");
 }
 
 int obtenerMenu() {
@@ -104,7 +104,7 @@ int ejecutarMenuJugar() {
 int ejecutarMenuReglas() {
     FILE *archivoReglas = fopen(rutaReglas, "r");
     fseek(archivoReglas, 0, SEEK_END);
-    const long max = ftello(archivoReglas) + 1;
+    const long max = ftell(archivoReglas) + 1;
     fseek(archivoReglas, 0, SEEK_SET);
 
     char reglas[max];
@@ -230,10 +230,10 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     const int fin = inicio + STATS_POR_PAGE;
     const int idPad = intDigits(max(fin, numero));
 
-    printf("%s", strrepeat(' ', idPad + 2));
+    wprintf(L"%s", strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
         wprintf(wcspadright(stats[i], STATS_PAD, ' '));
-    printf("\n");
+    wprintf(L"\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
@@ -256,7 +256,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
 int obtenerTableroSize() {
     for (int i = 0; i < TABLEROS; i++) {
         const int size = tableros[i];
-        printf("%d. %dx%d\n", i + 1, size, size);
+        wprintf(L"%d. %dx%d\n", i + 1, size, size);
     }
     wprintf(L"%d. Volver al menú principal\n\n", TABLEROS + 1);
 

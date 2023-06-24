@@ -8,6 +8,7 @@
 void setup() {
     setupDatos();
     setlocale(LC_ALL, "");
+    fwide(stdout, 1);
 }
 
 int main() {

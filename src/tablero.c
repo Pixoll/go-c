@@ -40,10 +40,10 @@ void printTablero() {
     const int size = partida.size;
     for (int i = 1; i < size + 1; i++) {
         for (int j = 1; j < size + 1; j++)
-            printf(j + 1 < size + 1 ? "%c-" : "%c", partida.tablero[i][j]);
-        printf("\n");
+            wprintf(j + 1 < size + 1 ? L"%lc-" : L"%lc", partida.tablero[i][j]);
+        wprintf(L"\n");
     }
-    printf("\n");
+    wprintf(L"\n");
 }
 
 void jugarTablero() {
@@ -58,18 +58,18 @@ void jugarTablero() {
 
     while (turno < 100) {  // condición de victoria
         int x, y;
-        printf("\tTurno de %s\n\n", partida.turnoNegras ? "negras" : "blancas");
-        printf("Insertar coordenada:\n");
-        printf("x: ");
+        wprintf(L"\tTurno de %s\n\n", partida.turnoNegras ? "negras" : "blancas");
+        wprintf(L"Insertar coordenada:\n");
+        wprintf(L"x: ");
         scanf("%d", &x);
-        printf("y: ");
+        wprintf(L"y: ");
         scanf("%d", &y);
 
         while (ocupadas[x][y] == true) {
-            printf("Esa casilla ya esta ocupada!\n");
-            printf("x: ");
+            wprintf(L"Esa casilla ya esta ocupada!\n");
+            wprintf(L"x: ");
             scanf("%d", &x);
-            printf("y: ");
+            wprintf(L"y: ");
             scanf("%d", &y);
         }
         if(x==9 && y==9){ // sirve para terminar la partida (no sabia si habia otra forma)
