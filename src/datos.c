@@ -46,7 +46,7 @@ void borrarConfig() {
     strempty(config.nombre);
 }
 
-bool validarNombre(char *nombre) {
+bool validarNombre(const char *nombre) {
     const int size = strlen(nombre);
     for (int i = 0; i < size; i++) {
         const char c = nombre[i];
@@ -68,7 +68,7 @@ const GoPartida *ultimaPartida() {
     return puntero;
 }
 
-void guardarPartida(GoPartida partida) {
+void guardarPartida(const GoPartida partida) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
     const GoPartida *partidaGuardada = ultimaPartida();
     if (partidaGuardada && partidaGuardada->terminada)
