@@ -112,8 +112,9 @@ wchar_t *wcslower(const wchar_t *buffer) {
         if (c < 'A' || c > 'Z')
             resultado[i] = c;
         else
-            resultado[i] = c - ('a' - 'A');
+            resultado[i] = c + ('a' - 'A');
     }
+    resultado[size] = '\0';
     return resultado;
 }
 
