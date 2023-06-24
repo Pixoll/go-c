@@ -15,7 +15,7 @@ int main() {
 
     int menu = -1;
     bool repetir = false;
-    while (1) {
+    while (true) {
         printBienvenida(repetir);
         repetir = false;
         if (menu == -1) menu = obtenerMenu();

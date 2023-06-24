@@ -70,7 +70,7 @@ void printBienvenida(bool repetirFlag) {
 int obtenerMenu() {
     for (int i = 0; i < MENUS; i++)
         wprintf(L"%d. %ls\n", i + 1, menus[i]);
-    wprintf(L"%d. Salir del juego\n\n", MENUS + 1);
+    wprintf(L"%d. Salir del juego\n", MENUS + 1);
 
     int menu;
     wprintf(L"\nSelecciona el menú: ");
@@ -162,8 +162,8 @@ int ejecutarMenuStats() {
 
     int i = 1, next = -1, page = 0;
     if (pages > 1) {
-        wprintf(L"\n%d. Página siguiente", i++);
         next = i;
+        wprintf(L"\n%d. Página siguiente", i++);
     }
     wprintf(L"\n%d. Volver al menú principal\n", i);
 
@@ -177,15 +177,15 @@ int ejecutarMenuStats() {
     while (opcion != i) {
         limpiarConsola();
         printTitulo();
-        printStats(todasPartidas, i == next ? ++page : --page);
+        printStats(todasPartidas, opcion == next ? ++page : --page);
         next = -1;
 
-        int i = 1;
+        i = 1;
         if (page != 0)
             wprintf(L"\n%d. Página anterior", i++);
         if (page != pages - 1) {
-            wprintf(L"\n%d. Página siguiente", i++);
             next = i;
+            wprintf(L"\n%d. Página siguiente", i++);
         }
 
         wprintf(L"\n%d. Volver al menú principal\n", i);
