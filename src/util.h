@@ -8,7 +8,7 @@
 
 #define TITULO_LEN 80
 
-#define __max(a,b) (((a) > (b)) ? (a) : (b))
+#define max(a,b) (((a) > (b)) ? (a) : (b))
 
 void wprintCentro(const wchar_t *texto, int sizeLinea);
 void wprintConLineLimit(const wchar_t *texto, int limit);

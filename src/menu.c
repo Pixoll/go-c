@@ -9,6 +9,8 @@
 #include "tablero.h"
 #include "util.h"
 
+#define pNeto(partida) (partida.puntajeJugador - partida.puntajeOponente)
+
 const char *rutaReglas = "./reglas.txt";
 
 const wchar_t *menus[MENUS] = {
@@ -148,12 +150,14 @@ int ejecutarMenuConfig() {
     return VOLVER;
 }
 
+int compararPartidas(const void *a, const void *b);
 void printStats(const TodasGoPartidas todasPartidas, int page);
 
 int ejecutarMenuStats() {
     const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
     const int numero = todasPartidas.numero;
     const int pages = numero == STATS_POR_PAGE ? 1 : numero / STATS_POR_PAGE + 1;
+    qsort(todasPartidas.partidas, numero, sizeof(GoPartida), compararPartidas);
 
     if (numero > 0)
         printStats(todasPartidas, 0);
@@ -199,13 +203,32 @@ int ejecutarMenuStats() {
     return VOLVER;
 }
 
+int compararPartidas(const void *a, const void *b) {
+    const GoPartida partida1 = *(GoPartida *)a;
+    const GoPartida partida2 = *(GoPartida *)b;
+
+    if (pNeto(partida1) > pNeto(partida2)) return -1;
+    if (pNeto(partida1) < pNeto(partida2)) return 1;
+
+    if (partida1.puntajeJugador > partida2.puntajeJugador) return -1;
+    if (partida1.puntajeJugador < partida2.puntajeJugador) return 1;
+
+    if (partida1.size > partida2.size) return -1;
+    if (partida1.size < partida2.size) return 1;
+
+    if (partida1.fecha > partida2.fecha) return -1;
+    if (partida1.fecha < partida2.fecha) return 1;
+
+    return 0;
+}
+
 void printStats(const TodasGoPartidas todasPartidas, int page) {
     const int numero = todasPartidas.numero;
     const GoPartida *partidas = todasPartidas.partidas;
 
     const int inicio = page * STATS_POR_PAGE;
     const int fin = inicio + STATS_POR_PAGE;
-    const int idPad = intDigits(__max(fin, numero));
+    const int idPad = intDigits(max(fin, numero));
 
     printf("%s", strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
@@ -226,7 +249,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
             wcspadright(oponente, STATS_PAD, ' '),
             strpadright(intATexto(partida.puntajeJugador), STATS_PAD, ' '),
             strpadright(intATexto(partida.puntajeOponente), STATS_PAD, ' '),
-            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), STATS_PAD, ' '));
+            strpadright(intATexto(pNeto(partida)), STATS_PAD, ' '));
     }
 }
 
