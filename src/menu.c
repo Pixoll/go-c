@@ -132,8 +132,11 @@ const MenuOrden ejecutarMenuConfig() {
 
     if (menuConfig == CONFIG_NOMBRE) {
         orden.flag = REPETIR;
+        char *antiguo = strdup(config.nombre);
         strempty(config.nombre);
         obtenerNombre();
+        swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"Nombre de usuario cambiado de \"%s\" a \"%s\"", antiguo, config.nombre);
+        free(antiguo);
         return orden;
     }
 
@@ -141,6 +144,8 @@ const MenuOrden ejecutarMenuConfig() {
         orden.flag = REPETIR;
         const bool confirmado = confirmar(wcslower(configs[menuConfig]));
         if (confirmado) borrarTodasPartidas();
+        swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"%s",
+                 confirmado ? "Las partidas guardadas han sido borradas" : "Cancelado");
         return orden;
     }
 
@@ -151,6 +156,8 @@ const MenuOrden ejecutarMenuConfig() {
             borrarTodasPartidas();
             borrarConfig();
         }
+        swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"%s",
+                 confirmado ? "Todas los datos guardados han sido borradas" : "Cancelado");
         return orden;
     }
 
