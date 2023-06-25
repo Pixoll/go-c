@@ -59,7 +59,7 @@ char *strpadright(const char *buffer, int max, char fill) {
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
     strncat(resultado, buffer, size);
-    strncat(resultado, strrepeat(fill, max - size),  max - size);
+    strncat(resultado, strrepeat(fill, max - size), max - size);
     resultado[max] = '\0';
     return resultado;
 }

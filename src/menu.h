@@ -1,4 +1,7 @@
 #include <stdbool.h>
+#include <wchar.h>
+
+#include "util.h"
 
 #ifndef _MENU_DEFINIDO
 
@@ -12,6 +15,19 @@ enum MENU {
     MENU_STATS,
 };
 
+enum MENU_FLAG {
+    REPETIR = -3,
+    VOLVER,
+    SALIR,
+};
+
+#define MENSAJE_ORDEN_LEN TITULO_LEN * 2
+
+typedef struct MenuOrden {
+    enum MENU_FLAG flag;
+    wchar_t mensaje[MENSAJE_ORDEN_LEN];
+} MenuOrden;
+
 #define CONFIGS 3
 enum CONFIG_MENU {
     CONFIG_NOMBRE,
@@ -22,17 +38,11 @@ enum CONFIG_MENU {
 #define STATS 6
 #define STATS_POR_PAGE 25
 
-enum MENU_FLAG {
-    REPETIR = -3,
-    VOLVER,
-    SALIR,
-};
-
 void printBienvenida(bool repetirFlag);
 int obtenerMenu();
-int ejecutarMenuJugar();
-int ejecutarMenuReglas();
-int ejecutarMenuConfig();
-int ejecutarMenuStats();
+const MenuOrden ejecutarMenuJugar();
+const MenuOrden ejecutarMenuReglas();
+const MenuOrden ejecutarMenuConfig();
+const MenuOrden ejecutarMenuStats();
 
 #endif

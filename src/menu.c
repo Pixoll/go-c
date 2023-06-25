@@ -61,7 +61,7 @@ void printBienvenida(bool repetirFlag) {
     if (repetirFlag) return;
 
     const wchar_t *formato = L"¡Bienvenid@ %s!";
-    const int sizeBienvenida = wcslen(formato) - 3 + NOMBRE_MAX;
+    const int sizeBienvenida = wcslen(formato) - 2 + NOMBRE_MAX;
     wchar_t bienvenido[sizeBienvenida];
     swprintf(bienvenido, sizeBienvenida, formato, config.nombre);
 
@@ -91,17 +91,18 @@ int obtenerMenu() {
 
 int obtenerTableroSize();
 
-int ejecutarMenuJugar() {
+const MenuOrden ejecutarMenuJugar() {
+    const MenuOrden orden = {VOLVER, L""};
     const int size = obtenerTableroSize();
-    if (size == VOLVER) return VOLVER;
+    if (size == VOLVER) return orden;
     wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
     crearTablero(size);
     jugarTablero();
-    return VOLVER;
+    return orden;
 }
 
-int ejecutarMenuReglas() {
+const MenuOrden ejecutarMenuReglas() {
     FILE *archivoReglas = fopen(rutaReglas, "r");
     fseek(archivoReglas, 0, SEEK_END);
     const long max = ftell(archivoReglas) + 1;
@@ -118,42 +119,48 @@ int ejecutarMenuReglas() {
     char c = 0;
     while (c != '\n') scanf("%c", &c);
 
-    return VOLVER;
+    const MenuOrden orden = {VOLVER, L""};
+    return orden;
 }
 
 int obtenerConfig();
 
-int ejecutarMenuConfig() {
+const MenuOrden ejecutarMenuConfig() {
+    MenuOrden orden = {VOLVER, L""};
     const int menuConfig = obtenerConfig();
-    if (menuConfig == VOLVER) return VOLVER;
+    if (menuConfig == VOLVER) return orden;
 
     if (menuConfig == CONFIG_NOMBRE) {
+        orden.flag = REPETIR;
         strempty(config.nombre);
         obtenerNombre();
-        return REPETIR;
+        return orden;
     }
 
     if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
+        orden.flag = REPETIR;
         const bool confirmado = confirmar(wcslower(configs[menuConfig]));
         if (confirmado) borrarTodasPartidas();
-        return REPETIR;
+        return orden;
     }
 
     if (menuConfig == CONFIG_BORRAR_TODO) {
+        orden.flag = REPETIR;
         const bool confirmado = confirmar(wcslower(configs[menuConfig]));
-        if (!confirmado) return REPETIR;
-        borrarTodasPartidas();
-        borrarConfig();
-        return VOLVER;
+        if (confirmado) {
+            borrarTodasPartidas();
+            borrarConfig();
+        }
+        return orden;
     }
 
-    return VOLVER;
+    return orden;
 }
 
 int compararPartidas(const void *a, const void *b);
 void printStats(const TodasGoPartidas todasPartidas, int page);
 
-int ejecutarMenuStats() {
+const MenuOrden ejecutarMenuStats() {
     const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
     const int numero = todasPartidas.numero;
     const int pages = numero == STATS_POR_PAGE ? 1 : numero / STATS_POR_PAGE + 1;
@@ -200,7 +207,8 @@ int ejecutarMenuStats() {
         }
     }
 
-    return VOLVER;
+    const MenuOrden orden = {VOLVER, L""};
+    return orden;
 }
 
 int compararPartidas(const void *a, const void *b) {
