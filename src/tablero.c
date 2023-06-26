@@ -11,7 +11,10 @@ enum CELDA {
     CELDA_BLANCA,
     CELDA_EMPTY_HOR,
     CELDA_EMPTY_VERT,
+    CELDA_NEGRA_CAPT,
+    CELDA_BLANCA_CAPT,
 };
+typedef enum CELDA celda_t;
 
 const wchar_t celdas[CELDAS] = {'X', 'O', '+', L'¦'};
 
@@ -22,8 +25,8 @@ void puntajePorCantidad();
 void puntajePorArea();
 void expandir();
 void verificarArea(int total);
-void DFS(int posX, int posY, char celdaJugador, char celdaOponente, bool visitado[19][19], bool *tieneLibertades, int grupo[19][19]);
-void capturas(char celdaJugador, char celdaOponente);
+void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_L][TABLERO_L], bool *tieneLibertades, int grupo[TABLERO_L][TABLERO_L]);
+void capturas(celda_t celdaJugador, celda_t celdaOponente);
 void regreso_normal();
 
 void crearTablero(int size) {
@@ -202,7 +205,7 @@ void verificarArea(int total) {  // analizamos el area de # verificando si solo 
 // cva
 
 // busca y recorre los grupos de fichas, los marca como que tienen o no libertades
-void DFS(int posX, int posY, char celdaJugador, char celdaOponente, bool visitado[19][19], bool *tieneLibertades, int grupo[19][19]) {
+void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_L][TABLERO_L], bool *tieneLibertades, int grupo[TABLERO_L][TABLERO_L]) {
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
 
@@ -226,9 +229,9 @@ void DFS(int posX, int posY, char celdaJugador, char celdaOponente, bool visitad
 }
 
 // analiza el tablero y los grupos de fichas que se forman, usa dfs para recorrer los grupos y ve si estan o no capturados
-void capturas(char celdaJugador, char celdaOponente) {
-    bool visitado[19][19];
-    int grupo[19][19];
+void capturas(celda_t celdaJugador, celda_t celdaOponente) {
+    bool visitado[TABLERO_L][TABLERO_L];
+    int grupo[TABLERO_L][TABLERO_L];
 
     for (int i = 1; i <= partida.size; i++) {
         for (int j = 1; j <= partida.size; j++) {
@@ -248,8 +251,8 @@ void capturas(char celdaJugador, char celdaOponente) {
             for (int i = 1; i <= partida.size; i++) {
                 for (int j = 1; j <= partida.size; j++) {
                     if (grupo[i][j] != 1) continue;
-                    partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? '2' : '1';  // captura X=1, O=2
-                    ocupadas[i][j] = false;                                            // actualiza el estado de 'ocupado'
+                    partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? CELDA_BLANCA_CAPT : CELDA_NEGRA_CAPT;  // captura X=1, O=2
+                    ocupadas[i][j] = false;                                                                       // actualiza el estado de 'ocupado'
                     grupo[i][j] = 0;
                 }
             }
@@ -261,11 +264,10 @@ void capturas(char celdaJugador, char celdaOponente) {
 void regreso_normal() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
-            const enum CELDA reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
-            if (partida.tablero[posX][posY] == '2') {
+            const celda_t reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
+            if (partida.tablero[posX][posY] == CELDA_BLANCA_CAPT) {
                 partida.tablero[posX][posY] = reemplazo;
-            }
-            if (partida.tablero[posX][posY] == '1') {
+            } else if (partida.tablero[posX][posY] == CELDA_NEGRA_CAPT) {
                 partida.tablero[posX][posY] = reemplazo;
                 ocupadas[posX][posY] = false;
             }
