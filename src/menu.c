@@ -214,6 +214,8 @@ const MenuOrden ejecutarMenuStats() {
         }
     }
 
+    free(todasPartidas.partidas);
+
     const MenuOrden orden = {VOLVER, L""};
     return orden;
 }
