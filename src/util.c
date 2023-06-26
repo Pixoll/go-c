@@ -59,9 +59,17 @@ char *strpadright(const char *buffer, int max, char fill) {
     char *resultado = malloc(max + 1);
     resultado[0] = '\0';
     strncat(resultado, buffer, size);
-    strncat(resultado, strrepeat(fill, max - size),  max - size);
+    strncat(resultado, strrepeat(fill, max - size), max - size);
     resultado[max] = '\0';
     return resultado;
+}
+
+char *strdup(const char *buffer) {
+    const int size = strlen(buffer);
+    char *dup = malloc(size + 1);
+    for (int i = 0; i < size; i++)
+        dup[i] = buffer[i];
+    return dup;
 }
 
 wchar_t *wcsrepeat(wchar_t fill, int size) {
@@ -112,17 +120,18 @@ wchar_t *wcslower(const wchar_t *buffer) {
         if (c < 'A' || c > 'Z')
             resultado[i] = c;
         else
-            resultado[i] = c - ('a' - 'A');
+            resultado[i] = c + ('a' - 'A');
     }
+    resultado[size] = '\0';
     return resultado;
 }
 
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
     const char *espacio = strrepeat(' ', TITULO_PAD);
-    printf("%s\n", fila);
-    printf("#%sGO%s#\n", espacio, espacio);
-    printf("%s\n\n", fila);
+    wprintf(L"%s\n", fila);
+    wprintf(L"#%sGO%s#\n", espacio, espacio);
+    wprintf(L"%s\n\n", fila);
 }
 
 void wprintCentro(const wchar_t *texto, int sizeLinea) {
@@ -142,12 +151,12 @@ void wprintConLineLimit(const wchar_t *texto, int limit) {
             int j = i;
             while (j >= 0) {
                 if (texto[j - 1] == ' ') break;
-                printf("\b");
+                wprintf(L"\b");
                 j--;
             }
             for (int k = j; k < i; k++)
-                printf(" ");
-            printf("\n");
+                wprintf(L" ");
+            wprintf(L"\n");
             for (int k = j; k < i; k++) {
                 wprintf(L"%lc", texto[k]);
                 lineaSize++;
@@ -161,9 +170,9 @@ void wprintConLineLimit(const wchar_t *texto, int limit) {
 void printCentro(const char *texto, int sizeLinea) {
     const int sizeTexto = strlen(texto);
     if (sizeTexto > sizeLinea)
-        printf("%s\n", texto);
+        wprintf(L"%s\n", texto);
     else
-        printf("%s%s\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
+        wprintf(L"%s%s\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
 }
 
 char *strget(char *buffer, int max) {

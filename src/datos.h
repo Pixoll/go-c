@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include <wchar.h>
 
 #ifndef _DATOS_DEFINIDO
 
@@ -30,7 +29,7 @@ typedef struct GoPartida {
     int puntajeOponente;
     unsigned long fecha;
     int size;
-    wchar_t tablero[TABLERO_MAX][TABLERO_MAX];
+    char tablero[TABLERO_MAX][TABLERO_MAX];
 } GoPartida;
 
 typedef struct TodasGoPartidas {
@@ -41,9 +40,9 @@ typedef struct TodasGoPartidas {
 void setupDatos();
 void guardarConfig();
 void borrarConfig();
-bool validarNombre(char *nombre);
+bool validarNombre(const char *nombre);
 const GoPartida *ultimaPartida();
-void guardarPartida(GoPartida partida);
+void guardarPartida(const  GoPartida partida);
 // void cargarPartida();
 TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas);
 void borrarTodasPartidas();
