@@ -9,8 +9,6 @@
 #include "tablero.h"
 #include "util.h"
 
-#define pNeto(partida) (partida.puntajeJugador - partida.puntajeOponente)
-
 const char *rutaReglas = "./reglas.txt";
 
 const wchar_t *menus[MENUS] = {
@@ -61,27 +59,24 @@ void printBienvenida(bool repetirFlag) {
     if (repetirFlag) return;
 
     const wchar_t *formato = L"¡Bienvenid@ %s!";
-    const int sizeBienvenida = wcslen(formato) - 2 + NOMBRE_MAX;
+    const int sizeBienvenida = wcslen(formato) - 3 + NOMBRE_MAX;
     wchar_t bienvenido[sizeBienvenida];
     swprintf(bienvenido, sizeBienvenida, formato, config.nombre);
 
     wprintCentro(bienvenido, TITULO_LEN);
-    wprintf(L"\n");
+    printf("\n");
 }
 
 int obtenerMenu() {
     for (int i = 0; i < MENUS; i++)
         wprintf(L"%d. %ls\n", i + 1, menus[i]);
-    wprintf(L"%d. Salir del juego\n", MENUS + 1);
 
     int menu;
     wprintf(L"\nSelecciona el menú: ");
 
-    while (!getInt(&menu) || menu < 1 || menu > MENUS + 1) {
+    while (!getInt(&menu) || menu < 1 || menu > MENUS) {
         wprintf(L"Menú inválido. Intenta de nuevo: ");
     }
-
-    if (menu == MENUS + 1) return SALIR;
 
     limpiarConsola();
     printTitulo();
@@ -91,21 +86,20 @@ int obtenerMenu() {
 
 int obtenerTableroSize();
 
-const MenuOrden ejecutarMenuJugar() {
-    const MenuOrden orden = {VOLVER, L""};
+int ejecutarMenuJugar() {
     const int size = obtenerTableroSize();
-    if (size == VOLVER) return orden;
+    if (size == VOLVER) return VOLVER;
     wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
     crearTablero(size);
     jugarTablero();
-    return orden;
+    return VOLVER;
 }
 
-const MenuOrden ejecutarMenuReglas() {
+int ejecutarMenuReglas() {
     FILE *archivoReglas = fopen(rutaReglas, "r");
     fseek(archivoReglas, 0, SEEK_END);
-    const long max = ftell(archivoReglas) + 1;
+    const long max = ftello(archivoReglas) + 1;
     fseek(archivoReglas, 0, SEEK_SET);
 
     char reglas[max];
@@ -119,59 +113,44 @@ const MenuOrden ejecutarMenuReglas() {
     char c = 0;
     while (c != '\n') scanf("%c", &c);
 
-    const MenuOrden orden = {VOLVER, L""};
-    return orden;
+    return VOLVER;
 }
 
 int obtenerConfig();
 
-const MenuOrden ejecutarMenuConfig() {
-    MenuOrden orden = {VOLVER, L""};
+int ejecutarMenuConfig() {
     const int menuConfig = obtenerConfig();
-    if (menuConfig == VOLVER) return orden;
+    if (menuConfig == VOLVER) return VOLVER;
 
     if (menuConfig == CONFIG_NOMBRE) {
-        orden.flag = REPETIR;
-        char *antiguo = strdup(config.nombre);
         strempty(config.nombre);
         obtenerNombre();
-        swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"Nombre de usuario cambiado de \"%s\" a \"%s\"", antiguo, config.nombre);
-        free(antiguo);
-        return orden;
+        return REPETIR;
     }
 
     if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
-        orden.flag = REPETIR;
         const bool confirmado = confirmar(wcslower(configs[menuConfig]));
         if (confirmado) borrarTodasPartidas();
-        swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"%s",
-                 confirmado ? "Las partidas guardadas han sido borradas" : "Cancelado");
-        return orden;
+        return REPETIR;
     }
 
     if (menuConfig == CONFIG_BORRAR_TODO) {
-        orden.flag = REPETIR;
         const bool confirmado = confirmar(wcslower(configs[menuConfig]));
-        if (confirmado) {
-            borrarTodasPartidas();
-            borrarConfig();
-        }
-        swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"%s",
-                 confirmado ? "Todas los datos guardados han sido borradas" : "Cancelado");
-        return orden;
+        if (!confirmado) return REPETIR;
+        borrarTodasPartidas();
+        borrarConfig();
+        return VOLVER;
     }
 
-    return orden;
+    return VOLVER;
 }
 
-int compararPartidas(const void *a, const void *b);
 void printStats(const TodasGoPartidas todasPartidas, int page);
 
-const MenuOrden ejecutarMenuStats() {
+int ejecutarMenuStats() {
     const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
     const int numero = todasPartidas.numero;
     const int pages = numero == STATS_POR_PAGE ? 1 : numero / STATS_POR_PAGE + 1;
-    qsort(todasPartidas.partidas, numero, sizeof(GoPartida), compararPartidas);
 
     if (numero > 0)
         printStats(todasPartidas, 0);
@@ -180,8 +159,8 @@ const MenuOrden ejecutarMenuStats() {
 
     int i = 1, next = -1, page = 0;
     if (pages > 1) {
-        next = i;
         wprintf(L"\n%d. Página siguiente", i++);
+        next = i;
     }
     wprintf(L"\n%d. Volver al menú principal\n", i);
 
@@ -195,15 +174,15 @@ const MenuOrden ejecutarMenuStats() {
     while (opcion != i) {
         limpiarConsola();
         printTitulo();
-        printStats(todasPartidas, opcion == next ? ++page : --page);
+        printStats(todasPartidas, i == next ? ++page : --page);
         next = -1;
 
-        i = 1;
+        int i = 1;
         if (page != 0)
             wprintf(L"\n%d. Página anterior", i++);
         if (page != pages - 1) {
-            next = i;
             wprintf(L"\n%d. Página siguiente", i++);
+            next = i;
         }
 
         wprintf(L"\n%d. Volver al menú principal\n", i);
@@ -214,29 +193,7 @@ const MenuOrden ejecutarMenuStats() {
         }
     }
 
-    free(todasPartidas.partidas);
-
-    const MenuOrden orden = {VOLVER, L""};
-    return orden;
-}
-
-int compararPartidas(const void *a, const void *b) {
-    const GoPartida partida1 = *(GoPartida *)a;
-    const GoPartida partida2 = *(GoPartida *)b;
-
-    if (pNeto(partida1) > pNeto(partida2)) return -1;
-    if (pNeto(partida1) < pNeto(partida2)) return 1;
-
-    if (partida1.puntajeJugador > partida2.puntajeJugador) return -1;
-    if (partida1.puntajeJugador < partida2.puntajeJugador) return 1;
-
-    if (partida1.size > partida2.size) return -1;
-    if (partida1.size < partida2.size) return 1;
-
-    if (partida1.fecha > partida2.fecha) return -1;
-    if (partida1.fecha < partida2.fecha) return 1;
-
-    return 0;
+    return VOLVER;
 }
 
 void printStats(const TodasGoPartidas todasPartidas, int page) {
@@ -245,12 +202,12 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
 
     const int inicio = page * STATS_POR_PAGE;
     const int fin = inicio + STATS_POR_PAGE;
-    const int idPad = intDigits(max(fin, numero));
+    const int idPad = intDigits(__max(fin, numero));
 
-    wprintf(L"%s", strrepeat(' ', idPad + 2));
+    printf("%s", strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
         wprintf(wcspadright(stats[i], STATS_PAD, ' '));
-    wprintf(L"\n");
+    printf("\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
         GoPartida partida = partidas[i];
@@ -266,14 +223,14 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
             wcspadright(oponente, STATS_PAD, ' '),
             strpadright(intATexto(partida.puntajeJugador), STATS_PAD, ' '),
             strpadright(intATexto(partida.puntajeOponente), STATS_PAD, ' '),
-            strpadright(intATexto(pNeto(partida)), STATS_PAD, ' '));
+            strpadright(intATexto(partida.puntajeJugador - partida.puntajeOponente), STATS_PAD, ' '));
     }
 }
 
 int obtenerTableroSize() {
     for (int i = 0; i < TABLEROS; i++) {
         const int size = tableros[i];
-        wprintf(L"%d. %dx%d\n", i + 1, size, size);
+        printf("%d. %dx%d\n", i + 1, size, size);
     }
     wprintf(L"%d. Volver al menú principal\n\n", TABLEROS + 1);
 
