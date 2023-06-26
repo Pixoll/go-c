@@ -19,6 +19,7 @@ char *strempty(char *buffer);
 char *strget(char *buffer, int size);
 char *strpadleft(const char *buffer, int max, char fill);
 char *strpadright(const char *buffer, int n, char fill);
+char *strdup(const char *buffer);
 wchar_t *wcsrepeat(wchar_t fill, int size);
 wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill);
 wchar_t *strtowcs(const char *buffer);

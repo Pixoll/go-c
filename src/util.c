@@ -64,6 +64,14 @@ char *strpadright(const char *buffer, int max, char fill) {
     return resultado;
 }
 
+char *strdup(const char *buffer) {
+    const int size = strlen(buffer);
+    char *dup = malloc(size + 1);
+    for (int i = 0; i < size; i++)
+        dup[i] = buffer[i];
+    return dup;
+}
+
 wchar_t *wcsrepeat(wchar_t fill, int size) {
     wchar_t *buffer = malloc(sizeof(wchar_t) * (size + 1));
     for (int i = 0; i < size; i++)
