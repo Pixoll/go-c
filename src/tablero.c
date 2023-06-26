@@ -163,15 +163,15 @@ void verificarArea(int total){  // analizamos el area de # verificando si solo l
     int otro=0;
     for(int i=1; i<partida.size+1; i++){ // cicloq ue contabiliza los tipos de zonas que rodean el area de #
         for(int j=1; j<partida.size+1; j++){ 
-            if (partida.tablero[i][j]==35){
-                if (partida.tablero[i+1][j]==88 || partida.tablero[i-1][j]==88 || partida.tablero[i][j+1]==88 ||partida.tablero[i][j-1]==88){
+            if (partida.tablero[i][j]=='#'){
+                if (partida.tablero[i+1][j]==CELDA_NEGRA || partida.tablero[i-1][j]==CELDA_NEGRA || partida.tablero[i][j+1]==CELDA_NEGRA ||partida.tablero[i][j-1]==CELDA_NEGRA){
                     negras++;
                 }
-                if (partida.tablero[i+1][j]==79 || partida.tablero[i-1][j]==79 || partida.tablero[i][j+1]==79 ||partida.tablero[i][j-1]==79){
+                if (partida.tablero[i+1][j]==CELDA_BLANCA || partida.tablero[i-1][j]==CELDA_BLANCA || partida.tablero[i][j+1]==CELDA_BLANCA ||partida.tablero[i][j-1]==CELDA_BLANCA){
                     blancas++;
                 }
-                if (partida.tablero[i+1][j]!=79 && partida.tablero[i-1][j]!=79 && partida.tablero[i][j+1]!=79 && partida.tablero[i][j-1]!=79 
-                && partida.tablero[i+1][j]!=88 && partida.tablero[i-1][j]!=88 && partida.tablero[i][j+1]!=88 && partida.tablero[i+j][j-1]!=88){
+                if (partida.tablero[i+1][j]!=CELDA_BLANCA && partida.tablero[i-1][j]!=CELDA_BLANCA && partida.tablero[i][j+1]!=CELDA_BLANCA && partida.tablero[i][j-1]!=CELDA_BLANCA 
+                && partida.tablero[i+1][j]!=CELDA_NEGRA && partida.tablero[i-1][j]!=CELDA_NEGRA && partida.tablero[i][j+1]!=CELDA_NEGRA && partida.tablero[i+j][j-1]!=CELDA_NEGRA){
                     otro++;
                 }
             }
