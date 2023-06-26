@@ -187,10 +187,8 @@ void verificarArea(int total) {  // analizamos el area de # verificando si solo 
         }
     }
     if (negras != 0 && blancas == 0 && otro < negras * 2) {  // si el area es rodeada solo por fichas negras o otro le asigna puntaje a jugador blanco
-
         partida.puntajeJugador = partida.puntajeJugador + total;
     } else if (blancas != 0 && negras == 0 && otro < blancas * 2) {  // lo mismo con fichas blancas y con puntos al jugador blanco
-
         partida.puntajeOponente = partida.puntajeOponente + total;
     }
     // de no cumplirse ninguna condicion anterior se asume que el area es neutra y no se le otorgara puntaje a ningun jugador
@@ -217,7 +215,7 @@ void DFS(int posX, int posY, char celdaJugador, char celdaOponente, bool visitad
         // verifica si las fichas vecinas son validas
         if (nx >= 1 && nx <= partida.size && ny >= 1 && ny <= partida.size) {
             // verifica si hay espacios en blanco en las fichas vecinas
-            if (partida.tablero[nx][ny] == '+' || partida.tablero[nx][ny] == L'¦') {
+            if (partida.tablero[nx][ny] == CELDA_EMPTY_HOR || partida.tablero[nx][ny] == CELDA_EMPTY_VERT) {
                 *tieneLibertades = true;
             } else if (partida.tablero[nx][ny] == celdaJugador && !visitado[nx][ny]) {
                 DFS(nx, ny, celdaJugador, celdaOponente, visitado, tieneLibertades, grupo);
@@ -240,21 +238,18 @@ void capturas(char celdaJugador, char celdaOponente) {
 
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
-            if (partida.tablero[posX][posY] == celdaJugador && !visitado[posX][posY]) {
-                bool tieneLibertades = false;
-                DFS(posX, posY, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
+            if (partida.tablero[posX][posY] != celdaJugador || visitado[posX][posY]) continue;
+            bool tieneLibertades = false;
+            DFS(posX, posY, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
 
-                // si un grupo de fichas del jugador no tiene libertades
-                if (!tieneLibertades) {
-                    for (int i = 1; i <= partida.size; i++) {
-                        for (int j = 1; j <= partida.size; j++) {
-                            if (grupo[i][j] == 1) {
-                                partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? '2' : '1';  // captura X=1, O=2
-                                ocupadas[i][j] = false;                                        // actualiza el estado de 'ocupado'
-                                grupo[i][j] = 0;
-                            }
-                        }
-                    }
+            // si un grupo de fichas del jugador no tiene libertades
+            if (tieneLibertades) continue;
+            for (int i = 1; i <= partida.size; i++) {
+                for (int j = 1; j <= partida.size; j++) {
+                    if (grupo[i][j] != 1) continue;
+                    partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? '2' : '1';  // captura X=1, O=2
+                    ocupadas[i][j] = false;                                            // actualiza el estado de 'ocupado'
+                    grupo[i][j] = 0;
                 }
             }
         }
@@ -265,13 +260,9 @@ void capturas(char celdaJugador, char celdaOponente) {
 void regreso_normal() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
-            if (partida.tablero[posX][posY] == '2') {
-                partida.tablero[posX][posY] = '+';
-            }
-            if (partida.tablero[posX][posY] == '1') {
-                partida.tablero[posX][posY] = '+';
+            if (partida.tablero[posX][posY] == '1')
                 ocupadas[posX][posY] = false;
-            }
+            partida.tablero[posX][posY] = CELDA_EMPTY_HOR;
         }
     }
 }
