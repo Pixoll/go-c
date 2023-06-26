@@ -5,10 +5,17 @@
 #include "datos.h"
 #include "util.h"
 
-GoPartida partida;
+#define CELDAS 4
+enum CELDA {
+    CELDA_NEGRA,
+    CELDA_BLANCA,
+    CELDA_EMPTY_HOR,
+    CELDA_EMPTY_VERT,
+};
 
-#define CELDA_J 'X'
-#define CELDA_M 'O'
+const wchar_t celdas[CELDAS] = {'X', 'O', '+', L'¦'};
+
+GoPartida partida;
 
 void puntajePorCantidad();
 void puntajePorArea();
@@ -21,18 +28,18 @@ void crearTablero(int size) {
     partida.puntajeOponente = 0;
     const int max = size;
 
-    partida.tablero[1][1] = '+';
-    partida.tablero[1][max] = '+';
-    partida.tablero[max][max] = '+';
-    partida.tablero[max][1] = '+';
+    partida.tablero[1][1] = CELDA_EMPTY_HOR;
+    partida.tablero[1][max] = CELDA_EMPTY_HOR;
+    partida.tablero[max][max] = CELDA_EMPTY_HOR;
+    partida.tablero[max][1] = CELDA_EMPTY_HOR;
 
     for (int i = 2; i < max; i++) {
-        partida.tablero[max][i] = '+';
-        partida.tablero[1][i] = '+';
-        partida.tablero[i][1] = L'¦';
-        partida.tablero[i][max] = L'¦';
+        partida.tablero[max][i] = CELDA_EMPTY_HOR;
+        partida.tablero[1][i] = CELDA_EMPTY_HOR;
+        partida.tablero[i][1] = CELDA_EMPTY_VERT;
+        partida.tablero[i][max] = CELDA_EMPTY_VERT;
         for (int j = 2; j < max; j++)
-            partida.tablero[i][j] = L'¦';
+            partida.tablero[i][j] = CELDA_EMPTY_VERT;
     }
 }
 
@@ -40,7 +47,7 @@ void printTablero() {
     const int size = partida.size;
     for (int i = 1; i < size + 1; i++) {
         for (int j = 1; j < size + 1; j++)
-            wprintf(j + 1 < size + 1 ? L"%lc-" : L"%lc", partida.tablero[i][j]);
+            wprintf(j + 1 < size + 1 ? L"%lc-" : L"%lc", celdas[partida.tablero[i][j]]);
         wprintf(L"\n");
     }
     wprintf(L"\n");
@@ -76,7 +83,7 @@ void jugarTablero() {
             break;
         }
         ocupadas[x][y] = true;
-        partida.tablero[x][y] = partida.turnoNegras ? CELDA_J : CELDA_M;
+        partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
         limpiarConsola();
         printTitulo();
         printTablero();
@@ -93,9 +100,9 @@ void jugarTablero() {
 void puntajePorCantidad() {
     for (int i = 1; i < partida.size + 1; i++) {
         for (int j = 1; j < partida.size + 1; j++) {
-            const wchar_t celda = partida.tablero[i][j];
-            if (celda == CELDA_J) partida.puntajeJugador++;
-            if (celda == CELDA_M) partida.puntajeOponente++;
+            const char celda = partida.tablero[i][j];
+            if (celda == CELDA_NEGRA) partida.puntajeJugador++;
+            if (celda == CELDA_BLANCA) partida.puntajeOponente++;
         }
     }
     puntajePorArea();
@@ -105,7 +112,7 @@ void puntajePorArea(){   // funcion que pasara por todos los puntos y buscara ar
     int c=0;
     for(int i=1; i<partida.size+1; i++){
         for(int j=1; j<partida.size+1; j++){
-            if ((partida.tablero[i][j]=='+') || (partida.tablero[i][j]==L'¦')){
+            if ((partida.tablero[i][j]==CELDA_EMPTY_HOR) || (partida.tablero[i][j]==CELDA_EMPTY_VERT)){
                 partida.tablero[i][j]='#';  //marca la primera zona vacia caracterizandole con el caracter #
                 expandir();
             }
@@ -122,22 +129,22 @@ void expandir(){   // en base al area vacia inicial busca todas las areas vacias
         for(int i=1; i<partida.size+1; i++){   
             for(int j=1; j<partida.size+1; j++){
                 if (partida.tablero[i][j]=='#'){
-                    if (partida.tablero[i][j-1]=='+' || partida.tablero[i][j-1]==L'¦'){
+                    if (partida.tablero[i][j-1]==CELDA_EMPTY_HOR || partida.tablero[i][j-1]==CELDA_EMPTY_VERT){
                         partida.tablero[i][j-1]='#';
                         c++;
                         total++;
                     }
-                    if (partida.tablero[i-1][j]=='+' || partida.tablero[i-1][j]==L'¦'){
+                    if (partida.tablero[i-1][j]==CELDA_EMPTY_HOR || partida.tablero[i-1][j]==CELDA_EMPTY_VERT){
                         partida.tablero[i-1][j]='#';
                         c++;
                         total++;
                     }
-                    if (partida.tablero[i+1][j]=='+' || partida.tablero[i+1][j]==L'¦'){
+                    if (partida.tablero[i+1][j]==CELDA_EMPTY_HOR || partida.tablero[i+1][j]==CELDA_EMPTY_VERT){
                         partida.tablero[i+1][j]='#';
                         c++;
                         total++;
                     }
-                    if (partida.tablero[i][j+1]=='+' || partida.tablero[i][j+1]==L'¦'){
+                    if (partida.tablero[i][j+1]==CELDA_EMPTY_HOR || partida.tablero[i][j+1]==CELDA_EMPTY_VERT){
                         partida.tablero[i][j+1]='#';
                         c++;
                         total++;
