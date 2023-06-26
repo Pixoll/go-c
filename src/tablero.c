@@ -28,17 +28,11 @@ void crearTablero(int size) {
     partida.puntajeOponente = 0;
     const int max = size;
 
-    partida.tablero[1][1] = CELDA_EMPTY_HOR;
-    partida.tablero[1][max] = CELDA_EMPTY_HOR;
-    partida.tablero[max][max] = CELDA_EMPTY_HOR;
-    partida.tablero[max][1] = CELDA_EMPTY_HOR;
-
-    for (int i = 2; i < max; i++) {
-        partida.tablero[max][i] = CELDA_EMPTY_HOR;
+    for (int i = 1; i <= max; i++) {
         partida.tablero[1][i] = CELDA_EMPTY_HOR;
-        partida.tablero[i][1] = CELDA_EMPTY_VERT;
-        partida.tablero[i][max] = CELDA_EMPTY_VERT;
-        for (int j = 2; j < max; j++)
+        partida.tablero[max][i] = CELDA_EMPTY_HOR;
+        if (i == 1 || i == max) continue;
+        for (int j = 1; j <= max; j++)
             partida.tablero[i][j] = CELDA_EMPTY_VERT;
     }
 }
