@@ -94,6 +94,7 @@ void jugarTablero() {
         partida.turnoNegras = !partida.turnoNegras;
         turno++;
     }
+
     partida.terminada = true;
     partida.fecha = now();
 
@@ -260,9 +261,14 @@ void capturas(char celdaJugador, char celdaOponente) {
 void regreso_normal() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
-            if (partida.tablero[posX][posY] == '1')
+            const enum CELDA reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
+            if (partida.tablero[posX][posY] == '2') {
+                partida.tablero[posX][posY] = reemplazo;
+            }
+            if (partida.tablero[posX][posY] == '1') {
+                partida.tablero[posX][posY] = reemplazo;
                 ocupadas[posX][posY] = false;
-            partida.tablero[posX][posY] = CELDA_EMPTY_HOR;
+            }
         }
     }
 }
