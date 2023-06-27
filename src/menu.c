@@ -117,7 +117,7 @@ const MenuOrden ejecutarMenuJugar() {
     wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
     wprintf(L"Tipo de oponente: %ls\n\n", oponentes[tipo]);
 
-    char *oponente = malloc(NOMBRE_MAX);
+    char oponente[NOMBRE_MAX];
     oponente[0] = '\0';
     if (tipo == OPONENTE_JUGADOR) {
         obtenerNombreOponente(oponente);
@@ -130,7 +130,6 @@ const MenuOrden ejecutarMenuJugar() {
 
     const bool confirmado = confirmar(L"¿Es correcta esta configuración?", false);
     if (!confirmado) {
-        free(oponente);
         orden.flag = REPETIR;
         return orden;
     }
@@ -138,7 +137,6 @@ const MenuOrden ejecutarMenuJugar() {
     limpiarConsola();
     printTitulo();
     crearTablero(size, oponente);
-    free(oponente);
     jugarTablero();
 
     return orden;
