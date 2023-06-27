@@ -28,6 +28,12 @@ typedef struct MenuOrden {
     wchar_t mensaje[MENSAJE_ORDEN_LEN];
 } MenuOrden;
 
+#define OPONENTES 2
+enum OPONENTE {
+    OPONENTE_MAQUINA,
+    OPONENTE_JUGADOR,
+};
+
 #define CONFIGS 3
 enum CONFIG_MENU {
     CONFIG_NOMBRE,

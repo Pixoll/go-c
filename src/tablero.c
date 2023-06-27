@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "datos.h"
 #include "util.h"
@@ -29,8 +30,9 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
 void capturas(celda_t celdaJugador, celda_t celdaOponente);
 void regreso_normal();
 
-void crearTablero(int size) {
+void crearTablero(int size, char *oponente) {
     partida.size = size;
+    snprintf(partida.oponente, NOMBRE_MAX, "%s", oponente);
     partida.puntajeJugador = 0;
     partida.puntajeOponente = 0;
     const int max = size;

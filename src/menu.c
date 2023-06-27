@@ -19,6 +19,10 @@ const wchar_t *menus[MENUS] = {
     L"Configuración",
     L"Estadísticas",
 };
+const wchar_t *oponentes[OPONENTES] = {
+    L"Máquina",
+    L"Otro jugador",
+};
 const wchar_t *configs[CONFIGS] = {
     L"Cambiar tu nombre de usuario",
     L"Borrar partidas guardadas",
@@ -90,15 +94,53 @@ int obtenerMenu() {
 }
 
 int obtenerTableroSize();
+int obtenerTipoOponente();
+void obtenerNombreOponente();
 
 const MenuOrden ejecutarMenuJugar() {
-    const MenuOrden orden = {VOLVER, L""};
+    MenuOrden orden = {VOLVER, L""};
     const int size = obtenerTableroSize();
     if (size == VOLVER) return orden;
+
+    limpiarConsola();
+    printTitulo();
     wprintf(L"Tamaño seleccionado: %dx%d\n\n", size, size);
 
-    crearTablero(size);
+    const int tipo = obtenerTipoOponente();
+    if (tipo == REPETIR) {
+        orden.flag = REPETIR;
+        return orden;
+    }
+
+    limpiarConsola();
+    printTitulo();
+    wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
+    wprintf(L"Tipo de oponente: %ls\n\n", oponentes[tipo]);
+
+    char *oponente = malloc(NOMBRE_MAX);
+    oponente[0] = '\0';
+    if (tipo == OPONENTE_JUGADOR) {
+        obtenerNombreOponente(oponente);
+        limpiarConsola();
+        printTitulo();
+        wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
+        wprintf(L"Tipo de oponente: %ls\n", oponentes[tipo]);
+        wprintf(L"Nombre del oponente: %s\n\n", oponente);
+    }
+
+    const bool confirmado = confirmar(L"¿Es correcta esta configuración?", false);
+    if (!confirmado) {
+        free(oponente);
+        orden.flag = REPETIR;
+        return orden;
+    }
+
+    limpiarConsola();
+    printTitulo();
+    crearTablero(size, oponente);
+    free(oponente);
     jugarTablero();
+
     return orden;
 }
 
@@ -142,7 +184,7 @@ const MenuOrden ejecutarMenuConfig() {
 
     if (menuConfig == CONFIG_BORRAR_PARTIDAS) {
         orden.flag = REPETIR;
-        const bool confirmado = confirmar(wcslower(configs[menuConfig]));
+        const bool confirmado = confirmar(wcslower(configs[menuConfig]), true);
         if (confirmado) borrarTodasPartidas();
         swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"%s",
                  confirmado ? "Las partidas guardadas han sido borradas" : "Cancelado");
@@ -151,7 +193,7 @@ const MenuOrden ejecutarMenuConfig() {
 
     if (menuConfig == CONFIG_BORRAR_TODO) {
         orden.flag = REPETIR;
-        const bool confirmado = confirmar(wcslower(configs[menuConfig]));
+        const bool confirmado = confirmar(wcslower(configs[menuConfig]), true);
         if (confirmado) {
             borrarTodasPartidas();
             borrarConfig();
@@ -286,6 +328,33 @@ int obtenerTableroSize() {
 
     if (size == TABLEROS + 1) return VOLVER;
     return tableros[size - 1];
+}
+
+int obtenerTipoOponente() {
+    for (int i = 0; i < OPONENTES; i++) {
+        wprintf(L"%d. %ls\n", i + 1, oponentes[i]);
+    }
+    wprintf(L"%d. Volver al menú de juego\n\n", OPONENTES + 1);
+
+    int tipo;
+    wprintf(L"Selecciona el tipo oponente: ");
+
+    while (!getInt(&tipo) || tipo < 1 || tipo > OPONENTES + 1) {
+        wprintf(L"Opción inválida. Intenta de nuevo: ");
+    }
+
+    if (tipo == OPONENTES + 1) return REPETIR;
+    return tipo - 1;
+}
+
+void obtenerNombreOponente(char *oponente) {
+    wprintf(L"¿Cuál es el nombre del oponente? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
+    strget(oponente, NOMBRE_MAX);
+
+    while (!validarNombre(oponente)) {
+        wprintf(L"Nombre inválido. Intenta de nuevo: ");
+        strget(oponente, NOMBRE_MAX);
+    }
 }
 
 int obtenerConfig() {

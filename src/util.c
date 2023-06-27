@@ -235,8 +235,12 @@ char *obtenerFecha(long long ms) {
     return fecha;
 }
 
-bool confirmar(const wchar_t *action) {
-    wprintf(L"¿Estás segur@ que quieres %ls? (y/n): ", action);
+bool confirmar(const wchar_t *action, bool predeterminado) {
+    if (predeterminado)
+        wprintf(L"¿Estás segur@ que quieres %ls? (y/n): ", action);
+    else
+        wprintf(L"%ls (y/n): ", action);
+
     char confirmado;
     scanf("%c", &confirmado);
     while (confirmado != 'y' && confirmado != 'n' && confirmado != 'Y' && confirmado != 'N') {

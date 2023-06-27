@@ -30,6 +30,6 @@ int intDigits(int n);
 void limpiarConsola();
 long long now();
 char *obtenerFecha(long long ms);
-bool confirmar(const wchar_t *action);
+bool confirmar(const wchar_t *action, bool predeterminado);
 
 #endif

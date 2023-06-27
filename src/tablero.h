@@ -4,7 +4,7 @@
 
 #define _TABLERO_DEFINIDO
 
-int crearTablero(int size);
+int crearTablero(int size, char *oponente);
 void printTablero();
 void jugarTablero();
 
