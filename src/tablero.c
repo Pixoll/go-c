@@ -48,11 +48,20 @@ void crearTablero(int size, char *oponente) {
 
 void printTablero() {
     const int size = partida.size;
+    const int tableroLen = TABLERO_L * 2;
+    wchar_t tablero[size][tableroLen];
     for (int i = 1; i < size + 1; i++) {
-        for (int j = 1; j < size + 1; j++)
-            wprintf(j + 1 < size + 1 ? L"%lc-" : L"%lc", celdas[partida.tablero[i][j]]);
-        wprintf(L"\n");
+        tablero[i - 1][0] = '\0';
+        for (int j = 1; j < size + 1; j++) {
+            const wchar_t *formato = j + 1 < size + 1 ? L"%ls%lc-" : L"%ls%lc";
+            const wchar_t celda = celdas[partida.tablero[i][j]];
+            snwprintf(tablero[i - 1], tableroLen, formato, tablero[i - 1], celda);
+        }
     }
+
+    for (int i = 0; i < size; i++)
+        wprintCentro(tablero[i], TITULO_LEN);
+
     wprintf(L"\n");
 }
 
@@ -67,7 +76,7 @@ void jugarTablero() {
 
     while (turno < 100) {  // condición de victoria
         int x, y;
-        wprintf(L"\tTurno de %s\n\n", partida.turnoNegras ? "negras" : "blancas");
+        wprintCentro(partida.turnoNegras ? L"Turno de negras\n" : L"Turno de blancas\n", TITULO_LEN);
         wprintf(L"Insertar coordenada:\n");
         wprintf(L"x: ");
         scanf("%d", &x);
