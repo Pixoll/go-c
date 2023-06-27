@@ -6,6 +6,8 @@
 #include "datos.h"
 #include "util.h"
 
+#define VERSUS_LEN 2 * (NOMBRE_MAX - 1) + 5
+
 #define CELDAS 4
 enum CELDA {
     CELDA_NEGRA,
@@ -21,6 +23,10 @@ const wchar_t celdas[CELDAS] = {'X', 'O', '+', L'¦'};
 
 GoPartida partida;
 bool ocupadas[TABLERO_MAX][TABLERO_MAX];
+
+bool esMaquina() {
+    return strlen(partida.oponente) == 0;
+}
 
 void puntajePorCantidad();
 void puntajePorArea();
@@ -58,6 +64,10 @@ void printTablero() {
             snwprintf(tablero[i - 1], tableroLen, formato, tablero[i - 1], celda);
         }
     }
+
+    wchar_t versus[VERSUS_LEN];
+    snwprintf(versus, VERSUS_LEN, L"%s vs. %ls\n", config.nombre, esMaquina() ? L"Máquina" : strtowcs(partida.oponente));
+    wprintCentro(versus, TITULO_LEN);
 
     for (int i = size - 1; i >= 0; i--)
         wprintCentro(tablero[i], TITULO_LEN);
