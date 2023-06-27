@@ -68,8 +68,11 @@ void printTablero() {
         swprintf(tablero[i - 1], tableroLen, L"%2d ", i);
         for (int j = 1; j < size + 1; j++) {
             const wchar_t celda = celdas[partida.tablero[i][j]];
-            swprintf(tablero[i - 1], tableroLen, L"%ls%lc-", tablero[i - 1], celda);
+            wchar_t *copia = wcsdup(tablero[i - 1]);
+            swprintf(tablero[i - 1], tableroLen, L"%ls%lc-", copia, celda);
+            free(copia);
         }
+        tablero[i - 1][tableroLen - 1] = '\0';
     }
 
     wchar_t versus[VERSUS_LEN];
@@ -79,7 +82,7 @@ void printTablero() {
     for (int i = size - 1; i >= 0; i--)
         wprintCentro(tablero[i], TITULO_LEN - 2);
 
-    char columnas[tableroLen - 2];
+    char columnas[tableroLen - 1];
     for (int i = 0; i < tableroLen - 2; i++)
         columnas[i] = i == 0 || !par(i) ? ' ' : 'A' + i / 2 - 1;
     columnas[tableroLen - 2] = '\0';

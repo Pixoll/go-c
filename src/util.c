@@ -61,7 +61,7 @@ char *strpadright(const char *buffer, int max, char fill) {
 char *strdup(const char *buffer) {
     const int size = strlen(buffer);
     char *dup = malloc(size + 1);
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i <= size; i++)
         dup[i] = buffer[i];
     return dup;
 }
@@ -115,6 +115,14 @@ wchar_t *wcslower(const wchar_t *buffer) {
     }
     resultado[size] = '\0';
     return resultado;
+}
+
+wchar_t *wcsdup(const wchar_t *buffer) {
+    const int size = wcslen(buffer);
+    wchar_t *dup = malloc((size + 1) * sizeof(wchar_t));
+    for (int i = 0; i <= size; i++)
+        dup[i] = buffer[i];
+    return dup;
 }
 
 void printTitulo() {

@@ -25,6 +25,7 @@ wchar_t *wcsrepeat(wchar_t fill, int size);
 wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill);
 wchar_t *strtowcs(const char *buffer);
 wchar_t *wcslower(const wchar_t* buffer);
+wchar_t *wcsdup(const wchar_t *buffer);
 bool getInt(int *n);
 char *intATexto(int n);
 int intDigits(int n);

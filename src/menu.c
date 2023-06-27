@@ -150,6 +150,7 @@ const MenuOrden ejecutarMenuReglas() {
     char reglas[max];
     fread(reglas, 1, max, archivoReglas);
     fclose(archivoReglas);
+    reglas[max - 1] = '\0';
 
     printCentro("-== REGLAS DE GO ==-\n", TITULO_LEN);
     wprintConLineLimit(strtowcs(reglas), TITULO_LEN);
