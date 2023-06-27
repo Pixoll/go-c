@@ -48,10 +48,10 @@ void crearTablero(int size, char *oponente) {
 
 void printTablero() {
     const int size = partida.size;
-    const int tableroLen = size * 2;
+    const int tableroLen = size * 2 + 2;
     wchar_t tablero[size][tableroLen];
     for (int i = 1; i < size + 1; i++) {
-        tablero[i - 1][0] = '\0';
+        snwprintf(tablero[i - 1], tableroLen, L"%d ", i);
         for (int j = 1; j < size + 1; j++) {
             const wchar_t *formato = j + 1 < size + 1 ? L"%ls%lc-" : L"%ls%lc";
             const wchar_t celda = celdas[partida.tablero[i][j]];
@@ -59,8 +59,14 @@ void printTablero() {
         }
     }
 
-    for (int i = 0; i < size; i++)
+    for (int i = size - 1; i >= 0; i--)
         wprintCentro(tablero[i], TITULO_LEN);
+
+    char columnas[tableroLen];
+    for (int i = 0; i < tableroLen; i++)
+        columnas[i] = i == 0 || i % 2 == 1 ? ' ' : '0' + i / 2;
+    columnas[tableroLen] = '\0';
+    printCentro(columnas, TITULO_LEN);
 
     wprintf(L"\n");
 }
@@ -78,16 +84,16 @@ void jugarTablero() {
         int x, y;
         wprintCentro(partida.turnoNegras ? L"Turno de negras\n" : L"Turno de blancas\n", TITULO_LEN);
         wprintf(L"Insertar coordenada:\n");
-        wprintf(L"x: ");
+        wprintf(L"Fila: ");
         scanf("%d", &x);
-        wprintf(L"y: ");
+        wprintf(L"Columna: ");
         scanf("%d", &y);
 
         while (ocupadas[x][y] == true) {
             wprintf(L"Esa casilla ya esta ocupada!\n");
-            wprintf(L"x: ");
+            wprintf(L"Fila: ");
             scanf("%d", &x);
-            wprintf(L"y: ");
+            wprintf(L"Columna: ");
             scanf("%d", &y);
         }
         if (x == 9 && y == 9) {  // sirve para terminar la partida (no sabia si habia otra forma)
