@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "datos.h"
 #include "util.h"
@@ -36,8 +37,12 @@ void verificarArea(int total);
 void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_L][TABLERO_L], bool *tieneLibertades, int grupo[TABLERO_L][TABLERO_L]);
 void capturas(celda_t celdaJugador, celda_t celdaOponente);
 void regreso_normal();
+void jugarMaquina(int *px, int *py);
 
 void crearTablero(int size, char *oponente) {
+    // para la máquina
+    srand(now());
+
     partida.size = size;
     snprintf(partida.oponente, NOMBRE_MAX, "%s", oponente);
     partida.puntajeJugador = 0;
@@ -100,18 +105,31 @@ void jugarTablero() {
         wprintCentro(turnoTexto, TITULO_LEN);
 
         int x, y;
-        wprintf(L"Insertar coordenada:\n");
-        wprintf(L"Fila: ");
-        scanf("%d", &x);
-        wprintf(L"Columna: ");
-        scanf("%d", &y);
-
-        while (ocupadas[x][y] == true) {
-            wprintf(L"Esa casilla ya esta ocupada!\n");
+        if (partida.turnoNegras) {
+            wprintf(L"Insertar coordenada:\n");
             wprintf(L"Fila: ");
             scanf("%d", &x);
             wprintf(L"Columna: ");
             scanf("%d", &y);
+
+            while (ocupadas[x][y] == true) {
+                wprintf(L"Esa casilla ya esta ocupada!\n");
+                wprintf(L"Fila: ");
+                scanf("%d", &x);
+                wprintf(L"Columna: ");
+                scanf("%d", &y);
+            }
+        } else if (esMaquina()) {
+            jugarMaquina(&x, &y);
+            wprintf(L"%s", strrepeat(' ', TITULO_LEN / 2 - 3));
+            // suspenso o.o completamente innecesario xD
+            sleep(1);
+            wprintf(L"%s", ".");
+            sleep(1);
+            wprintf(L"%s", "\b. .");
+            sleep(1);
+            wprintf(L"%s", "\b\b\b. . .");
+            sleep(1);
         }
 
         ocupadas[x][y] = true;
@@ -135,6 +153,17 @@ void jugarTablero() {
 
     puntajePorCantidad();
     guardarPartida(partida);
+}
+
+// pone una ficha random
+void jugarMaquina(int *px, int *py) {
+    int x, y;
+    do {
+        x = rand() % partida.size + 1;
+        y = rand() % partida.size + 1;
+    } while (ocupadas[x][y] == true);
+    *px = x;
+    *py = y;
 }
 
 void puntajePorCantidad() {
