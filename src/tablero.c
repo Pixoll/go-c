@@ -60,14 +60,13 @@ void crearTablero(int size, char *oponente) {
 
 void printTablero() {
     const int size = partida.size;
-    const int tableroLen = size * 2 + 2;
+    const int tableroLen = size * 2 + 3;
     wchar_t tablero[size][tableroLen];
     for (int i = 1; i < size + 1; i++) {
-        snwprintf(tablero[i - 1], tableroLen, L"%d ", i);
+        snwprintf(tablero[i - 1], tableroLen, L"%2d ", i);
         for (int j = 1; j < size + 1; j++) {
-            const wchar_t *formato = j + 1 < size + 1 ? L"%ls%lc-" : L"%ls%lc";
             const wchar_t celda = celdas[partida.tablero[i][j]];
-            snwprintf(tablero[i - 1], tableroLen, formato, tablero[i - 1], celda);
+            snwprintf(tablero[i - 1], tableroLen, L"%ls%lc-", tablero[i - 1], celda);
         }
     }
 
@@ -76,12 +75,12 @@ void printTablero() {
     wprintCentro(versus, TITULO_LEN);
 
     for (int i = size - 1; i >= 0; i--)
-        wprintCentro(tablero[i], TITULO_LEN);
+        wprintCentro(tablero[i], TITULO_LEN - 2);
 
-    char columnas[tableroLen];
-    for (int i = 0; i < tableroLen; i++)
-        columnas[i] = i == 0 || i % 2 == 1 ? ' ' : '0' + i / 2;
-    columnas[tableroLen] = '\0';
+    char columnas[tableroLen - 2];
+    for (int i = 0; i < tableroLen - 2; i++)
+        columnas[i] = i == 0 || !par(i) ? ' ' : 'A' + i / 2 - 1;
+    columnas[tableroLen - 2] = '\0';
     printCentro(columnas, TITULO_LEN);
 
     wprintf(L"\n");
