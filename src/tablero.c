@@ -34,7 +34,6 @@ void puntajePorCantidad();
 void puntajePorArea();
 void expandir();
 void verificarArea(int total);
-void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_L][TABLERO_L], bool *tieneLibertades, int grupo[TABLERO_L][TABLERO_L]);
 void capturas(celda_t celdaJugador, celda_t celdaOponente);
 void regreso_normal();
 void jugarMaquina(int *px, int *py);
@@ -47,13 +46,16 @@ void crearTablero(int size, char *oponente) {
     snprintf(partida.oponente, NOMBRE_MAX, "%s", oponente);
     partida.puntajeJugador = 0;
     partida.puntajeOponente = 0;
-    const int max = size;
+    partida.turnoNegras = true;
+    for (int i = 1; i < size + 1; i++)
+        for (int j = 1; j < size + 1; j++)
+            ocupadas[i][j] = false;
 
-    for (int i = 1; i <= max; i++) {
+    for (int i = 1; i <= size; i++) {
         partida.tablero[1][i] = CELDA_EMPTY_HOR;
-        partida.tablero[max][i] = CELDA_EMPTY_HOR;
-        if (i == 1 || i == max) continue;
-        for (int j = 1; j <= max; j++)
+        partida.tablero[size][i] = CELDA_EMPTY_HOR;
+        if (i == 1 || i == size) continue;
+        for (int j = 1; j <= size; j++)
             partida.tablero[i][j] = CELDA_EMPTY_VERT;
     }
 }
@@ -90,10 +92,6 @@ void jugarTablero() {
     printTablero();
     const int size = partida.size;
     int turno = 0;
-    partida.turnoNegras = true;
-    for (int i = 1; i < size + 1; i++)
-        for (int j = 1; j < size + 1; j++)
-            ocupadas[i][j] = false;
 
     while (turno < 100) {  // condición de victoria
         wchar_t turnoTexto[TURNO_LEN];
@@ -265,7 +263,7 @@ void verificarArea(int total) {  // analizamos el area de # verificando si solo 
 // cva
 
 // busca y recorre los grupos de fichas, los marca como que tienen o no libertades
-void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_L][TABLERO_L], bool *tieneLibertades, int grupo[TABLERO_L][TABLERO_L]) {
+void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_MAX][TABLERO_MAX], bool *tieneLibertades, int grupo[TABLERO_MAX][TABLERO_MAX]) {
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
 
@@ -290,20 +288,21 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
 
 // analiza el tablero y los grupos de fichas que se forman, usa dfs para recorrer los grupos y ve si están o no capturados
 void capturas(celda_t celdaJugador, celda_t celdaOponente) {
-    bool visitado[TABLERO_L][TABLERO_L];
-    int grupo[TABLERO_L][TABLERO_L];
-
-    for (int i = 1; i <= partida.size; i++) {
-        for (int j = 1; j <= partida.size; j++) {
+    bool visitado[TABLERO_MAX][TABLERO_MAX];
+    for (int i = 1; i <= partida.size; i++)
+        for (int j = 1; j <= partida.size; j++)
             visitado[i][j] = false;
-            grupo[i][j] = 0;
-        }
-    }
 
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
             if (partida.tablero[posX][posY] != celdaJugador || visitado[posX][posY]) continue;
+
             bool tieneLibertades = false;
+            int grupo[TABLERO_MAX][TABLERO_MAX];
+            for (int i = 1; i <= partida.size; i++)
+                for (int j = 1; j <= partida.size; j++)
+                    grupo[i][j] = 0;
+
             DFS(posX, posY, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
 
             // si un grupo de fichas del jugador no tiene libertades
@@ -311,9 +310,10 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
             for (int i = 1; i <= partida.size; i++) {
                 for (int j = 1; j <= partida.size; j++) {
                     if (grupo[i][j] != 1) continue;
-                    partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? CELDA_BLANCA_CAPT : CELDA_NEGRA_CAPT;  // captura X=1, O=2
-                    ocupadas[i][j] = false;                                                                       // actualiza el estado de 'ocupado'
-                    grupo[i][j] = 0;
+                    // marca la ficha como capturada
+                    partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? CELDA_BLANCA_CAPT : CELDA_NEGRA_CAPT;
+                    // actualiza el estado de 'ocupado'
+                    ocupadas[i][j] = false;
                 }
             }
         }
@@ -324,13 +324,10 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
 void regreso_normal() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
+            const celda_t celda = partida.tablero[posX][posY];
+            if (celda != CELDA_BLANCA_CAPT && celda != CELDA_NEGRA_CAPT) continue;
             const celda_t reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
-            if (partida.tablero[posX][posY] == CELDA_BLANCA_CAPT) {
-                partida.tablero[posX][posY] = reemplazo;
-            } else if (partida.tablero[posX][posY] == CELDA_NEGRA_CAPT) {
-                partida.tablero[posX][posY] = reemplazo;
-                ocupadas[posX][posY] = false;
-            }
+            partida.tablero[posX][posY] = reemplazo;
         }
     }
 }
