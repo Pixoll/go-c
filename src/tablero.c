@@ -7,6 +7,7 @@
 #include "util.h"
 
 #define VERSUS_LEN 2 * (NOMBRE_MAX - 1) + 5
+#define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 10
 
 #define CELDAS 4
 enum CELDA {
@@ -91,8 +92,14 @@ void jugarTablero() {
             ocupadas[i][j] = false;
 
     while (turno < 100) {  // condición de victoria
+        wchar_t turnoTexto[TURNO_LEN];
+        snwprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n",
+                  partida.turnoNegras ? strtowcs(config.nombre)
+                  : esMaquina()       ? L"máquina"
+                                      : strtowcs(partida.oponente));
+        wprintCentro(turnoTexto, TITULO_LEN);
+
         int x, y;
-        wprintCentro(partida.turnoNegras ? L"Turno de negras\n" : L"Turno de blancas\n", TITULO_LEN);
         wprintf(L"Insertar coordenada:\n");
         wprintf(L"Fila: ");
         scanf("%d", &x);
