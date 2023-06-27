@@ -65,15 +65,15 @@ void printTablero() {
     const int tableroLen = size * 2 + 3;
     wchar_t tablero[size][tableroLen];
     for (int i = 1; i < size + 1; i++) {
-        snwprintf(tablero[i - 1], tableroLen, L"%2d ", i);
+        swprintf(tablero[i - 1], tableroLen, L"%2d ", i);
         for (int j = 1; j < size + 1; j++) {
             const wchar_t celda = celdas[partida.tablero[i][j]];
-            snwprintf(tablero[i - 1], tableroLen, L"%ls%lc-", tablero[i - 1], celda);
+            swprintf(tablero[i - 1], tableroLen, L"%ls%lc-", tablero[i - 1], celda);
         }
     }
 
     wchar_t versus[VERSUS_LEN];
-    snwprintf(versus, VERSUS_LEN, L"%s vs. %ls\n", config.nombre, esMaquina() ? L"Máquina" : strtowcs(partida.oponente));
+    swprintf(versus, VERSUS_LEN, L"%s vs. %ls\n", config.nombre, esMaquina() ? L"Máquina" : strtowcs(partida.oponente));
     wprintCentro(versus, TITULO_LEN);
 
     for (int i = size - 1; i >= 0; i--)
@@ -95,10 +95,10 @@ void jugarTablero() {
 
     while (turno < 100) {  // condición de victoria
         wchar_t turnoTexto[TURNO_LEN];
-        snwprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n",
-                  partida.turnoNegras ? strtowcs(config.nombre)
-                  : esMaquina()       ? L"máquina"
-                                      : strtowcs(partida.oponente));
+        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n",
+                 partida.turnoNegras ? strtowcs(config.nombre)
+                 : esMaquina()       ? L"máquina"
+                                     : strtowcs(partida.oponente));
         wprintCentro(turnoTexto, TITULO_LEN);
 
         int x, y;

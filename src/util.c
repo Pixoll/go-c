@@ -78,7 +78,7 @@ wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill) {
     const int size = wcslen(buffer);
     if (size >= max) return (wchar_t *)buffer;
     wchar_t *resultado = malloc((max + 1) * sizeof(wchar_t));
-    snwprintf(resultado, max + 1, L"%ls%s", buffer, strrepeat(fill, max - size));
+    swprintf(resultado, max + 1, L"%ls%s", buffer, strrepeat(fill, max - size));
     return resultado;
 }
 
