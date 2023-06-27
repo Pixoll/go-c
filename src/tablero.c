@@ -102,7 +102,18 @@ void jugarTablero() {
         wprintCentro(turnoTexto, TITULO_LEN);
 
         int x, y;
-        if (partida.turnoNegras) {
+        if (esMaquina() && !partida.turnoNegras) {
+            jugarMaquina(&x, &y);
+            wprintf(L"%s", strrepeat(' ', TITULO_LEN / 2 - 3));
+            // suspenso o.o completamente innecesario xD
+            sleep(1);
+            wprintf(L"%s", ".");
+            sleep(1);
+            wprintf(L"%s", "\b. .");
+            sleep(1);
+            wprintf(L"%s", "\b\b\b. . .");
+            sleep(1);
+        } else {
             wprintf(L"Insertar coordenada:\n");
             wprintf(L"Fila: ");
             scanf("%d", &x);
@@ -116,17 +127,6 @@ void jugarTablero() {
                 wprintf(L"Columna: ");
                 scanf("%d", &y);
             }
-        } else if (esMaquina()) {
-            jugarMaquina(&x, &y);
-            wprintf(L"%s", strrepeat(' ', TITULO_LEN / 2 - 3));
-            // suspenso o.o completamente innecesario xD
-            sleep(1);
-            wprintf(L"%s", ".");
-            sleep(1);
-            wprintf(L"%s", "\b. .");
-            sleep(1);
-            wprintf(L"%s", "\b\b\b. . .");
-            sleep(1);
         }
 
         ocupadas[x][y] = true;
