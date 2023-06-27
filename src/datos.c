@@ -48,6 +48,7 @@ void borrarConfig() {
 
 bool validarNombre(const char *nombre) {
     const int size = strlen(nombre);
+    if (size == 0) return false;
     for (int i = 0; i < size; i++) {
         const char c = nombre[i];
         // Letra, número o guion bajo
