@@ -46,10 +46,7 @@ char *strpadleft(const char *buffer, int max, char fill) {
     const int size = strlen(buffer);
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
-    resultado[0] = '\0';
-    strncat(resultado, strrepeat(fill, max - size), max - size);
-    strncat(resultado, buffer, size);
-    resultado[max] = '\0';
+    snprintf(resultado, max + 1, "%s%s", strrepeat(fill, max - size), buffer);
     return resultado;
 }
 
@@ -57,10 +54,7 @@ char *strpadright(const char *buffer, int max, char fill) {
     const int size = strlen(buffer);
     if (size >= max) return (char *)buffer;
     char *resultado = malloc(max + 1);
-    resultado[0] = '\0';
-    strncat(resultado, buffer, size);
-    strncat(resultado, strrepeat(fill, max - size), max - size);
-    resultado[max] = '\0';
+    snprintf(resultado, max + 1, "%s%s", buffer, strrepeat(fill, max - size));
     return resultado;
 }
 
@@ -84,10 +78,7 @@ wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill) {
     const int size = wcslen(buffer);
     if (size >= max) return (wchar_t *)buffer;
     wchar_t *resultado = malloc((max + 1) * sizeof(wchar_t));
-    resultado[0] = '\0';
-    wcscat(resultado, buffer);
-    wcscat(resultado, wcsrepeat(fill, max - size));
-    resultado[max] = '\0';
+    snwprintf(resultado, max + 1, L"%ls%s", buffer, strrepeat(fill, max - size));
     return resultado;
 }
 
