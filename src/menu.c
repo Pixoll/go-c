@@ -117,8 +117,7 @@ const MenuOrden ejecutarMenuJugar() {
     wprintf(L"Tamaño seleccionado: %dx%d\n", size, size);
     wprintf(L"Tipo de oponente: %ls\n\n", oponentes[tipo]);
 
-    char oponente[NOMBRE_MAX];
-    oponente[0] = '\0';
+    char oponente[NOMBRE_MAX] = "";
     if (tipo == OPONENTE_JUGADOR) {
         obtenerNombreOponente(oponente);
         limpiarConsola();
