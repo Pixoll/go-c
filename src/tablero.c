@@ -48,7 +48,7 @@ void crearTablero(int size, char *oponente) {
 
 void printTablero() {
     const int size = partida.size;
-    const int tableroLen = TABLERO_L * 2;
+    const int tableroLen = size * 2;
     wchar_t tablero[size][tableroLen];
     for (int i = 1; i < size + 1; i++) {
         tablero[i - 1][0] = '\0';
