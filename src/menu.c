@@ -95,7 +95,7 @@ int obtenerMenu() {
 
 int obtenerTableroSize();
 int obtenerTipoOponente();
-void obtenerNombreOponente();
+void obtenerNombreOponente(char *oponente);
 
 const MenuOrden ejecutarMenuJugar() {
     MenuOrden orden = {VOLVER, L""};
