@@ -113,13 +113,11 @@ void jugarTablero() {
             wprintf(L"Columna: ");
             scanf("%d", &y);
         }
-        if (x == 9 && y == 9) {  // sirve para terminar la partida (no sabia si habia otra forma)
-            break;
-        }
+
         ocupadas[x][y] = true;
         partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
 
-        // Checkeo de capturas
+        // Chequeo de capturas
         capturas(CELDA_NEGRA, CELDA_BLANCA);
         capturas(CELDA_BLANCA, CELDA_NEGRA);
         regreso_normal();
@@ -150,22 +148,22 @@ void puntajePorCantidad() {
     puntajePorArea();
 }
 
-void puntajePorArea() {  // funcion que pasara por todos los puntos y buscara areas vacias
+void puntajePorArea() {  // función que pasara por todos los puntos y buscara areas vacías
     int c = 0;
     for (int i = 1; i < partida.size + 1; i++) {
         for (int j = 1; j < partida.size + 1; j++) {
             if ((partida.tablero[i][j] == CELDA_EMPTY_HOR) || (partida.tablero[i][j] == CELDA_EMPTY_VERT)) {
-                partida.tablero[i][j] = '#';  // marca la primera zona vacia caracterizandole con el caracter #
+                partida.tablero[i][j] = '#';  // marca la primera zona vacía caracterizándose con el carácter #
                 expandir();
             }
         }
     }
 }
 
-void expandir() {    // en base al area vacia inicial busca todas las areas vacias contiguas y las caracteriza con #
-    int c = 1;       // contador que nos servira para saber cuando se dejan de encontrar areas vacias contiguas
-    int total = 1;   // cantidad de espacios vacios encerrados dentro de un area
-    while (c > 0) {  // ciclo que expande el area inicial cambiando las areas vacias contiguas por #,
+void expandir() {    // en base al area vacía inicial busca todas las areas vacías contiguas y las caracteriza con #
+    int c = 1;       // contador que nos servirá para saber cuando se dejan de encontrar areas vacías contiguas
+    int total = 1;   // cantidad de espacios vacíos encerrados dentro de un area
+    while (c > 0) {  // ciclo que expande el area inicial cambiando las areas vacías contiguas por #,
                      // se repite siempre que se haya expandido una ultima vez (c>0)
         c = 0;
         for (int i = 1; i < partida.size + 1; i++) {
@@ -209,7 +207,7 @@ void verificarArea(int total) {  // analizamos el area de # verificando si solo 
     int negras = 0;
     int blancas = 0;
     int otro = 0;
-    for (int i = 1; i < partida.size + 1; i++) {  // cicloq ue contabiliza los tipos de zonas que rodean el area de #
+    for (int i = 1; i < partida.size + 1; i++) {  // ciclo que contabiliza los tipos de zonas que rodean el area de #
         for (int j = 1; j < partida.size + 1; j++) {
             if (partida.tablero[i][j] == '#') {
                 if (partida.tablero[i + 1][j] == CELDA_NEGRA || partida.tablero[i - 1][j] == CELDA_NEGRA || partida.tablero[i][j + 1] == CELDA_NEGRA || partida.tablero[i][j - 1] == CELDA_NEGRA) {
@@ -229,11 +227,11 @@ void verificarArea(int total) {  // analizamos el area de # verificando si solo 
     } else if (blancas != 0 && negras == 0 && otro < blancas * 2) {  // lo mismo con fichas blancas y con puntos al jugador blanco
         partida.puntajeOponente = partida.puntajeOponente + total;
     }
-    // de no cumplirse ninguna condicion anterior se asume que el area es neutra y no se le otorgara puntaje a ningun jugador
+    // de no cumplirse ninguna condición anterior se asume que el area es neutra y no se le otorgara puntaje a ningún jugador
     // mas a delante se pueden implementar mas condiciones de area neutra haciendo las condiciones del juego mas realista
 }
 
-// si quieren probar la contabilizacion de puntajes en una condicion un tanto extrema seleccione jugar y el tablero de 9x9 (1) y coloque
+// si quieren probar la contabilización de puntajes en una condición un tanto extrema seleccione jugar y el tablero de 9x9 (1) y coloque
 // 1 2 3 1 2 2 4 2 2 3 5 2 2 4 6 2 3 5 7 3 4 4 7 4 4 3 7 5 5 3 7 6 6 3 8 6 6 4 9 6 6 5 4 8 6 6 5 7 5 6 5 9 4 7 6 7 3 7 6 9 2 7 7 8 1 7
 
 // cva
@@ -262,7 +260,7 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
     }
 }
 
-// analiza el tablero y los grupos de fichas que se forman, usa dfs para recorrer los grupos y ve si estan o no capturados
+// analiza el tablero y los grupos de fichas que se forman, usa dfs para recorrer los grupos y ve si están o no capturados
 void capturas(celda_t celdaJugador, celda_t celdaOponente) {
     bool visitado[TABLERO_L][TABLERO_L];
     int grupo[TABLERO_L][TABLERO_L];
