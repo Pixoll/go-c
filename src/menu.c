@@ -127,7 +127,7 @@ const MenuOrden ejecutarMenuJugar() {
         limpiarConsola();
         printTitulo();
         cargarPartida(partidaGuardada);
-        jugarPartida();
+        jugarPartida(true);
 
         return orden;
     }
@@ -169,7 +169,7 @@ const MenuOrden ejecutarMenuJugar() {
     limpiarConsola();
     printTitulo();
     crearPartida(size, oponente);
-    jugarPartida();
+    jugarPartida(false);
 
     return orden;
 }

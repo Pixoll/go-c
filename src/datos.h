@@ -43,7 +43,7 @@ void borrarConfig();
 bool validarNombre(const char *nombre);
 GoPartida *obtenerUltimaPartida();
 void borrarUltimaPartida();
-void guardarPartida(const  GoPartida partida);
+void guardarPartida(const  GoPartida partida, bool reemplazarUltima);
 TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas);
 void borrarTodasPartidas();
 

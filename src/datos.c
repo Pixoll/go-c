@@ -92,11 +92,11 @@ void borrarUltimaPartida() {
     rename(rutaPartidasTemp, rutaPartidas);
 }
 
-void guardarPartida(const GoPartida partida) {
-    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+void guardarPartida(const GoPartida partida, bool reemplazarUltima) {
     GoPartida *partidaGuardada = obtenerUltimaPartida();
-    if (partidaGuardada && partidaGuardada->terminada)
-        fseek(archivoPartidas, 0, SEEK_END);
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
+    if (partidaGuardada && !partidaGuardada->terminada && reemplazarUltima)
+        fseek(archivoPartidas, -partidaSize, SEEK_END);
     free(partidaGuardada);
 
     const int guardado = fwrite(&partida, partidaSize, 1, archivoPartidas);

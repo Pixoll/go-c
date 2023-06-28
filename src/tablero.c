@@ -24,7 +24,7 @@ enum CELDA {
 typedef enum CELDA celda_t;
 
 enum PARTIDA_FLAG {
-    TERMINAR,
+    TERMINAR = -2,
     GUARDAR,
 };
 
@@ -111,7 +111,7 @@ void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 bool obtenerCelda(int *px, int *py, bool reintentar);
 
-void jugarPartida() {
+void jugarPartida(bool cargada) {
     printTablero();
     const int size = partida.size;
     int turno = 0;
@@ -186,7 +186,7 @@ void jugarPartida() {
         wprintf(L"Puntaje %ls: %d\n\n", oponente, partida.puntajeOponente);
     }
 
-    guardarPartida(partida);
+    guardarPartida(partida, cargada);
 
     if (!terminar)
         wprintf(L"La partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.\n");
@@ -208,7 +208,7 @@ bool obtenerCelda(int *px, int *py, bool reintentar) {
     strget(fila, 3);
 
     if (col == '0' || col == '1') {
-        *px = col - '0';
+        *px = col - '0' - 2;
         return true;
     }
 

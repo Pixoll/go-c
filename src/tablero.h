@@ -7,6 +7,6 @@
 int crearPartida(int size, char *oponente);
 void cargarPartida(GoPartida *guardada);
 void printTablero();
-void jugarPartida();
+void jugarPartida(bool cargada);
 
 #endif
