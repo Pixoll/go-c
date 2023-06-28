@@ -46,11 +46,11 @@ void obtenerNombre() {
 
     wprintf(L"¿Cuál es tu nombre de usuario? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
     char nombre[NOMBRE_MAX];
-    strget(nombre, NOMBRE_MAX);
+    strget(nombre, NOMBRE_MAX, '\n');
 
     while (!validarNombre(nombre)) {
         wprintf(L"Nombre inválido. Intenta de nuevo: ");
-        strget(nombre, NOMBRE_MAX);
+        strget(nombre, NOMBRE_MAX, '\n');
     }
 
     strncpy(config.nombre, nombre, NOMBRE_MAX);
@@ -389,11 +389,11 @@ int obtenerTipoOponente() {
 
 void obtenerNombreOponente(char *oponente) {
     wprintf(L"¿Cuál es el nombre del oponente? Máximo %d caracteres (alfanuméricos y guion bajo).\n", NOMBRE_MAX - 1);
-    strget(oponente, NOMBRE_MAX);
+    strget(oponente, NOMBRE_MAX, '\n');
 
     while (!validarNombre(oponente)) {
         wprintf(L"Nombre inválido. Intenta de nuevo: ");
-        strget(oponente, NOMBRE_MAX);
+        strget(oponente, NOMBRE_MAX, '\n');
     }
 }
 

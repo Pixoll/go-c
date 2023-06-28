@@ -124,14 +124,14 @@ void printCentro(const char *texto, int sizeLinea) {
         wprintf(L"%*s%s\n", (sizeLinea - sizeTexto) / 2, "", texto);
 }
 
-char *strget(char *buffer, int max) {
+char *strget(char *buffer, int max, char termino) {
     int size = 0;
     for (int i = 0; i < max - 1; i++) {
         char c;
         scanf("%c", &c);
         // detectó character inválido
         if (c == '\0') c = '?';
-        if (c == '\n') break;
+        if (c == '\n' || c == termino) break;
         buffer[i] = c;
         size++;
     }
@@ -143,7 +143,7 @@ char *strget(char *buffer, int max) {
 
 bool getInt(int *n) {
     char buffer[INT_STR_MAX];
-    strget(buffer, INT_STR_MAX);
+    strget(buffer, INT_STR_MAX, ' ');
     for (int i = 0; i < INT_STR_MAX; i++) {
         const char c = buffer[i];
         if (c == '\0') break;

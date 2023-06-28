@@ -19,7 +19,7 @@ void printCentro(const char *texto, int sizeLinea);
 void printTitulo();
 char *strrepeat(char fill, int size);
 char *strempty(char *buffer);
-char *strget(char *buffer, int size);
+char *strget(char *buffer, int size, char termino);
 wchar_t *strtowcs(const char *buffer);
 wchar_t *wcslower(const wchar_t* buffer);
 bool getInt(int *n);
