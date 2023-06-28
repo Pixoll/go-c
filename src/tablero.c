@@ -10,7 +10,7 @@
 #define VERSUS_LEN 2 * (NOMBRE_MAX - 1) + 5
 #define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 10
 
-#define CELDAS 4
+#define CELDAS 7
 enum CELDA {
     CELDA_BORDE,
     CELDA_NEGRA,
@@ -22,7 +22,7 @@ enum CELDA {
 };
 typedef enum CELDA celda_t;
 
-const wchar_t celdas[CELDAS] = {'X', 'O', '+', L'¦'};
+const wchar_t celdas[CELDAS] = {'?', 'X', 'O', '+', L'¦', '?', '?'};
 
 GoPartida partida;
 bool ocupadas[TABLERO_MAX][TABLERO_MAX];
