@@ -124,6 +124,8 @@ const MenuOrden ejecutarMenuJugar() {
             return orden;
         }
 
+        limpiarConsola();
+        printTitulo();
         cargarPartida(partidaGuardada);
         jugarPartida();
 
