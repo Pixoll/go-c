@@ -23,6 +23,11 @@ enum CELDA {
 };
 typedef enum CELDA celda_t;
 
+enum PARTIDA_FLAG {
+    TERMINAR,
+    GUARDAR,
+};
+
 const wchar_t celdas[CELDAS] = {'?', 'X', 'O', '+', L'¦', '?', '?', '?', '?'};
 const int dx[4] = {-1, 1, 0, 0};
 const int dy[4] = {0, 0, -1, 1};
@@ -33,12 +38,6 @@ bool ocupadas[TABLERO_MAX][TABLERO_MAX];
 bool esMaquina() {
     return strlen(partida.oponente) == 0;
 }
-
-void puntajePorCantidad();
-void puntajePorArea();
-void capturas(celda_t celdaJugador, celda_t celdaOponente);
-void eliminarCapturadas();
-void jugarMaquina(int *px, int *py);
 
 void crearTablero(int size, char *oponente) {
     // para la máquina
@@ -94,13 +93,21 @@ void printTablero() {
     wprintf(L"\n");
 }
 
+void puntajePorCantidad();
+void puntajePorArea();
+void capturas(celda_t celdaJugador, celda_t celdaOponente);
+void eliminarCapturadas();
+void jugarMaquina(int *px, int *py);
+bool obtenerCelda(int *px, int *py, bool reintentar);
+
 void jugarTablero() {
     printTablero();
     const int size = partida.size;
     int turno = 0;
     const wchar_t *oponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
 
-    while (turno < 100) {  // condición de victoria
+    bool terminar = false, guardar = false;
+    while (!terminar) {
         wchar_t turnoTexto[TURNO_LEN];
         swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", partida.turnoNegras ? strtowcs(config.nombre) : oponente);
         wprintCentro(turnoTexto, TITULO_LEN);
@@ -118,26 +125,29 @@ void jugarTablero() {
             wprintf(L" .");
             esperar(1);
         } else {
-            wprintf(L"Insertar coordenada:\n");
-            wprintf(L"Fila: ");
-            scanf("%d", &x);
-            wprintf(L"Columna: ");
-            scanf("%d", &y);
-            if (x == 0 && y == 0) {
-                break;
-            }
+            do {
+                bool reintentar = false;
+                while (!obtenerCelda(&x, &y, reintentar))
+                    reintentar = true;
 
-            while (ocupadas[x][y] == true) {
-                wprintf(L"Esa casilla ya esta ocupada!\n");
-                wprintf(L"Fila: ");
-                scanf("%d", &x);
-                wprintf(L"Columna: ");
-                scanf("%d", &y);
-                if (x == 0 && y == 0) {
+                if (x == TERMINAR) {
+                    terminar = true;
                     break;
                 }
-            }
+
+                if (x == GUARDAR) {
+                    const bool confirmado = confirmar(L"guardar la partida y volver al menú principal", true);
+                    if (!confirmado) continue;
+                    guardar = true;
+                    break;
+                }
+
+                if (ocupadas[x][y] == true)
+                    wprintf(L"¡Esa casilla ya esta ocupada!\n");
+            } while (ocupadas[x][y] == true);
         }
+
+        if (guardar) break;
 
         ocupadas[x][y] = true;
         partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
@@ -155,22 +165,52 @@ void jugarTablero() {
         turno++;
     }
 
-    partida.terminada = true;
-    partida.fecha = now();
+    partida.terminada = terminar;
+    if (terminar) {
+        partida.fecha = now();
+        puntajePorCantidad();
+        puntajePorArea();
 
-    puntajePorCantidad();
-    puntajePorArea();
-
-    wprintf(L"Puntaje %s: %d\n", config.nombre, partida.puntajeJugador);
-    wprintf(L"Puntaje %ls: %d\n\n", oponente, partida.puntajeOponente);
-
-    int end = 0;
-    while (end != 1) {
-        wprintf(L"Ingrese dos 1 para volver al inicio: ");
-        scanf("%d \n", &end);
+        wprintf(L"Puntaje %s: %d\n", config.nombre, partida.puntajeJugador);
+        wprintf(L"Puntaje %ls: %d\n\n", oponente, partida.puntajeOponente);
     }
 
     guardarPartida(partida);
+
+    if (!terminar)
+        wprintf(L"La partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.\n");
+
+    wprintf(L"Presiona ENTER para volver al menú principal.");
+    char c = 0;
+    while (c != '\n') scanf("%c", &c);
+}
+
+bool obtenerCelda(int *px, int *py, bool reintentar) {
+    if (!reintentar)
+        wprintf(L"Ingresa la casilla (0 para terminar, 1 para guardar e ir al menú principal): ");
+    else
+        wprintf(L"Casilla inválida. Intenta de nuevo: ");
+
+    const int size = partida.size;
+    char col, fila[3];
+    scanf("%c", &col);
+    strget(fila, 3);
+
+    if (col == '0' || col == '1') {
+        *px = col - '0';
+        return true;
+    }
+
+    if ((col < 'a' || col > 'a' + size - 1) && (col < 'A' || col > 'A' + size - 1))
+        return false;
+
+    const int f = atoi(fila);
+    if (f < 1 || f > size)
+        return false;
+
+    *py = col >= 'a' && col <= 'a' + size - 1 ? col - 'a' + 1 : col - 'A' + 1;
+    *px = f;
+    return true;
 }
 
 // pone una ficha random
@@ -240,7 +280,6 @@ void expandir() {
 
     verificarArea(total);
 
-    // cambia el area de CELDA_EMPTY por CELDA_ANALIZADA para que esta no se vuelva a analizar nuevamente
     for (int i = 1; i <= partida.size; i++) {
         for (int j = 1; j <= partida.size; j++) {
             if (partida.tablero[i][j] != CELDA_EMPTY) continue;
@@ -256,7 +295,7 @@ void verificarArea(int total) {
     int negras = 0;
     int blancas = 0;
     int otro = 0;
-    // ciclo que contabiliza los tipos de zonas que rodean el area de CELDA_EMPTY
+
     for (int i = 1; i <= partida.size; i++) {
         for (int j = 1; j <= partida.size; j++) {
             if (partida.tablero[i][j] != CELDA_EMPTY) continue;
@@ -269,10 +308,8 @@ void verificarArea(int total) {
         }
     }
 
-    // si el area es rodeada solo por fichas negras o otro le asigna puntaje a jugador blanco
     if (negras != 0 && blancas == 0 && otro < negras * 2) {
         partida.puntajeJugador += total;
-        // lo mismo con fichas blancas y con puntos al jugador blanco
     } else if (blancas != 0 && negras == 0 && otro < blancas * 2) {
         partida.puntajeOponente += total;
     }
@@ -280,9 +317,6 @@ void verificarArea(int total) {
     // de no cumplirse ninguna condición anterior se asume que el area es neutra y no se le otorgara puntaje a ningún jugador
     // mas a delante se pueden implementar mas condiciones de area neutra haciendo las condiciones del juego mas realista
 }
-
-// si quieren probar la contabilización de puntajes en una condición un tanto extrema seleccione jugar y el tablero de 9x9 (1) y coloque
-// 1 2 3 1 2 2 4 2 2 3 5 2 2 4 6 2 3 5 7 3 4 4 7 4 4 3 7 5 5 3 7 6 6 3 8 6 6 4 9 6 6 5 4 8 6 6 5 7 5 6 5 9 4 7 6 7 3 7 6 9 2 7 7 8 1 7
 
 bool tieneCeldaAlrededor(int x, int y, celda_t tipo) {
     for (int r = 0; r < 4; r++) {
@@ -292,8 +326,6 @@ bool tieneCeldaAlrededor(int x, int y, celda_t tipo) {
     }
     return false;
 }
-
-// cva
 
 // busca y recorre los grupos de fichas, los marca como que tienen o no libertades
 void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_MAX][TABLERO_MAX], bool *tieneLibertades, int grupo[TABLERO_MAX][TABLERO_MAX]) {
@@ -349,7 +381,7 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
     }
 }
 
-// saca las fichas capturadas
+// saca las fichas capturadas y otorgar puntaje correspondiente
 void eliminarCapturadas() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
