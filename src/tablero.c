@@ -12,6 +12,7 @@
 
 #define CELDAS 4
 enum CELDA {
+    CELDA_BORDE,
     CELDA_NEGRA,
     CELDA_BLANCA,
     CELDA_EMPTY_HOR,
