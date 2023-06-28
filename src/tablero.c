@@ -39,7 +39,7 @@ bool esMaquina() {
     return strlen(partida.oponente) == 0;
 }
 
-void crearTablero(int size, char *oponente) {
+void crearPartida(int size, char *oponente) {
     // para la máquina
     srand(now());
 
@@ -59,6 +59,17 @@ void crearTablero(int size, char *oponente) {
         for (int j = 1; j <= size; j++)
             partida.tablero[i][j] = CELDA_EMPTY_VERT;
     }
+}
+
+void cargarPartida(GoPartida *guardada) {
+    partida.size = guardada->size;
+    snprintf(partida.oponente, NOMBRE_MAX, "%s", guardada->oponente);
+    partida.puntajeJugador = guardada->puntajeJugador;
+    partida.puntajeOponente = guardada->puntajeOponente;
+    partida.turnoNegras = guardada->turnoNegras;
+    for (int i = 0; i < TABLERO_MAX; i++)
+        for (int j = 0; j < TABLERO_MAX; j++)
+            partida.tablero[i][j] = guardada->tablero[i][j];
 }
 
 void printTablero() {
@@ -100,7 +111,7 @@ void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 bool obtenerCelda(int *px, int *py, bool reintentar);
 
-void jugarTablero() {
+void jugarPartida() {
     printTablero();
     const int size = partida.size;
     int turno = 0;
@@ -166,8 +177,8 @@ void jugarTablero() {
     }
 
     partida.terminada = terminar;
+    partida.fecha = now();
     if (terminar) {
-        partida.fecha = now();
         puntajePorCantidad();
         puntajePorArea();
 

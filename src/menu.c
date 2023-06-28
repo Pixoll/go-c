@@ -99,6 +99,37 @@ void obtenerNombreOponente(char *oponente);
 
 const MenuOrden ejecutarMenuJugar() {
     MenuOrden orden = {VOLVER, L""};
+    GoPartida *partidaGuardada = obtenerUltimaPartida();
+
+    if (partidaGuardada && !partidaGuardada->terminada) {
+        wprintf(L"Se detectó una partida guardada:\n\n");
+        wprintf(L"Fecha: %s\n", obtenerFecha(partidaGuardada->fecha));
+        wprintf(L"Tablero: %dx%d\n", partidaGuardada->size, partidaGuardada->size);
+        const wchar_t *oponente = strlen(partidaGuardada->oponente) == 0
+                                      ? L"Máquina"
+                                      : strtowcs(partidaGuardada->oponente);
+        wprintf(L"Oponente: %ls\n\n", oponente);
+
+        const bool cargar = confirmar(
+            L"¿Quieres cargar la partida guardada? Sino será eliminada para siempre", false);
+        if (!cargar) {
+            borrarUltimaPartida();
+
+            wprintf(L"La partida guardada ha sido eliminada.\n");
+            wprintf(L"Presiona ENTER para volver al menú de Jugar.");
+            char c = 0;
+            while (c != '\n') scanf("%c", &c);
+
+            orden.flag = REPETIR;
+            return orden;
+        }
+
+        cargarPartida(partidaGuardada);
+        jugarPartida();
+
+        return orden;
+    }
+
     const int size = obtenerTableroSize();
     if (size == VOLVER) return orden;
 
@@ -135,8 +166,8 @@ const MenuOrden ejecutarMenuJugar() {
 
     limpiarConsola();
     printTitulo();
-    crearTablero(size, oponente);
-    jugarTablero();
+    crearPartida(size, oponente);
+    jugarPartida();
 
     return orden;
 }
@@ -332,7 +363,7 @@ int obtenerTipoOponente() {
     for (int i = 0; i < OPONENTES; i++) {
         wprintf(L"%d. %ls\n", i + 1, oponentes[i]);
     }
-    wprintf(L"%d. Volver al menú de juego\n\n", OPONENTES + 1);
+    wprintf(L"%d. Volver al menú de Jugar\n\n", OPONENTES + 1);
 
     int tipo;
     wprintf(L"Selecciona el tipo oponente: ");

@@ -4,8 +4,9 @@
 
 #define _TABLERO_DEFINIDO
 
-int crearTablero(int size, char *oponente);
+int crearPartida(int size, char *oponente);
+void cargarPartida(GoPartida *guardada);
 void printTablero();
-void jugarTablero();
+void jugarPartida();
 
 #endif

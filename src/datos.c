@@ -8,11 +8,12 @@
 #include "util.h"
 
 #define LEER "rb"
-#define CREAR "wb"
+#define ESCRIBIR "wb"
 #define LEER_ESCRIBIR "rb+"
 
 const char *rutaConfig = "./config.bin";
 const char *rutaPartidas = "./partidas.bin";
+const char *rutaPartidasTemp = "./.temp.partidas.bin";
 
 const int configSize = sizeof(GoConfig);
 const int partidaSize = sizeof(GoPartida);
@@ -21,14 +22,14 @@ GoConfig config;
 void setupDatos() {
     FILE *archivoConfig = fopen(rutaConfig, LEER);
     if (!archivoConfig)
-        archivoConfig = fopen(rutaConfig, CREAR);
+        archivoConfig = fopen(rutaConfig, ESCRIBIR);
     else
         fread(&config, configSize, 1, archivoConfig);
     fclose(archivoConfig);
 
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
     if (!archivoPartidas)
-        archivoPartidas = fopen(rutaPartidas, CREAR);
+        archivoPartidas = fopen(rutaPartidas, ESCRIBIR);
     fclose(archivoPartidas);
 }
 
@@ -67,6 +68,28 @@ GoPartida *obtenerUltimaPartida() {
     fread(ultimaPartida, partidaSize, 1, archivoPartidas);
     fclose(archivoPartidas);
     return ultimaPartida;
+}
+
+void borrarUltimaPartida() {
+    FILE *archivoTemp = fopen(rutaPartidasTemp, ESCRIBIR);
+    FILE *archivoPartidas = fopen(rutaPartidas, LEER);
+
+    fseek(archivoPartidas, 0, SEEK_END);
+    const long max = ftell(archivoPartidas) - partidaSize;
+    fseek(archivoPartidas, 0, SEEK_SET);
+
+    long cursor = 0;
+    while (cursor < max) {
+        GoPartida partida;
+        fread(&partida, partidaSize, 1, archivoPartidas);
+        cursor += partidaSize;
+        fwrite(&partida, partidaSize, 1, archivoTemp);
+    }
+
+    fclose(archivoPartidas);
+    remove(rutaPartidas);
+    fclose(archivoTemp);
+    rename(rutaPartidasTemp, rutaPartidas);
 }
 
 void guardarPartida(const GoPartida partida) {
@@ -112,6 +135,6 @@ void borrarTodasPartidas() {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
     if (!archivoPartidas) return;
     fclose(archivoPartidas);
-    archivoPartidas = fopen(rutaPartidas, CREAR);
+    archivoPartidas = fopen(rutaPartidas, ESCRIBIR);
     fclose(archivoPartidas);
 }
