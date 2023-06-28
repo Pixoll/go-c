@@ -107,14 +107,18 @@ void jugarTablero() {
         int x, y;
         if (esMaquina() && !partida.turnoNegras) {
             jugarMaquina(&x, &y);
-            wprintf(L"%s", strrepeat(' ', TITULO_LEN / 2 - 3));
+            wprintf(wcsrepeat(L' ', TITULO_LEN / 2 - 3));
+            fflush(stdout);
             // suspenso o.o completamente innecesario xD
             sleep(1);
-            wprintf(L"%s", ".");
+            wprintf(L".");
+            fflush(stdout);
             sleep(1);
-            wprintf(L"%s", "\b. .");
+            wprintf(L" .");
+            fflush(stdout);
             sleep(1);
-            wprintf(L"%s", "\b\b\b. . .");
+            wprintf(L" .");
+            fflush(stdout);
             sleep(1);
         } else {
             wprintf(L"Insertar coordenada:\n");
