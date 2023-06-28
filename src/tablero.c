@@ -114,7 +114,6 @@ bool obtenerCelda(int *px, int *py, bool reintentar);
 void jugarPartida(bool cargada) {
     printTablero();
     const int size = partida.size;
-    int turno = 0;
     const wchar_t *oponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
 
     bool terminar = false, guardar = false;
@@ -159,9 +158,10 @@ void jugarPartida(bool cargada) {
         }
 
         if (guardar) break;
-
-        ocupadas[x][y] = true;
-        partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
+        if (!terminar) {
+            ocupadas[x][y] = true;
+            partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
+        }
 
         // Chequeo de capturas
         capturas(CELDA_NEGRA, CELDA_BLANCA);
@@ -172,8 +172,8 @@ void jugarPartida(bool cargada) {
         printTitulo();
         printTablero();
 
-        partida.turnoNegras = !partida.turnoNegras;
-        turno++;
+        if (!terminar)
+            partida.turnoNegras = !partida.turnoNegras;
     }
 
     partida.terminada = terminar;
