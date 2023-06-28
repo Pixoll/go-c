@@ -251,7 +251,7 @@ void jugarMaquina(int *px, int *py) {
     do {
         x = rand() % size;
         y = rand() % size;
-    } while (ocupadas[x][y] == true || !estaEnTablero(x, y));
+    } while (!estaEnTablero(x, y) || ocupadas[x][y] == true);
     *px = x;
     *py = y;
 }
