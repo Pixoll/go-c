@@ -41,9 +41,8 @@ void setupDatos();
 void guardarConfig();
 void borrarConfig();
 bool validarNombre(const char *nombre);
-const GoPartida *ultimaPartida();
+GoPartida *obtenerUltimaPartida();
 void guardarPartida(const  GoPartida partida);
-// void cargarPartida();
 TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas);
 void borrarTodasPartidas();
 

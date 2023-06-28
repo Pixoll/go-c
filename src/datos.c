@@ -58,22 +58,23 @@ bool validarNombre(const char *nombre) {
     return true;
 }
 
-const GoPartida *ultimaPartida() {
+GoPartida *obtenerUltimaPartida() {
+    GoPartida *ultimaPartida = malloc(partidaSize);
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
-    if (fseek(archivoPartidas, -partidaSize, SEEK_END) != 0) return NULL;
+    if (fseek(archivoPartidas, -partidaSize, SEEK_END) != 0)
+        return NULL;
 
-    GoPartida ultimaPartida;
-    fread(&ultimaPartida, partidaSize, 1, archivoPartidas);
+    fread(ultimaPartida, partidaSize, 1, archivoPartidas);
     fclose(archivoPartidas);
-    const GoPartida *puntero = &ultimaPartida;
-    return puntero;
+    return ultimaPartida;
 }
 
 void guardarPartida(const GoPartida partida) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
-    const GoPartida *partidaGuardada = ultimaPartida();
+    GoPartida *partidaGuardada = obtenerUltimaPartida();
     if (partidaGuardada && partidaGuardada->terminada)
         fseek(archivoPartidas, 0, SEEK_END);
+    free(partidaGuardada);
 
     const int guardado = fwrite(&partida, partidaSize, 1, archivoPartidas);
     if (!guardado) {
