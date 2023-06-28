@@ -7,7 +7,9 @@
 #include "util.h"
 
 #define VERSUS_LEN 2 * (NOMBRE_MAX - 1) + 5
+#define PUNTAJE_LEN 2 * (INT_STR_MAX - 1) + 5
 #define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 10
+#define SUSPENSO_LEN TITULO_LEN / 2 - 3
 
 #define CELDAS 9
 enum CELDA {
@@ -92,6 +94,14 @@ void printTablero() {
     swprintf(versus, VERSUS_LEN, L"%s vs. %ls\n", config.nombre, esMaquina() ? L"Máquina" : strtowcs(partida.oponente));
     wprintCentro(versus, TITULO_LEN);
 
+    char puntaje[PUNTAJE_LEN];
+    snprintf(puntaje, PUNTAJE_LEN, "%*d | %-*d\n",
+             INT_STR_MAX - 1,
+             partida.puntajeJugador,
+             INT_STR_MAX - 1,
+             partida.puntajeOponente);
+    printCentro(puntaje, TITULO_LEN);
+
     for (int i = size - 1; i >= 0; i--)
         wprintCentro(tablero[i], TITULO_LEN - 2);
 
@@ -125,7 +135,7 @@ void jugarPartida(bool cargada) {
         int x, y;
         if (esMaquina() && !partida.turnoNegras) {
             jugarMaquina(&x, &y);
-            wprintf(wcsrepeat(L' ', TITULO_LEN / 2 - 3));
+            wprintf(wcsrepeat(L' ', SUSPENSO_LEN));
             // suspenso o.o completamente innecesario xD
             wprintf(L".");
             esperar(1);
