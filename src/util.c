@@ -41,22 +41,6 @@ char *strempty(char *buffer) {
     return buffer;
 }
 
-char *strdup(const char *buffer) {
-    const int size = strlen(buffer);
-    char *dup = malloc(size + 1);
-    for (int i = 0; i <= size; i++)
-        dup[i] = buffer[i];
-    return dup;
-}
-
-wchar_t *wcsrepeat(wchar_t fill, int size) {
-    wchar_t *buffer = malloc(sizeof(wchar_t) * (size + 1));
-    for (int i = 0; i < size; i++)
-        buffer[i] = fill;
-    buffer[size] = '\0';
-    return buffer;
-}
-
 wchar_t *strtowcs(const char *buffer) {
     const int size = strlen(buffer);
     wchar_t *transformado = malloc((size + 1) * sizeof(wchar_t));
@@ -92,19 +76,10 @@ wchar_t *wcslower(const wchar_t *buffer) {
     return resultado;
 }
 
-wchar_t *wcsdup(const wchar_t *buffer) {
-    const int size = wcslen(buffer);
-    wchar_t *dup = malloc((size + 1) * sizeof(wchar_t));
-    for (int i = 0; i <= size; i++)
-        dup[i] = buffer[i];
-    return dup;
-}
-
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
-    const char *espacio = strrepeat(' ', TITULO_PAD);
     wprintf(L"%s\n", fila);
-    wprintf(L"#%sGO%s#\n", espacio, espacio);
+    wprintf(L"#%*sGO%*s#\n", TITULO_PAD, "", TITULO_PAD, "");
     wprintf(L"%s\n\n", fila);
 }
 
@@ -113,7 +88,7 @@ void wprintCentro(const wchar_t *texto, int sizeLinea) {
     if (sizeTexto > sizeLinea)
         wprintf(L"%ls\n", texto);
     else
-        wprintf(L"%s%ls\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
+        wprintf(L"%*s%ls\n", (sizeLinea - sizeTexto) / 2, "", texto);
 }
 
 void wprintConLineLimit(const wchar_t *texto, int limit) {
@@ -146,7 +121,7 @@ void printCentro(const char *texto, int sizeLinea) {
     if (sizeTexto > sizeLinea)
         wprintf(L"%s\n", texto);
     else
-        wprintf(L"%s%s\n", strrepeat(' ', (sizeLinea - sizeTexto) / 2), texto);
+        wprintf(L"%*s%s\n", (sizeLinea - sizeTexto) / 2, "", texto);
 }
 
 char *strget(char *buffer, int max) {

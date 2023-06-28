@@ -83,9 +83,10 @@ void printTablero() {
         swprintf(tablero[i - 1], tableroLen, L"%2d ", i);
         for (int j = 1; j <= size; j++) {
             const wchar_t celda = celdas[partida.tablero[i][j]];
-            wchar_t *copia = wcsdup(tablero[i - 1]);
+            const int lenCopia = wcslen(tablero[i - 1]) + 1;
+            wchar_t copia[lenCopia];
+            wcsncpy(copia, tablero[i - 1], lenCopia);
             swprintf(tablero[i - 1], tableroLen, L"%ls%lc-", copia, celda);
-            free(copia);
         }
         tablero[i - 1][tableroLen - 1] = '\0';
     }
@@ -136,7 +137,7 @@ void jugarPartida(bool cargada) {
         int x, y;
         if (esMaquina() && !partida.turnoNegras) {
             jugarMaquina(&x, &y);
-            wprintf(wcsrepeat(L' ', SUSPENSO_LEN));
+            wprintf(L"%*s", SUSPENSO_LEN, "");
             // suspenso o.o completamente innecesario xD
             wprintf(L".");
             esperar(1);

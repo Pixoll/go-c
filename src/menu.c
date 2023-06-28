@@ -207,11 +207,11 @@ const MenuOrden ejecutarMenuConfig() {
 
     if (menuConfig == CONFIG_NOMBRE) {
         orden.flag = REPETIR;
-        char *antiguo = strdup(config.nombre);
+        char antiguo[NOMBRE_MAX];
+        strncpy(antiguo, config.nombre, NOMBRE_MAX);
         strempty(config.nombre);
         obtenerNombre();
         swprintf(orden.mensaje, MENSAJE_ORDEN_LEN, L"Nombre de usuario cambiado de \"%s\" a \"%s\"", antiguo, config.nombre);
-        free(antiguo);
         return orden;
     }
 
@@ -322,7 +322,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     const int fin = inicio + STATS_POR_PAGE;
     const int idPad = intDigits(max(fin, numero));
 
-    wprintf(L"%s", strrepeat(' ', idPad + 2));
+    wprintf(L"%*s", idPad + 2, "");
     for (int i = 0; i < STATS; i++)
         wprintf(L"%-*ls", STATS_PAD, stats[i]);
     wprintf(L"\n");
