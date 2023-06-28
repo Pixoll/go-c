@@ -165,7 +165,7 @@ void jugarPartida(bool cargada) {
 
                 if (ocupadas[x][y] == true)
                     wprintf(L"¡Esa casilla ya esta ocupada!\n");
-            } while (ocupadas[x][y] == true);
+            } while (x == GUARDAR || ocupadas[x][y] == true);
         }
 
         if (guardar) break;
@@ -214,28 +214,31 @@ bool obtenerCelda(int *px, int *py, bool reintentar) {
         wprintf(L"Casilla inválida. Intenta de nuevo: ");
 
     const int size = partida.size;
-    char col, fila[3];
+    char col;
+    int fila;
     scanf("%c", &col);
-    strget(fila, 3);
+    if (!getInt(&fila)) return false;
 
-    if (col == '0' || col == '1') {
+    if (fila == 0 && (col == '0' || col == '1')) {
         *px = col - '0' - 2;
         return true;
     }
 
-    if ((col < 'a' || col > 'a' + size - 1) && (col < 'A' || col > 'A' + size - 1))
+    if (fila < 1 || fila > size)
         return false;
 
-    const int f = atoi(fila);
-    if (f < 1 || f > size)
+    if (col >= 'a' && col <= 'a' + size - 1)
+        col += 'A' - 'a';
+
+    if (col < 'A' || col > 'A' + size - 1)
         return false;
 
-    *py = col >= 'a' && col <= 'a' + size - 1 ? col - 'a' : col - 'A';
-    *px = f - 1;
+    *py = col - 'A';
+    *px = fila - 1;
     return true;
 }
 
-bool estaEnTablero(int x, int y) { 
+bool estaEnTablero(int x, int y) {
     return x >= 0 && x <= partida.size - 1 && y >= 0 && y <= partida.size - 1;
 }
 
