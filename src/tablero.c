@@ -16,9 +16,9 @@ enum CELDA {
     CELDA_BLANCA,
     CELDA_EMPTY_HOR,
     CELDA_EMPTY_VERT,
-    CELDA_EMPTY,
     CELDA_NEGRA_CAPT,
     CELDA_BLANCA_CAPT,
+    CELDA_EMPTY,
     CELDA_ANALIZADA,
 };
 typedef enum CELDA celda_t;
@@ -226,8 +226,8 @@ void expandir() {
             for (int j = 1; j <= partida.size; j++) {
                 if (partida.tablero[i][j] != CELDA_EMPTY) continue;
                 for (int r = 0; r < 4; r++) {
-                    const int x = i + dx[i];
-                    const int y = j + dy[i];
+                    const int x = i + dx[r];
+                    const int y = j + dy[r];
                     const celda_t celda = partida.tablero[x][y];
                     if (celda != CELDA_EMPTY_HOR && celda != CELDA_EMPTY_VERT) continue;
                     partida.tablero[x][y] = CELDA_EMPTY;
@@ -249,6 +249,8 @@ void expandir() {
     }
 }
 
+bool tieneCeldaAlrededor(int x, int y, celda_t tipo);
+
 // analizamos el area de CELDA_EMPTY verificando si solo la rodea un tipo de ficha o no
 void verificarArea(int total) {
     int negras = 0;
@@ -258,15 +260,12 @@ void verificarArea(int total) {
     for (int i = 1; i <= partida.size; i++) {
         for (int j = 1; j <= partida.size; j++) {
             if (partida.tablero[i][j] != CELDA_EMPTY) continue;
-            if (partida.tablero[i + 1][j] == CELDA_NEGRA || partida.tablero[i - 1][j] == CELDA_NEGRA || partida.tablero[i][j + 1] == CELDA_NEGRA || partida.tablero[i][j - 1] == CELDA_NEGRA) {
+            if (tieneCeldaAlrededor(i, j, CELDA_NEGRA))
                 negras++;
-            }
-            if (partida.tablero[i + 1][j] == CELDA_BLANCA || partida.tablero[i - 1][j] == CELDA_BLANCA || partida.tablero[i][j + 1] == CELDA_BLANCA || partida.tablero[i][j - 1] == CELDA_BLANCA) {
+            if (tieneCeldaAlrededor(i, j, CELDA_BLANCA))
                 blancas++;
-            }
-            if (partida.tablero[i + 1][j] != CELDA_BLANCA && partida.tablero[i - 1][j] != CELDA_BLANCA && partida.tablero[i][j + 1] != CELDA_BLANCA && partida.tablero[i][j - 1] != CELDA_BLANCA && partida.tablero[i + 1][j] != CELDA_NEGRA && partida.tablero[i - 1][j] != CELDA_NEGRA && partida.tablero[i][j + 1] != CELDA_NEGRA && partida.tablero[i + j][j - 1] != CELDA_NEGRA) {
+            if (!tieneCeldaAlrededor(i, j, CELDA_NEGRA) && !tieneCeldaAlrededor(i, j, CELDA_BLANCA))
                 otro++;
-            }
         }
     }
 
@@ -285,6 +284,15 @@ void verificarArea(int total) {
 // si quieren probar la contabilización de puntajes en una condición un tanto extrema seleccione jugar y el tablero de 9x9 (1) y coloque
 // 1 2 3 1 2 2 4 2 2 3 5 2 2 4 6 2 3 5 7 3 4 4 7 4 4 3 7 5 5 3 7 6 6 3 8 6 6 4 9 6 6 5 4 8 6 6 5 7 5 6 5 9 4 7 6 7 3 7 6 9 2 7 7 8 1 7
 
+bool tieneCeldaAlrededor(int x, int y, celda_t tipo) {
+    for (int r = 0; r < 4; r++) {
+        const int nx = x + dx[r];
+        const int ny = y + dy[r];
+        if (partida.tablero[nx][ny] == tipo) return true;
+    }
+    return false;
+}
+
 // cva
 
 // busca y recorre los grupos de fichas, los marca como que tienen o no libertades
@@ -293,8 +301,8 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
     grupo[posX][posY] = 1;
 
     for (int i = 0; i < 4; i++) {
-        int nx = posX + dx[i];
-        int ny = posY + dy[i];
+        const int nx = posX + dx[i];
+        const int ny = posY + dy[i];
 
         // verifica si las fichas vecinas son validas
         if (nx >= 1 && nx <= partida.size && ny >= 1 && ny <= partida.size) {
