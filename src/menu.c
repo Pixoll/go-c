@@ -106,9 +106,11 @@ const MenuOrden ejecutarMenuJugar() {
         wprintf(L"Fecha: %s\n", obtenerFecha(partidaGuardada->fecha));
         wprintf(L"Tablero: %dx%d\n", partidaGuardada->size, partidaGuardada->size);
         const wchar_t *oponente = strlen(partidaGuardada->oponente) == 0
-                                      ? L"Máquina"
+                                      ? L"máquina"
                                       : strtowcs(partidaGuardada->oponente);
-        wprintf(L"Oponente: %ls\n\n", oponente);
+        wprintf(L"Oponente: %ls\n", oponente);
+        wprintf(L"Puntaje %s: %d\n", config.nombre, partidaGuardada->puntajeJugador);
+        wprintf(L"Puntaje %ls: %d\n\n", oponente, partidaGuardada->puntajeOponente);
 
         const bool cargar = confirmar(
             L"¿Quieres cargar la partida guardada? Sino será eliminada para siempre", false);

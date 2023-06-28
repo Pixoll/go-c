@@ -189,7 +189,7 @@ void jugarPartida(bool cargada) {
     guardarPartida(partida, cargada);
 
     if (!terminar)
-        wprintf(L"La partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.\n");
+        wprintf(L"\nLa partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.\n");
 
     wprintf(L"Presiona ENTER para volver al menú principal.");
     char c = 0;
