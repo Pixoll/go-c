@@ -235,6 +235,10 @@ bool obtenerCelda(int *px, int *py, bool reintentar) {
     return true;
 }
 
+bool estaEnTablero(int x, int y) { 
+    return x >= 0 && x <= partida.size - 1 && y >= 0 && y <= partida.size - 1;
+}
+
 // pone una ficha random
 void jugarMaquina(int *px, int *py) {
     const int size = partida.size;
@@ -242,7 +246,7 @@ void jugarMaquina(int *px, int *py) {
     do {
         x = rand() % size;
         y = rand() % size;
-    } while (ocupadas[x][y] == true);
+    } while (ocupadas[x][y] == true || !estaEnTablero(x, y));
     *px = x;
     *py = y;
 }
@@ -291,7 +295,7 @@ void expandir() {
                     const int x = i + dx[r];
                     const int y = j + dy[r];
                     // No salir del tablero
-                    if (x < 0 || x > size - 1 || y < 0 || y > size - 1) continue;
+                    if (!estaEnTablero(x, y)) continue;
 
                     const celda_t celda = partida.tablero[x][y];
                     if (celda != CELDA_EMPTY_HOR && celda != CELDA_EMPTY_VERT) continue;
@@ -348,7 +352,7 @@ bool tieneCeldaAlrededor(int x, int y, celda_t tipo) {
         const int nx = x + dx[r];
         const int ny = y + dy[r];
         // No salir del tablero
-        if (nx < 0 || nx > partida.size - 1 || ny < 0 || ny > partida.size - 1) continue;
+        if (!estaEnTablero(nx, ny)) continue;
         if (partida.tablero[nx][ny] == tipo) return true;
     }
     return false;
@@ -363,7 +367,7 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
         const int nx = posX + dx[i];
         const int ny = posY + dy[i];
         // No salir del tablero
-        if (nx < 0 || nx > partida.size - 1 || ny < 0 || ny > partida.size - 1) continue;
+        if (!estaEnTablero(nx, ny)) continue;
 
         // verifica si hay espacios en blanco en las fichas vecinas
         if (partida.tablero[nx][ny] == CELDA_EMPTY_HOR || partida.tablero[nx][ny] == CELDA_EMPTY_VERT) {
