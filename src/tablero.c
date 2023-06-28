@@ -11,9 +11,8 @@
 #define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 10
 #define SUSPENSO_LEN TITULO_LEN / 2 - 3
 
-#define CELDAS 9
+#define CELDAS 8
 enum CELDA {
-    CELDA_BORDE,
     CELDA_NEGRA,
     CELDA_BLANCA,
     CELDA_EMPTY_HOR,
@@ -30,7 +29,7 @@ enum PARTIDA_FLAG {
     GUARDAR,
 };
 
-const wchar_t celdas[CELDAS] = {'?', 'X', 'O', '+', L'¦', '?', '?', '?', '?'};
+const wchar_t celdas[CELDAS] = {'X', 'O', '+', L'¦', '?', '?', '?', '?'};
 const int dx[4] = {-1, 1, 0, 0};
 const int dy[4] = {0, 0, -1, 1};
 
@@ -122,13 +121,14 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente);
 void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 bool obtenerCelda(int *px, int *py, bool reintentar);
+bool confirmarTerminoPartida(const wchar_t *oponente);
 
 void jugarPartida(bool cargada) {
     printTablero();
     const int size = partida.size;
     const wchar_t *oponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
 
-    bool terminar = false, guardar = false;
+    bool terminar = false, guardar = false, primerTurno = !cargada;
     while (!terminar) {
         wchar_t turnoTexto[TURNO_LEN];
         swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", partida.turnoNegras ? strtowcs(config.nombre) : oponente);
@@ -169,40 +169,42 @@ void jugarPartida(bool cargada) {
         }
 
         if (guardar) break;
+
+        const bool terminoSolicitado = terminar;
         if (!terminar) {
             ocupadas[x][y] = true;
             partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
+
+            // Chequeo de capturas
+            capturas(CELDA_NEGRA, CELDA_BLANCA);
+            capturas(CELDA_BLANCA, CELDA_NEGRA);
+            eliminarCapturadas();
+        } else {
+            if (primerTurno) break;
+            terminar = confirmarTerminoPartida(oponente);
         }
 
-        // Chequeo de capturas
-        capturas(CELDA_NEGRA, CELDA_BLANCA);
-        capturas(CELDA_BLANCA, CELDA_NEGRA);
-        eliminarCapturadas();
+        if (terminar) break;
 
         limpiarConsola();
         printTitulo();
         printTablero();
 
-        if (!terminar)
-            partida.turnoNegras = !partida.turnoNegras;
+        if (terminoSolicitado) continue;
+        partida.turnoNegras = !partida.turnoNegras;
+        primerTurno = false;
     }
+
+    if (primerTurno) return;
 
     partida.terminada = terminar;
     partida.fecha = now();
-    if (terminar) {
-        puntajePorCantidad();
-        puntajePorArea();
-
-        wprintf(L"Puntaje %s: %d\n", config.nombre, partida.puntajeJugador);
-        wprintf(L"Puntaje %ls: %d\n\n", oponente, partida.puntajeOponente);
-    }
-
     guardarPartida(partida, cargada);
 
     if (!terminar)
-        wprintf(L"\nLa partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.\n");
+        wprintf(L"\nLa partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.");
 
-    wprintf(L"Presiona ENTER para volver al menú principal.");
+    wprintf(L"\nPresiona ENTER para volver al menú principal.");
     char c = 0;
     while (c != '\n') scanf("%c", &c);
 }
@@ -252,6 +254,43 @@ void jugarMaquina(int *px, int *py) {
     } while (ocupadas[x][y] == true || !estaEnTablero(x, y));
     *px = x;
     *py = y;
+}
+
+bool confirmarTerminoPartida(const wchar_t *oponente) {
+    const int size = partida.size;
+    const int puntajeJugador = partida.puntajeJugador;
+    const int puntajeOponente = partida.puntajeOponente;
+    char antiguo[size][size];
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            antiguo[i][j] = partida.tablero[i][j];
+
+    // Chequeo de capturas
+    capturas(CELDA_NEGRA, CELDA_BLANCA);
+    capturas(CELDA_BLANCA, CELDA_NEGRA);
+    eliminarCapturadas();
+
+    limpiarConsola();
+    printTitulo();
+    printTablero();
+
+    puntajePorCantidad();
+    puntajePorArea();
+
+    wprintf(L"Puntaje %s: %d\n", config.nombre, partida.puntajeJugador);
+    wprintf(L"Puntaje %ls: %d\n\n", oponente, partida.puntajeOponente);
+
+    wprintf(L"Para el puntaje total se considera el número de fichas en el tablero, las capturas y las áreas.\n");
+    const bool confirmado = confirmar(L"¿Están de acuerdo con los resultados?", false);
+    if (!confirmado) {
+        partida.puntajeJugador = puntajeJugador;
+        partida.puntajeOponente = puntajeOponente;
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                partida.tablero[i][j] = antiguo[i][j];
+    }
+
+    return confirmado;
 }
 
 void puntajePorCantidad() {
