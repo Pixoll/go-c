@@ -33,5 +33,6 @@ void limpiarConsola();
 long long now();
 char *obtenerFecha(long long ms);
 bool confirmar(const wchar_t *action, bool predeterminado);
+void esperar(unsigned int segundos);
 
 #endif

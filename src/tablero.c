@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "datos.h"
 #include "util.h"
@@ -10,19 +9,23 @@
 #define VERSUS_LEN 2 * (NOMBRE_MAX - 1) + 5
 #define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 10
 
-#define CELDAS 7
+#define CELDAS 9
 enum CELDA {
     CELDA_BORDE,
     CELDA_NEGRA,
     CELDA_BLANCA,
     CELDA_EMPTY_HOR,
     CELDA_EMPTY_VERT,
+    CELDA_EMPTY,
     CELDA_NEGRA_CAPT,
     CELDA_BLANCA_CAPT,
+    CELDA_ANALIZADA,
 };
 typedef enum CELDA celda_t;
 
-const wchar_t celdas[CELDAS] = {'?', 'X', 'O', '+', L'¦', '?', '?'};
+const wchar_t celdas[CELDAS] = {'?', 'X', 'O', '+', L'¦', '?', '?', '?', '?'};
+const int dx[4] = {-1, 1, 0, 0};
+const int dy[4] = {0, 0, -1, 1};
 
 GoPartida partida;
 bool ocupadas[TABLERO_MAX][TABLERO_MAX];
@@ -33,10 +36,8 @@ bool esMaquina() {
 
 void puntajePorCantidad();
 void puntajePorArea();
-void expandir();
-void verificarArea(int total);
 void capturas(celda_t celdaJugador, celda_t celdaOponente);
-void regreso_normal();
+void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 
 void crearTablero(int size, char *oponente) {
@@ -48,8 +49,8 @@ void crearTablero(int size, char *oponente) {
     partida.puntajeJugador = 0;
     partida.puntajeOponente = 0;
     partida.turnoNegras = true;
-    for (int i = 1; i < size + 1; i++)
-        for (int j = 1; j < size + 1; j++)
+    for (int i = 1; i <= size; i++)
+        for (int j = 1; j <= size; j++)
             ocupadas[i][j] = false;
 
     for (int i = 1; i <= size; i++) {
@@ -65,9 +66,10 @@ void printTablero() {
     const int size = partida.size;
     const int tableroLen = size * 2 + 3;
     wchar_t tablero[size][tableroLen];
-    for (int i = 1; i < size + 1; i++) {
+
+    for (int i = 1; i <= size; i++) {
         swprintf(tablero[i - 1], tableroLen, L"%2d ", i);
-        for (int j = 1; j < size + 1; j++) {
+        for (int j = 1; j <= size; j++) {
             const wchar_t celda = celdas[partida.tablero[i][j]];
             wchar_t *copia = wcsdup(tablero[i - 1]);
             swprintf(tablero[i - 1], tableroLen, L"%ls%lc-", copia, celda);
@@ -96,38 +98,32 @@ void jugarTablero() {
     printTablero();
     const int size = partida.size;
     int turno = 0;
+    const wchar_t *oponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
 
     while (turno < 100) {  // condición de victoria
         wchar_t turnoTexto[TURNO_LEN];
-        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n",
-                 partida.turnoNegras ? strtowcs(config.nombre)
-                 : esMaquina()       ? L"máquina"
-                                     : strtowcs(partida.oponente));
+        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", partida.turnoNegras ? strtowcs(config.nombre) : oponente);
         wprintCentro(turnoTexto, TITULO_LEN);
 
         int x, y;
         if (esMaquina() && !partida.turnoNegras) {
             jugarMaquina(&x, &y);
             wprintf(wcsrepeat(L' ', TITULO_LEN / 2 - 3));
-            fflush(stdout);
             // suspenso o.o completamente innecesario xD
-            sleep(1);
+            esperar(1);
             wprintf(L".");
-            fflush(stdout);
-            sleep(1);
+            esperar(1);
             wprintf(L" .");
-            fflush(stdout);
-            sleep(1);
+            esperar(1);
             wprintf(L" .");
-            fflush(stdout);
-            sleep(1);
+            esperar(1);
         } else {
             wprintf(L"Insertar coordenada:\n");
             wprintf(L"Fila: ");
             scanf("%d", &x);
             wprintf(L"Columna: ");
             scanf("%d", &y);
-            if (x==0 && y==0){
+            if (x == 0 && y == 0) {
                 break;
             }
 
@@ -137,7 +133,7 @@ void jugarTablero() {
                 scanf("%d", &x);
                 wprintf(L"Columna: ");
                 scanf("%d", &y);
-                if (x==0 && y==0){
+                if (x == 0 && y == 0) {
                     break;
                 }
             }
@@ -149,7 +145,7 @@ void jugarTablero() {
         // Chequeo de capturas
         capturas(CELDA_NEGRA, CELDA_BLANCA);
         capturas(CELDA_BLANCA, CELDA_NEGRA);
-        regreso_normal();
+        eliminarCapturadas();
 
         limpiarConsola();
         printTitulo();
@@ -163,117 +159,125 @@ void jugarTablero() {
     partida.fecha = now();
 
     puntajePorCantidad();
-    printf("puntaje jugador X : %d \n", partida.puntajeJugador);
-    printf("puntaje jugador O : %d \n", partida.puntajeOponente);
-    int end=0;
-    while (end!=1){
-        printf("ingrese dos 1 para volver al inicio: \n");
+    puntajePorArea();
+
+    wprintf(L"Puntaje %s: %d\n", config.nombre, partida.puntajeJugador);
+    wprintf(L"Puntaje %ls: %d\n\n", oponente, partida.puntajeOponente);
+
+    int end = 0;
+    while (end != 1) {
+        wprintf(L"Ingrese dos 1 para volver al inicio: ");
         scanf("%d \n", &end);
     }
+
     guardarPartida(partida);
 }
 
 // pone una ficha random
 void jugarMaquina(int *px, int *py) {
+    const int size = partida.size + 1;
     int x, y;
     do {
-        x = rand() % partida.size + 1;
-        y = rand() % partida.size + 1;
+        x = rand() % size;
+        y = rand() % size;
     } while (ocupadas[x][y] == true);
     *px = x;
     *py = y;
 }
 
 void puntajePorCantidad() {
-    for (int i = 1; i < partida.size + 1; i++) {
-        for (int j = 1; j < partida.size + 1; j++) {
+    for (int i = 1; i <= partida.size; i++) {
+        for (int j = 1; j <= partida.size; j++) {
             const char celda = partida.tablero[i][j];
             if (celda == CELDA_NEGRA) partida.puntajeJugador++;
             if (celda == CELDA_BLANCA) partida.puntajeOponente++;
         }
     }
-    puntajePorArea();
 }
 
-void puntajePorArea() {  // función que pasara por todos los puntos y buscara areas vacías
+void expandir();
+
+// función que pasara por todos los puntos y buscara areas vacías
+void puntajePorArea() {
     int c = 0;
-    for (int i = 1; i < partida.size + 1; i++) {
-        for (int j = 1; j < partida.size + 1; j++) {
-            if ((partida.tablero[i][j] == CELDA_EMPTY_HOR) || (partida.tablero[i][j] == CELDA_EMPTY_VERT)) {
-                partida.tablero[i][j] = '#';  // marca la primera zona vacía caracterizándose con el carácter #
-                expandir();
-            }
+    for (int i = 1; i <= partida.size; i++) {
+        for (int j = 1; j <= partida.size; j++) {
+            const celda_t celda = partida.tablero[i][j];
+            if (celda != CELDA_EMPTY_HOR && celda != CELDA_EMPTY_VERT) continue;
+            partida.tablero[i][j] = CELDA_EMPTY;
+            expandir();
         }
     }
 }
 
-void expandir() {    // en base al area vacía inicial busca todas las areas vacías contiguas y las caracteriza con #
-    int c = 1;       // contador que nos servirá para saber cuando se dejan de encontrar areas vacías contiguas
-    int total = 1;   // cantidad de espacios vacíos encerrados dentro de un area
-    while (c > 0) {  // ciclo que expande el area inicial cambiando las areas vacías contiguas por #,
-                     // se repite siempre que se haya expandido una ultima vez (c>0)
+void verificarArea(int total);
+
+void expandir() {
+    // en base al area vacía inicial busca todas las areas vacías contiguas y las caracteriza con CELDA_EMPTY
+    // contador que nos servirá para saber cuando se dejan de encontrar areas vacías contiguas
+    // cantidad de espacios vacíos encerrados dentro de un area
+    // ciclo que expande el area inicial cambiando las areas vacías contiguas por CELDA_EMPTY,
+    // se repite siempre que se haya expandido una ultima vez (c>0)
+
+    int c = 1, total = 1;
+    while (c > 0) {
         c = 0;
-        for (int i = 1; i < partida.size + 1; i++) {
-            for (int j = 1; j < partida.size + 1; j++) {
-                if (partida.tablero[i][j] == '#') {
-                    if (partida.tablero[i][j - 1] == CELDA_EMPTY_HOR || partida.tablero[i][j - 1] == CELDA_EMPTY_VERT) {
-                        partida.tablero[i][j - 1] = '#';
-                        c++;
-                        total++;
-                    }
-                    if (partida.tablero[i - 1][j] == CELDA_EMPTY_HOR || partida.tablero[i - 1][j] == CELDA_EMPTY_VERT) {
-                        partida.tablero[i - 1][j] = '#';
-                        c++;
-                        total++;
-                    }
-                    if (partida.tablero[i + 1][j] == CELDA_EMPTY_HOR || partida.tablero[i + 1][j] == CELDA_EMPTY_VERT) {
-                        partida.tablero[i + 1][j] = '#';
-                        c++;
-                        total++;
-                    }
-                    if (partida.tablero[i][j + 1] == CELDA_EMPTY_HOR || partida.tablero[i][j + 1] == CELDA_EMPTY_VERT) {
-                        partida.tablero[i][j + 1] = '#';
-                        c++;
-                        total++;
-                    }
+        for (int i = 1; i <= partida.size; i++) {
+            for (int j = 1; j <= partida.size; j++) {
+                if (partida.tablero[i][j] != CELDA_EMPTY) continue;
+                for (int r = 0; r < 4; r++) {
+                    const int x = i + dx[i];
+                    const int y = j + dy[i];
+                    const celda_t celda = partida.tablero[x][y];
+                    if (celda != CELDA_EMPTY_HOR && celda != CELDA_EMPTY_VERT) continue;
+                    partida.tablero[x][y] = CELDA_EMPTY;
+                    c++;
+                    total++;
                 }
             }
         }
     }
+
     verificarArea(total);
-    for (int i = 1; i < partida.size + 1; i++) {  // cambia el area de # por @ para que esta no se vuelva a analizar nuevamente
-        for (int j = 1; j < partida.size + 1; j++) {
-            if (partida.tablero[i][j] == '#') {
-                partida.tablero[i][j] = '@';
-            }
+
+    // cambia el area de CELDA_EMPTY por CELDA_ANALIZADA para que esta no se vuelva a analizar nuevamente
+    for (int i = 1; i <= partida.size; i++) {
+        for (int j = 1; j <= partida.size; j++) {
+            if (partida.tablero[i][j] != CELDA_EMPTY) continue;
+            partida.tablero[i][j] = CELDA_ANALIZADA;
         }
     }
 }
 
-void verificarArea(int total) {  // analizamos el area de # verificando si solo la rodea un tipo de ficha o no
+// analizamos el area de CELDA_EMPTY verificando si solo la rodea un tipo de ficha o no
+void verificarArea(int total) {
     int negras = 0;
     int blancas = 0;
     int otro = 0;
-    for (int i = 1; i < partida.size + 1; i++) {  // ciclo que contabiliza los tipos de zonas que rodean el area de #
-        for (int j = 1; j < partida.size + 1; j++) {
-            if (partida.tablero[i][j] == '#') {
-                if (partida.tablero[i + 1][j] == CELDA_NEGRA || partida.tablero[i - 1][j] == CELDA_NEGRA || partida.tablero[i][j + 1] == CELDA_NEGRA || partida.tablero[i][j - 1] == CELDA_NEGRA) {
-                    negras++;
-                }
-                if (partida.tablero[i + 1][j] == CELDA_BLANCA || partida.tablero[i - 1][j] == CELDA_BLANCA || partida.tablero[i][j + 1] == CELDA_BLANCA || partida.tablero[i][j - 1] == CELDA_BLANCA) {
-                    blancas++;
-                }
-                if (partida.tablero[i + 1][j] != CELDA_BLANCA && partida.tablero[i - 1][j] != CELDA_BLANCA && partida.tablero[i][j + 1] != CELDA_BLANCA && partida.tablero[i][j - 1] != CELDA_BLANCA && partida.tablero[i + 1][j] != CELDA_NEGRA && partida.tablero[i - 1][j] != CELDA_NEGRA && partida.tablero[i][j + 1] != CELDA_NEGRA && partida.tablero[i + j][j - 1] != CELDA_NEGRA) {
-                    otro++;
-                }
+    // ciclo que contabiliza los tipos de zonas que rodean el area de CELDA_EMPTY
+    for (int i = 1; i <= partida.size; i++) {
+        for (int j = 1; j <= partida.size; j++) {
+            if (partida.tablero[i][j] != CELDA_EMPTY) continue;
+            if (partida.tablero[i + 1][j] == CELDA_NEGRA || partida.tablero[i - 1][j] == CELDA_NEGRA || partida.tablero[i][j + 1] == CELDA_NEGRA || partida.tablero[i][j - 1] == CELDA_NEGRA) {
+                negras++;
+            }
+            if (partida.tablero[i + 1][j] == CELDA_BLANCA || partida.tablero[i - 1][j] == CELDA_BLANCA || partida.tablero[i][j + 1] == CELDA_BLANCA || partida.tablero[i][j - 1] == CELDA_BLANCA) {
+                blancas++;
+            }
+            if (partida.tablero[i + 1][j] != CELDA_BLANCA && partida.tablero[i - 1][j] != CELDA_BLANCA && partida.tablero[i][j + 1] != CELDA_BLANCA && partida.tablero[i][j - 1] != CELDA_BLANCA && partida.tablero[i + 1][j] != CELDA_NEGRA && partida.tablero[i - 1][j] != CELDA_NEGRA && partida.tablero[i][j + 1] != CELDA_NEGRA && partida.tablero[i + j][j - 1] != CELDA_NEGRA) {
+                otro++;
             }
         }
     }
-    if (negras != 0 && blancas == 0 && otro < negras * 2) {  // si el area es rodeada solo por fichas negras o otro le asigna puntaje a jugador blanco
-        partida.puntajeJugador = partida.puntajeJugador + total;
-    } else if (blancas != 0 && negras == 0 && otro < blancas * 2) {  // lo mismo con fichas blancas y con puntos al jugador blanco
-        partida.puntajeOponente = partida.puntajeOponente + total;
+
+    // si el area es rodeada solo por fichas negras o otro le asigna puntaje a jugador blanco
+    if (negras != 0 && blancas == 0 && otro < negras * 2) {
+        partida.puntajeJugador += total;
+        // lo mismo con fichas blancas y con puntos al jugador blanco
+    } else if (blancas != 0 && negras == 0 && otro < blancas * 2) {
+        partida.puntajeOponente += total;
     }
+
     // de no cumplirse ninguna condición anterior se asume que el area es neutra y no se le otorgara puntaje a ningún jugador
     // mas a delante se pueden implementar mas condiciones de area neutra haciendo las condiciones del juego mas realista
 }
@@ -285,9 +289,6 @@ void verificarArea(int total) {  // analizamos el area de # verificando si solo 
 
 // busca y recorre los grupos de fichas, los marca como que tienen o no libertades
 void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_MAX][TABLERO_MAX], bool *tieneLibertades, int grupo[TABLERO_MAX][TABLERO_MAX]) {
-    int dx[] = {-1, 1, 0, 0};
-    int dy[] = {0, 0, -1, 1};
-
     visitado[posX][posY] = true;
     grupo[posX][posY] = 1;
 
@@ -325,9 +326,8 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
                     grupo[i][j] = 0;
 
             DFS(posX, posY, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
-
-            // si un grupo de fichas del jugador no tiene libertades
             if (tieneLibertades) continue;
+
             for (int i = 1; i <= partida.size; i++) {
                 for (int j = 1; j <= partida.size; j++) {
                     if (grupo[i][j] != 1) continue;
@@ -341,20 +341,19 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
     }
 }
 
-// saca las fichas capturadas y regresa el estado del tablero a X, O y espacios en blanco
-void regreso_normal() {
+// saca las fichas capturadas
+void eliminarCapturadas() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
             const celda_t celda = partida.tablero[posX][posY];
-            if (celda==CELDA_BLANCA_CAPT){
-                partida.puntajeJugador++;
-            }
-            else if(celda==CELDA_NEGRA_CAPT){
-                partida.puntajeOponente++;
-            }
             if (celda != CELDA_BLANCA_CAPT && celda != CELDA_NEGRA_CAPT) continue;
+
             const celda_t reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
             partida.tablero[posX][posY] = reemplazo;
+            if (celda == CELDA_BLANCA_CAPT)
+                partida.puntajeJugador++;
+            else
+                partida.puntajeOponente++;
         }
     }
 }

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include <wchar.h>
 
 // signo + 10 dígitos + nulo
@@ -257,4 +258,9 @@ bool confirmar(const wchar_t *action, bool predeterminado) {
     }
     getchar();
     return confirmado == 'y' || confirmado == 'Y';
+}
+
+void esperar(unsigned int segundos) {
+    fflush(stdout);
+    sleep(segundos);
 }
