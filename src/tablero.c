@@ -50,15 +50,15 @@ void crearPartida(int size, char *oponente) {
     partida.puntajeJugador = 0;
     partida.puntajeOponente = 0;
     partida.turnoNegras = true;
-    for (int i = 1; i <= size; i++)
-        for (int j = 1; j <= size; j++)
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             ocupadas[i][j] = false;
 
-    for (int i = 1; i <= size; i++) {
-        partida.tablero[1][i] = CELDA_EMPTY_HOR;
-        partida.tablero[size][i] = CELDA_EMPTY_HOR;
-        if (i == 1 || i == size) continue;
-        for (int j = 1; j <= size; j++)
+    for (int i = 0; i < size; i++) {
+        partida.tablero[0][i] = CELDA_EMPTY_HOR;
+        partida.tablero[size - 1][i] = CELDA_EMPTY_HOR;
+        if (i == 0 || i == size - 1) continue;
+        for (int j = 0; j < size; j++)
             partida.tablero[i][j] = CELDA_EMPTY_VERT;
     }
 }
@@ -79,16 +79,16 @@ void printTablero() {
     const int tableroLen = size * 2 + 3;
     wchar_t tablero[size][tableroLen];
 
-    for (int i = 1; i <= size; i++) {
-        swprintf(tablero[i - 1], tableroLen, L"%2d ", i);
-        for (int j = 1; j <= size; j++) {
+    for (int i = 0; i < size; i++) {
+        swprintf(tablero[i], tableroLen, L"%2d ", i + 1);
+        for (int j = 0; j < size; j++) {
             const wchar_t celda = celdas[partida.tablero[i][j]];
-            const int lenCopia = wcslen(tablero[i - 1]) + 1;
+            const int lenCopia = wcslen(tablero[i]) + 1;
             wchar_t copia[lenCopia];
-            wcsncpy(copia, tablero[i - 1], lenCopia);
-            swprintf(tablero[i - 1], tableroLen, L"%ls%lc-", copia, celda);
+            wcsncpy(copia, tablero[i], lenCopia);
+            swprintf(tablero[i], tableroLen, L"%ls%lc-", copia, celda);
         }
-        tablero[i - 1][tableroLen - 1] = '\0';
+        tablero[i][tableroLen - 1] = '\0';
     }
 
     wchar_t versus[VERSUS_LEN];
@@ -230,14 +230,14 @@ bool obtenerCelda(int *px, int *py, bool reintentar) {
     if (f < 1 || f > size)
         return false;
 
-    *py = col >= 'a' && col <= 'a' + size - 1 ? col - 'a' + 1 : col - 'A' + 1;
-    *px = f;
+    *py = col >= 'a' && col <= 'a' + size - 1 ? col - 'a' : col - 'A';
+    *px = f - 1;
     return true;
 }
 
 // pone una ficha random
 void jugarMaquina(int *px, int *py) {
-    const int size = partida.size + 1;
+    const int size = partida.size;
     int x, y;
     do {
         x = rand() % size;
@@ -248,8 +248,8 @@ void jugarMaquina(int *px, int *py) {
 }
 
 void puntajePorCantidad() {
-    for (int i = 1; i <= partida.size; i++) {
-        for (int j = 1; j <= partida.size; j++) {
+    for (int i = 0; i < partida.size; i++) {
+        for (int j = 0; j < partida.size; j++) {
             const char celda = partida.tablero[i][j];
             if (celda == CELDA_NEGRA) partida.puntajeJugador++;
             if (celda == CELDA_BLANCA) partida.puntajeOponente++;
@@ -261,9 +261,8 @@ void expandir();
 
 // función que pasara por todos los puntos y buscara areas vacías
 void puntajePorArea() {
-    int c = 0;
-    for (int i = 1; i <= partida.size; i++) {
-        for (int j = 1; j <= partida.size; j++) {
+    for (int i = 0; i < partida.size; i++) {
+        for (int j = 0; j < partida.size; j++) {
             const celda_t celda = partida.tablero[i][j];
             if (celda != CELDA_EMPTY_HOR && celda != CELDA_EMPTY_VERT) continue;
             partida.tablero[i][j] = CELDA_EMPTY;
@@ -281,15 +280,19 @@ void expandir() {
     // ciclo que expande el area inicial cambiando las areas vacías contiguas por CELDA_EMPTY,
     // se repite siempre que se haya expandido una ultima vez (c>0)
 
+    const int size = partida.size;
     int c = 1, total = 1;
     while (c > 0) {
         c = 0;
-        for (int i = 1; i <= partida.size; i++) {
-            for (int j = 1; j <= partida.size; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (partida.tablero[i][j] != CELDA_EMPTY) continue;
                 for (int r = 0; r < 4; r++) {
                     const int x = i + dx[r];
                     const int y = j + dy[r];
+                    // No salir del tablero
+                    if (x < 0 || x > size - 1 || y < 0 || y > size - 1) continue;
+
                     const celda_t celda = partida.tablero[x][y];
                     if (celda != CELDA_EMPTY_HOR && celda != CELDA_EMPTY_VERT) continue;
                     partida.tablero[x][y] = CELDA_EMPTY;
@@ -302,8 +305,8 @@ void expandir() {
 
     verificarArea(total);
 
-    for (int i = 1; i <= partida.size; i++) {
-        for (int j = 1; j <= partida.size; j++) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
             if (partida.tablero[i][j] != CELDA_EMPTY) continue;
             partida.tablero[i][j] = CELDA_ANALIZADA;
         }
@@ -318,8 +321,8 @@ void verificarArea(int total) {
     int blancas = 0;
     int otro = 0;
 
-    for (int i = 1; i <= partida.size; i++) {
-        for (int j = 1; j <= partida.size; j++) {
+    for (int i = 0; i < partida.size; i++) {
+        for (int j = 0; j < partida.size; j++) {
             if (partida.tablero[i][j] != CELDA_EMPTY) continue;
             if (tieneCeldaAlrededor(i, j, CELDA_NEGRA))
                 negras++;
@@ -344,6 +347,8 @@ bool tieneCeldaAlrededor(int x, int y, celda_t tipo) {
     for (int r = 0; r < 4; r++) {
         const int nx = x + dx[r];
         const int ny = y + dy[r];
+        // No salir del tablero
+        if (nx < 0 || nx > partida.size - 1 || ny < 0 || ny > partida.size - 1) continue;
         if (partida.tablero[nx][ny] == tipo) return true;
     }
     return false;
@@ -357,15 +362,14 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
     for (int i = 0; i < 4; i++) {
         const int nx = posX + dx[i];
         const int ny = posY + dy[i];
+        // No salir del tablero
+        if (nx < 0 || nx > partida.size - 1 || ny < 0 || ny > partida.size - 1) continue;
 
-        // verifica si las fichas vecinas son validas
-        if (nx >= 1 && nx <= partida.size && ny >= 1 && ny <= partida.size) {
-            // verifica si hay espacios en blanco en las fichas vecinas
-            if (partida.tablero[nx][ny] == CELDA_EMPTY_HOR || partida.tablero[nx][ny] == CELDA_EMPTY_VERT) {
-                *tieneLibertades = true;
-            } else if (partida.tablero[nx][ny] == celdaJugador && !visitado[nx][ny]) {
-                DFS(nx, ny, celdaJugador, celdaOponente, visitado, tieneLibertades, grupo);
-            }
+        // verifica si hay espacios en blanco en las fichas vecinas
+        if (partida.tablero[nx][ny] == CELDA_EMPTY_HOR || partida.tablero[nx][ny] == CELDA_EMPTY_VERT) {
+            *tieneLibertades = true;
+        } else if (partida.tablero[nx][ny] == celdaJugador && !visitado[nx][ny]) {
+            DFS(nx, ny, celdaJugador, celdaOponente, visitado, tieneLibertades, grupo);
         }
     }
 }
@@ -373,25 +377,25 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
 // analiza el tablero y los grupos de fichas que se forman, usa dfs para recorrer los grupos y ve si están o no capturados
 void capturas(celda_t celdaJugador, celda_t celdaOponente) {
     bool visitado[TABLERO_MAX][TABLERO_MAX];
-    for (int i = 1; i <= partida.size; i++)
-        for (int j = 1; j <= partida.size; j++)
+    for (int i = 0; i < partida.size; i++)
+        for (int j = 0; j < partida.size; j++)
             visitado[i][j] = false;
 
-    for (int posX = 1; posX <= partida.size; posX++) {
-        for (int posY = 1; posY <= partida.size; posY++) {
+    for (int posX = 0; posX < partida.size; posX++) {
+        for (int posY = 0; posY < partida.size; posY++) {
             if (partida.tablero[posX][posY] != celdaJugador || visitado[posX][posY]) continue;
 
             bool tieneLibertades = false;
             int grupo[TABLERO_MAX][TABLERO_MAX];
-            for (int i = 1; i <= partida.size; i++)
-                for (int j = 1; j <= partida.size; j++)
+            for (int i = 0; i < partida.size; i++)
+                for (int j = 0; j < partida.size; j++)
                     grupo[i][j] = 0;
 
             DFS(posX, posY, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
             if (tieneLibertades) continue;
 
-            for (int i = 1; i <= partida.size; i++) {
-                for (int j = 1; j <= partida.size; j++) {
+            for (int i = 0; i < partida.size; i++) {
+                for (int j = 0; j < partida.size; j++) {
                     if (grupo[i][j] != 1) continue;
                     // marca la ficha como capturada
                     partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? CELDA_BLANCA_CAPT : CELDA_NEGRA_CAPT;
@@ -405,12 +409,12 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
 
 // saca las fichas capturadas y otorgar puntaje correspondiente
 void eliminarCapturadas() {
-    for (int posX = 1; posX <= partida.size; posX++) {
-        for (int posY = 1; posY <= partida.size; posY++) {
+    for (int posX = 0; posX < partida.size; posX++) {
+        for (int posY = 0; posY < partida.size; posY++) {
             const celda_t celda = partida.tablero[posX][posY];
             if (celda != CELDA_BLANCA_CAPT && celda != CELDA_NEGRA_CAPT) continue;
 
-            const celda_t reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
+            const celda_t reemplazo = posX == 0 || posX == partida.size - 1 ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
             partida.tablero[posX][posY] = reemplazo;
             if (celda == CELDA_BLANCA_CAPT)
                 partida.puntajeJugador++;

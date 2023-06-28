@@ -11,7 +11,7 @@
 #define TABLERO_S 9
 #define TABLERO_M 13
 #define TABLERO_L 19
-#define TABLERO_MAX 21
+#define TABLERO_MAX TABLERO_L
 #define TABLEROS 3
 
 typedef struct GoConfig {
