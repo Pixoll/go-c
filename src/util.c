@@ -8,8 +8,6 @@
 #include <unistd.h>
 #include <wchar.h>
 
-// signo + 10 dígitos + nulo
-#define INT_STR_MAX 12
 #define TITULO_PAD TITULO_LEN / 2 - 2
 #define YEAR_0 1900
 
@@ -43,22 +41,6 @@ char *strempty(char *buffer) {
     return buffer;
 }
 
-char *strpadleft(const char *buffer, int max, char fill) {
-    const int size = strlen(buffer);
-    if (size >= max) return (char *)buffer;
-    char *resultado = malloc(max + 1);
-    snprintf(resultado, max + 1, "%s%s", strrepeat(fill, max - size), buffer);
-    return resultado;
-}
-
-char *strpadright(const char *buffer, int max, char fill) {
-    const int size = strlen(buffer);
-    if (size >= max) return (char *)buffer;
-    char *resultado = malloc(max + 1);
-    snprintf(resultado, max + 1, "%s%s", buffer, strrepeat(fill, max - size));
-    return resultado;
-}
-
 char *strdup(const char *buffer) {
     const int size = strlen(buffer);
     char *dup = malloc(size + 1);
@@ -73,14 +55,6 @@ wchar_t *wcsrepeat(wchar_t fill, int size) {
         buffer[i] = fill;
     buffer[size] = '\0';
     return buffer;
-}
-
-wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill) {
-    const int size = wcslen(buffer);
-    if (size >= max) return (wchar_t *)buffer;
-    wchar_t *resultado = malloc((max + 1) * sizeof(wchar_t));
-    swprintf(resultado, max + 1, L"%ls%s", buffer, strrepeat(fill, max - size));
-    return resultado;
 }
 
 wchar_t *strtowcs(const char *buffer) {
@@ -204,13 +178,6 @@ bool getInt(int *n) {
     }
     *n = atoi(buffer);
     return true;
-}
-
-char *intATexto(int n) {
-    char *buffer = malloc(INT_STR_MAX);
-    snprintf(buffer, INT_STR_MAX, "%d", n);
-    buffer = realloc(buffer, strlen(buffer) + 1);
-    return buffer;
 }
 
 int intDigits(int n) {

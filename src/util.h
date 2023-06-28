@@ -6,6 +6,8 @@
 
 #define _UTIL_DEFINIDO
 
+// signo + 10 dígitos + nulo
+#define INT_STR_MAX 7
 #define TITULO_LEN 80
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
@@ -18,16 +20,12 @@ void printTitulo();
 char *strrepeat(char fill, int size);
 char *strempty(char *buffer);
 char *strget(char *buffer, int size);
-char *strpadleft(const char *buffer, int max, char fill);
-char *strpadright(const char *buffer, int n, char fill);
 char *strdup(const char *buffer);
 wchar_t *wcsrepeat(wchar_t fill, int size);
-wchar_t *wcspadright(const wchar_t *buffer, int max, wchar_t fill);
 wchar_t *strtowcs(const char *buffer);
 wchar_t *wcslower(const wchar_t* buffer);
 wchar_t *wcsdup(const wchar_t *buffer);
 bool getInt(int *n);
-char *intATexto(int n);
 int intDigits(int n);
 void limpiarConsola();
 long long now();

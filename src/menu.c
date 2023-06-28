@@ -324,7 +324,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
 
     wprintf(L"%s", strrepeat(' ', idPad + 2));
     for (int i = 0; i < STATS; i++)
-        wprintf(wcspadright(stats[i], STATS_PAD, ' '));
+        wprintf(L"%-*ls", STATS_PAD, stats[i]);
     wprintf(L"\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
@@ -334,14 +334,21 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
         wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
 
         wprintf(
-            L"%s. %s%s%ls%s%s%s\n",
-            strpadleft(intATexto(i + 1), idPad, ' '),
-            strpadright(obtenerFecha(partida.fecha), STATS_PAD, ' '),
-            strpadright(tablero, STATS_PAD, ' '),
-            wcspadright(oponente, STATS_PAD, ' '),
-            strpadright(intATexto(partida.puntajeJugador), STATS_PAD, ' '),
-            strpadright(intATexto(partida.puntajeOponente), STATS_PAD, ' '),
-            strpadright(intATexto(pNeto(partida)), STATS_PAD, ' '));
+            L"%*d. %-*s%-*s%-*ls%-*d%-*d%-*d\n",
+            idPad,
+            i + 1,
+            STATS_PAD,
+            obtenerFecha(partida.fecha),
+            STATS_PAD,
+            tablero,
+            STATS_PAD,
+            oponente,
+            STATS_PAD,
+            partida.puntajeJugador,
+            STATS_PAD,
+            partida.puntajeOponente,
+            STATS_PAD,
+            pNeto(partida));
     }
 }
 
