@@ -188,6 +188,7 @@ char *strget(char *buffer, int max) {
     }
 
     buffer[size] = '\0';
+    if (strlen(buffer) == max - 1) getchar();
     return buffer;
 }
 
