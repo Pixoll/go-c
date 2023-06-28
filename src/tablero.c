@@ -127,7 +127,6 @@ void jugarPartida(bool cargada) {
             jugarMaquina(&x, &y);
             wprintf(wcsrepeat(L' ', TITULO_LEN / 2 - 3));
             // suspenso o.o completamente innecesario xD
-            esperar(1);
             wprintf(L".");
             esperar(1);
             wprintf(L" .");
