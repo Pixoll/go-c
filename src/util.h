@@ -6,7 +6,7 @@
 
 #define _UTIL_DEFINIDO
 
-// signo + 10 dígitos + nulo
+// signo + 5 dígitos + nulo
 #define INT_STR_MAX 7
 #define TITULO_LEN 80
 
