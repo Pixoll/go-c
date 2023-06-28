@@ -94,13 +94,14 @@ void printTablero() {
     swprintf(versus, VERSUS_LEN, L"%s vs. %ls\n", config.nombre, esMaquina() ? L"Máquina" : strtowcs(partida.oponente));
     wprintCentro(versus, TITULO_LEN);
 
-    char puntaje[PUNTAJE_LEN];
-    snprintf(puntaje, PUNTAJE_LEN, "%*d | %-*d\n",
+    char capturas[PUNTAJE_LEN];
+    snprintf(capturas, PUNTAJE_LEN, "%*d | %-*d\n",
              INT_STR_MAX - 1,
              partida.puntajeJugador,
              INT_STR_MAX - 1,
              partida.puntajeOponente);
-    printCentro(puntaje, TITULO_LEN);
+    printCentro("Capturas", TITULO_LEN);
+    printCentro(capturas, TITULO_LEN);
 
     for (int i = size - 1; i >= 0; i--)
         wprintCentro(tablero[i], TITULO_LEN - 2);
