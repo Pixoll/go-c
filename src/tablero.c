@@ -127,6 +127,9 @@ void jugarTablero() {
             scanf("%d", &x);
             wprintf(L"Columna: ");
             scanf("%d", &y);
+            if (x==0 && y==0){
+                break;
+            }
 
             while (ocupadas[x][y] == true) {
                 wprintf(L"Esa casilla ya esta ocupada!\n");
@@ -134,6 +137,9 @@ void jugarTablero() {
                 scanf("%d", &x);
                 wprintf(L"Columna: ");
                 scanf("%d", &y);
+                if (x==0 && y==0){
+                    break;
+                }
             }
         }
 
@@ -157,6 +163,13 @@ void jugarTablero() {
     partida.fecha = now();
 
     puntajePorCantidad();
+    printf("puntaje jugador X : %d \n", partida.puntajeJugador);
+    printf("puntaje jugador O : %d \n", partida.puntajeOponente);
+    int end=0;
+    while (end!=1){
+        printf("ingrese dos 1 para volver al inicio: \n");
+        scanf("%d \n", &end);
+    }
     guardarPartida(partida);
 }
 
@@ -333,6 +346,12 @@ void regreso_normal() {
     for (int posX = 1; posX <= partida.size; posX++) {
         for (int posY = 1; posY <= partida.size; posY++) {
             const celda_t celda = partida.tablero[posX][posY];
+            if (celda==CELDA_BLANCA_CAPT){
+                partida.puntajeJugador++;
+            }
+            else if(celda==CELDA_NEGRA_CAPT){
+                partida.puntajeOponente++;
+            }
             if (celda != CELDA_BLANCA_CAPT && celda != CELDA_NEGRA_CAPT) continue;
             const celda_t reemplazo = posX == 1 || posX == partida.size ? CELDA_EMPTY_HOR : CELDA_EMPTY_VERT;
             partida.tablero[posX][posY] = reemplazo;
