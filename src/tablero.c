@@ -124,7 +124,7 @@ void printTablero() {
 
 void puntajePorCantidad();
 void puntajePorArea();
-void capturas(celda_t celdaJugador, celda_t celdaOponente);
+bool capturas(celda_t celdaJugador, celda_t celdaOponente);
 void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 bool obtenerCelda(int *px, int *py, bool reintentar);
@@ -208,8 +208,8 @@ void jugarPartida(bool cargada) {
             ocupadas[x][y] = true;
             partida.tablero[x][y] = jugador;
 
-            capturas(oponente, jugador);
-            eliminarCapturadas();
+            const bool realizaronCapturas = capturas(oponente, jugador);
+            if (realizaronCapturas) eliminarCapturadas();
         } else {
             if (primerTurno) break;
             terminar = confirmarTerminoPartida(nombreOponente);
@@ -308,9 +308,9 @@ bool confirmarTerminoPartida(const wchar_t *oponente) {
             antiguo[i][j] = partida.tablero[i][j];
 
     // Chequeo de capturas
-    capturas(CELDA_NEGRA, CELDA_BLANCA);
-    capturas(CELDA_BLANCA, CELDA_NEGRA);
-    eliminarCapturadas();
+    const bool realizaronCapturas1 = capturas(CELDA_NEGRA, CELDA_BLANCA);
+    const bool realizaronCapturas2 = capturas(CELDA_BLANCA, CELDA_NEGRA);
+    if (realizaronCapturas1 || realizaronCapturas2) eliminarCapturadas();
 
     limpiarConsola();
     printTitulo();
@@ -463,7 +463,8 @@ void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool v
 }
 
 // analiza el tablero y los grupos de fichas que se forman, usa dfs para recorrer los grupos y ve si están o no capturados
-void capturas(celda_t celdaJugador, celda_t celdaOponente) {
+bool capturas(celda_t celdaJugador, celda_t celdaOponente) {
+    bool realizaronCapturas = false;
     bool visitado[TABLERO_MAX][TABLERO_MAX];
     for (int i = 0; i < partida.size; i++)
         for (int j = 0; j < partida.size; j++)
@@ -485,6 +486,7 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
             for (int i = 0; i < partida.size; i++) {
                 for (int j = 0; j < partida.size; j++) {
                     if (!grupo[i][j]) continue;
+                    realizaronCapturas = true;
                     // marca la ficha como capturada
                     partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? CELDA_BLANCA_CAPT : CELDA_NEGRA_CAPT;
                     // actualiza el estado de 'ocupado'
@@ -493,6 +495,8 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
             }
         }
     }
+
+    return realizaronCapturas;
 }
 
 // saca las fichas capturadas y otorgar puntaje correspondiente
@@ -524,17 +528,18 @@ bool ko(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
             previo[i][j] = partida.tablero[i][j];
 
     partida.tablero[x][y] = celdaJugador;
-    capturas(celdaOponente, celdaJugador);
-    eliminarCapturadas();
-
-    bool esKo = true;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (partida.tablero[i][j] == partida.anterior[i][j]) continue;
-            esKo = false;
-            break;
+    const bool realizaronCapturas = capturas(celdaOponente, celdaJugador);
+    bool esKo = realizaronCapturas;
+    if (realizaronCapturas) {
+        eliminarCapturadas();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (partida.tablero[i][j] == partida.anterior[i][j]) continue;
+                esKo = false;
+                break;
+            }
+            if (!esKo) break;
         }
-        if (!esKo) break;
     }
 
     for (int i = 0; i < size; i++)
@@ -577,36 +582,52 @@ void encontrarBordeGrupo(bool grupo[TABLERO_MAX][TABLERO_MAX], int *px, int *py)
 
 bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
     const int size = partida.size;
-    bool tieneLibertades = false;
-    bool visitado[TABLERO_MAX][TABLERO_MAX];
-    bool grupo[TABLERO_MAX][TABLERO_MAX];
+    char previo[size][size];
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            visitado[i][j] = false;
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            grupo[i][j] = false;
-
-    const celda_t previo = partida.tablero[x][y];
-    partida.tablero[x][y] = celdaJugador;
-    DFS(x, y, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
-    partida.tablero[x][y] = previo;
-
-    if (tieneLibertades) return false;
-
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            visitado[i][j] = false;
-
-    int bordeX = x, bordeY = y;
-    encontrarBordeGrupo(grupo, &bordeX, &bordeY);
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            grupo[i][j] = false;
+            previo[i][j] = partida.tablero[i][j];
 
     partida.tablero[x][y] = celdaJugador;
-    DFS(bordeX, bordeY, celdaOponente, celdaJugador, visitado, &tieneLibertades, grupo);
-    partida.tablero[x][y] = previo;
+    const bool realizaronCapturas = capturas(celdaJugador, celdaOponente);
+    const bool esSuicidio = realizaronCapturas && previo[x][y] != partida.tablero[x][y];
 
-    return tieneLibertades;
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            partida.tablero[i][j] = previo[i][j];
+
+    return esSuicidio;
+
+    // const int size = partida.size;
+    // bool tieneLibertades = false;
+    // bool visitado[TABLERO_MAX][TABLERO_MAX];
+    // bool grupo[TABLERO_MAX][TABLERO_MAX];
+    // for (int i = 0; i < size; i++)
+    //     for (int j = 0; j < size; j++)
+    //         visitado[i][j] = false;
+    // for (int i = 0; i < size; i++)
+    //     for (int j = 0; j < size; j++)
+    //         grupo[i][j] = false;
+
+    // const celda_t previo = partida.tablero[x][y];
+    // partida.tablero[x][y] = celdaJugador;
+    // DFS(x, y, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
+    // partida.tablero[x][y] = previo;
+
+    // if (tieneLibertades) return false;
+
+    // for (int i = 0; i < size; i++)
+    //     for (int j = 0; j < size; j++)
+    //         visitado[i][j] = false;
+
+    // int bordeX = x, bordeY = y;
+    // encontrarBordeGrupo(grupo, &bordeX, &bordeY);
+    // for (int i = 0; i < size; i++)
+    //     for (int j = 0; j < size; j++)
+    //         grupo[i][j] = false;
+
+    // partida.tablero[x][y] = celdaJugador;
+    // DFS(bordeX, bordeY, celdaOponente, celdaJugador, visitado, &tieneLibertades, grupo);
+    // partida.tablero[x][y] = previo;
+
+    // return tieneLibertades;
 }
