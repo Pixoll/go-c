@@ -20,12 +20,6 @@ typedef struct Config {
 
 extern Config config;
 
-typedef struct Captura {
-    int x;
-    int y;
-    int turno;
-} Captura;
-
 typedef struct Partida {
     bool terminada;
     int turno;
@@ -36,7 +30,7 @@ typedef struct Partida {
     long long fecha;
     int size;
     char tablero[TABLERO_MAX][TABLERO_MAX];
-    Captura ultimasCapturas[2];
+    char anterior[TABLERO_MAX][TABLERO_MAX];
 } Partida;
 
 typedef struct TodasPartidas {

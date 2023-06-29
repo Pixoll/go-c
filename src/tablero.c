@@ -8,7 +8,7 @@
 
 #define VERSUS_LEN 2 * (NOMBRE_MAX - 1) + 5
 #define PUNTAJE_LEN 2 * (INT_STR_MAX - 1) + 5
-#define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 10
+#define TURNO_LEN 2 * (NOMBRE_MAX - 1) + 13
 #define SUSPENSO_LEN TITULO_LEN / 2 - 3
 
 #define CELDAS 8
@@ -52,18 +52,16 @@ void crearPartida(int size, char *oponente) {
     partida.fecha = 0;
     partida.terminada = false;
 
-    for (int i = 0; i < 2; i++) {
-        partida.ultimasCapturas[i].turno = -1;
-        partida.ultimasCapturas[i].x = -1;
-        partida.ultimasCapturas[i].y = -1;
-    }
-
     for (int i = 0; i < size; i++) {
         partida.tablero[0][i] = CELDA_EMPTY_HOR;
+        partida.anterior[0][i] = CELDA_EMPTY_HOR;
         partida.tablero[size - 1][i] = CELDA_EMPTY_HOR;
+        partida.anterior[size - 1][i] = CELDA_EMPTY_HOR;
         if (i == 0 || i == size - 1) continue;
-        for (int j = 0; j < size; j++)
+        for (int j = 0; j < size; j++) {
             partida.tablero[i][j] = CELDA_EMPTY_VERT;
+            partida.anterior[i][j] = CELDA_EMPTY_VERT;
+        }
     }
 
     for (int i = 0; i < size; i++)
@@ -131,21 +129,29 @@ void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 bool obtenerCelda(int *px, int *py, bool reintentar);
 bool confirmarTerminoPartida(const wchar_t *oponente);
-bool ko(int x, int y);
+bool ko(int x, int y, celda_t celdaJugador, celda_t celdaOponente);
 bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente);
 
 void jugarPartida(bool cargada) {
     printTablero();
+    const int size = partida.size;
     const wchar_t *nombreOponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
+
+    char anterior[size][size];
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            anterior[i][j] = partida.anterior[i][j];
 
     bool terminar = false, guardar = false, primerTurno = !cargada;
     while (!terminar) {
-        wchar_t turnoTexto[TURNO_LEN];
-        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", par(partida.turno) ? strtowcs(config.nombre) : nombreOponente);
-        wprintCentro(turnoTexto, TITULO_LEN);
-
         const celda_t jugador = par(partida.turno) ? CELDA_NEGRA : CELDA_BLANCA;
         const celda_t oponente = jugador == CELDA_NEGRA ? CELDA_BLANCA : CELDA_NEGRA;
+
+        wchar_t turnoTexto[TURNO_LEN];
+        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls (%lc)\n",
+                 par(partida.turno) ? strtowcs(config.nombre) : nombreOponente,
+                 celdas[jugador]);
+        wprintCentro(turnoTexto, TITULO_LEN);
 
         int x, y;
         if (esMaquina() && !par(partida.turno)) {
@@ -181,16 +187,15 @@ void jugarPartida(bool cargada) {
                     continue;
                 }
 
+                if (ko(x, y, jugador, oponente)) {
+                    wprintf(L"! Colocar una ficha acá causaría un KO. Espera al menos un turno para poner una ficha aquí.\n");
+                    continue;
+                }
+
                 if (suicidio(x, y, jugador, oponente)) {
                     wprintf(L"! Colocar una ficha acá sería SUICIDIO.\n");
                     continue;
                 }
-
-                // TODO: regla de suicidio debe estar bien implementada antes de usar el ko
-                // if (ko(x, y)) {
-                //     wprintf(L"! Colocar una ficha acá causaría un KO. Espera al menos un turno para poner una ficha aquí.\n");
-                //     continue;
-                // }
 
                 break;
             }
@@ -219,6 +224,17 @@ void jugarPartida(bool cargada) {
         if (terminoSolicitado) continue;
         partida.turno++;
         primerTurno = false;
+
+        if (partida.turno - 2 >= 0) {
+            for (int i = 0; i < partida.size; i++)
+                for (int j = 0; j < partida.size; j++)
+                    partida.anterior[i][j] = anterior[i][j];
+        }
+        if (partida.turno - 1 >= 0) {
+            for (int i = 0; i < partida.size; i++)
+                for (int j = 0; j < partida.size; j++)
+                    anterior[i][j] = partida.tablero[i][j];
+        }
     }
 
     if (primerTurno) return;
@@ -479,16 +495,6 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
     }
 }
 
-void guardarCaptura(int x, int y) {
-    swap(&partida.ultimasCapturas[0].turno, &partida.ultimasCapturas[1].turno);
-    swap(&partida.ultimasCapturas[0].x, &partida.ultimasCapturas[1].x);
-    swap(&partida.ultimasCapturas[0].y, &partida.ultimasCapturas[1].y);
-
-    partida.ultimasCapturas[1].turno = partida.turno;
-    partida.ultimasCapturas[1].x = x;
-    partida.ultimasCapturas[1].y = y;
-}
-
 // saca las fichas capturadas y otorgar puntaje correspondiente
 void eliminarCapturadas() {
     for (int posX = 0; posX < partida.size; posX++) {
@@ -502,36 +508,39 @@ void eliminarCapturadas() {
                 partida.puntajeJugador++;
             else
                 partida.puntajeOponente++;
-
-            guardarCaptura(posX, posY);
         }
     }
 }
 
-bool ko(int x, int y) {
+bool ko(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
     const int turno = partida.turno;
-    const Captura captura1 = partida.ultimasCapturas[0];
-    const Captura captura2 = partida.ultimasCapturas[1];
-    if (captura1.turno == -1 || captura2.turno == -1 || captura1.turno != turno - 2 || captura2.turno != turno - 1)
-        return false;
+    if (turno <= 2) return false;
 
     const int size = partida.size;
-    char antiguo[size][size];
+    char previo[size][size];
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            antiguo[i][j] = partida.tablero[i][j];
+            previo[i][j] = partida.tablero[i][j];
 
-    capturas(CELDA_NEGRA, CELDA_BLANCA);
-    capturas(CELDA_BLANCA, CELDA_NEGRA);
+    partida.tablero[x][y] = celdaJugador;
+    capturas(celdaOponente, celdaJugador);
+    eliminarCapturadas();
 
-    const celda_t capturada = partida.tablero[captura1.x][captura1.y];
-    const bool esKO = capturada == CELDA_NEGRA_CAPT || capturada == CELDA_BLANCA_CAPT;
+    bool esKo = true;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (partida.tablero[i][j] == partida.anterior[i][j]) continue;
+            esKo = false;
+            break;
+        }
+        if (!esKo) break;
+    }
 
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            partida.tablero[i][j] = antiguo[i][j];
+            partida.tablero[i][j] = previo[i][j];
 
-    return esKO;
+    return esKo;
 }
 
 void encontrarBordeGrupo(bool grupo[TABLERO_MAX][TABLERO_MAX], int *px, int *py) {
