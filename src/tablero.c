@@ -122,17 +122,22 @@ void eliminarCapturadas();
 void jugarMaquina(int *px, int *py);
 bool obtenerCelda(int *px, int *py, bool reintentar);
 bool confirmarTerminoPartida(const wchar_t *oponente);
+bool ko(int x, int y);
+bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente);
 
 void jugarPartida(bool cargada) {
     printTablero();
     const int size = partida.size;
-    const wchar_t *oponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
+    const wchar_t *nombreOponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
 
     bool terminar = false, guardar = false, primerTurno = !cargada;
     while (!terminar) {
         wchar_t turnoTexto[TURNO_LEN];
-        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", partida.turnoNegras ? strtowcs(config.nombre) : oponente);
+        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", partida.turnoNegras ? strtowcs(config.nombre) : nombreOponente);
         wprintCentro(turnoTexto, TITULO_LEN);
+
+        const celda_t jugador = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
+        const celda_t oponente = partida.turnoNegras ? CELDA_BLANCA : CELDA_NEGRA;
 
         int x, y;
         if (esMaquina() && !partida.turnoNegras) {
@@ -146,7 +151,7 @@ void jugarPartida(bool cargada) {
             wprintf(L" .");
             esperar(1);
         } else {
-            do {
+            while (true) {
                 bool reintentar = false;
                 while (!obtenerCelda(&x, &y, reintentar))
                     reintentar = true;
@@ -163,9 +168,23 @@ void jugarPartida(bool cargada) {
                     break;
                 }
 
-                if (ocupadas[x][y] == true)
-                    wprintf(L"¡Esa casilla ya esta ocupada!\n");
-            } while (x == GUARDAR || ocupadas[x][y] == true);
+                if (ocupadas[x][y] == true) {
+                    wprintf(L"! Esa casilla ya esta ocupada.\n");
+                    continue;
+                }
+
+                if (suicidio(x, y, CELDA_NEGRA, CELDA_BLANCA) || suicidio(x, y, CELDA_BLANCA, CELDA_NEGRA)) {
+                    wprintf(L"! Colocar una ficha acá sería SUICIDIO.\n");
+                    continue;
+                }
+
+                if (ko(x, y)) {
+                    wprintf(L"! Colocar una ficha acá causaría un KO.\n");
+                    continue;
+                }
+
+                break;
+            }
         }
 
         if (guardar) break;
@@ -181,7 +200,7 @@ void jugarPartida(bool cargada) {
             eliminarCapturadas();
         } else {
             if (primerTurno) break;
-            terminar = confirmarTerminoPartida(oponente);
+            terminar = confirmarTerminoPartida(nombreOponente);
         }
 
         if (terminar) break;
@@ -468,4 +487,26 @@ void eliminarCapturadas() {
                 partida.puntajeOponente++;
         }
     }
+}
+
+bool ko(int x, int y) {
+    return false;
+}
+
+bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
+    bool tieneLibertades = false;
+    bool visitado[TABLERO_MAX][TABLERO_MAX];
+    int grupo[TABLERO_MAX][TABLERO_MAX];
+    for (int i = 0; i < partida.size; i++)
+        for (int j = 0; j < partida.size; j++)
+            visitado[i][j] = false;
+    for (int i = 0; i < partida.size; i++)
+        for (int j = 0; j < partida.size; j++)
+            grupo[i][j] = 0;
+
+    const celda_t previo = partida.tablero[x][y];
+    partida.tablero[x][y] = celdaJugador;
+    DFS(x, y, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
+    partida.tablero[x][y] = previo;
+    return !tieneLibertades;
 }
