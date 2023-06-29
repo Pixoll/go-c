@@ -14,37 +14,44 @@
 #define TABLERO_MAX TABLERO_L
 #define TABLEROS 3
 
-typedef struct GoConfig {
+typedef struct Config {
     char nombre[NOMBRE_MAX];
-} GoConfig;
+} Config;
 
-extern GoConfig config;
+extern Config config;
 
-typedef struct GoPartida {
+typedef struct Captura {
+    int x;
+    int y;
+    int turno;
+} Captura;
+
+typedef struct Partida {
     bool terminada;
-    bool turnoNegras;
+    int turno;
     int puntajeJugador;
     /* Vacío si es la máquina */
     char oponente[NOMBRE_MAX];
     int puntajeOponente;
-    unsigned long fecha;
+    long long fecha;
     int size;
     char tablero[TABLERO_MAX][TABLERO_MAX];
-} GoPartida;
+    Captura ultimasCapturas[2];
+} Partida;
 
-typedef struct TodasGoPartidas {
+typedef struct TodasPartidas {
     int numero;
-    GoPartida *partidas;
-} TodasGoPartidas;
+    Partida *partidas;
+} TodasPartidas;
 
 void setupDatos();
 void guardarConfig();
 void borrarConfig();
 bool validarNombre(const char *nombre);
-GoPartida *obtenerUltimaPartida();
+Partida *obtenerUltimaPartida();
 void borrarUltimaPartida();
-void guardarPartida(const  GoPartida partida, bool reemplazarUltima);
-TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas);
+void guardarPartida(const Partida partida, bool reemplazarUltima);
+TodasPartidas obtenerTodasPartidas(bool soloTerminadas);
 void borrarTodasPartidas();
 
 #endif

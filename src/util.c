@@ -207,3 +207,9 @@ void esperar(unsigned int segundos) {
     fflush(stdout);
     sleep(segundos);
 }
+
+void swap(int *px, int *py) {
+    const int temp = *px;
+    *px = *py;
+    *py = temp;
+}

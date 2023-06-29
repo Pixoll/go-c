@@ -33,7 +33,7 @@ const wchar_t celdas[CELDAS] = {'X', 'O', '+', L'¦', '?', '?', '?', '?'};
 const int dx[4] = {-1, 1, 0, 0};
 const int dy[4] = {0, 0, -1, 1};
 
-GoPartida partida;
+Partida partida;
 bool ocupadas[TABLERO_MAX][TABLERO_MAX];
 
 bool esMaquina() {
@@ -48,10 +48,15 @@ void crearPartida(int size, char *oponente) {
     snprintf(partida.oponente, NOMBRE_MAX, "%s", oponente);
     partida.puntajeJugador = 0;
     partida.puntajeOponente = 0;
-    partida.turnoNegras = true;
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            ocupadas[i][j] = false;
+    partida.turno = 0;
+    partida.fecha = 0;
+    partida.terminada = false;
+
+    for (int i = 0; i < 2; i++) {
+        partida.ultimasCapturas[i].turno = -1;
+        partida.ultimasCapturas[i].x = -1;
+        partida.ultimasCapturas[i].y = -1;
+    }
 
     for (int i = 0; i < size; i++) {
         partida.tablero[0][i] = CELDA_EMPTY_HOR;
@@ -60,14 +65,18 @@ void crearPartida(int size, char *oponente) {
         for (int j = 0; j < size; j++)
             partida.tablero[i][j] = CELDA_EMPTY_VERT;
     }
+
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            ocupadas[i][j] = false;
 }
 
-void cargarPartida(GoPartida *guardada) {
+void cargarPartida(Partida *guardada) {
     partida.size = guardada->size;
     snprintf(partida.oponente, NOMBRE_MAX, "%s", guardada->oponente);
     partida.puntajeJugador = guardada->puntajeJugador;
     partida.puntajeOponente = guardada->puntajeOponente;
-    partida.turnoNegras = guardada->turnoNegras;
+    partida.turno = guardada->turno;
     for (int i = 0; i < TABLERO_MAX; i++)
         for (int j = 0; j < TABLERO_MAX; j++)
             partida.tablero[i][j] = guardada->tablero[i][j];
@@ -133,14 +142,11 @@ void jugarPartida(bool cargada) {
     bool terminar = false, guardar = false, primerTurno = !cargada;
     while (!terminar) {
         wchar_t turnoTexto[TURNO_LEN];
-        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", partida.turnoNegras ? strtowcs(config.nombre) : nombreOponente);
+        swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", par(partida.turno) ? strtowcs(config.nombre) : nombreOponente);
         wprintCentro(turnoTexto, TITULO_LEN);
 
-        const celda_t jugador = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
-        const celda_t oponente = partida.turnoNegras ? CELDA_BLANCA : CELDA_NEGRA;
-
         int x, y;
-        if (esMaquina() && !partida.turnoNegras) {
+        if (esMaquina() && !par(partida.turno)) {
             jugarMaquina(&x, &y);
             wprintf(L"%*s", SUSPENSO_LEN, "");
             // suspenso o.o completamente innecesario xD
@@ -179,7 +185,7 @@ void jugarPartida(bool cargada) {
                 }
 
                 if (ko(x, y)) {
-                    wprintf(L"! Colocar una ficha acá causaría un KO.\n");
+                    wprintf(L"! Colocar una ficha acá causaría un KO. Espera al menos un turno para poner una ficha aquí.\n");
                     continue;
                 }
 
@@ -192,7 +198,7 @@ void jugarPartida(bool cargada) {
         const bool terminoSolicitado = terminar;
         if (!terminar) {
             ocupadas[x][y] = true;
-            partida.tablero[x][y] = partida.turnoNegras ? CELDA_NEGRA : CELDA_BLANCA;
+            partida.tablero[x][y] = par(partida.turno) ? CELDA_NEGRA : CELDA_BLANCA;
 
             // Chequeo de capturas
             capturas(CELDA_NEGRA, CELDA_BLANCA);
@@ -210,7 +216,7 @@ void jugarPartida(bool cargada) {
         printTablero();
 
         if (terminoSolicitado) continue;
-        partida.turnoNegras = !partida.turnoNegras;
+        partida.turno++;
         primerTurno = false;
     }
 
@@ -472,6 +478,16 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
     }
 }
 
+void guardarCaptura(int x, int y) {
+    swap(&partida.ultimasCapturas[0].turno, &partida.ultimasCapturas[1].turno);
+    swap(&partida.ultimasCapturas[0].x, &partida.ultimasCapturas[1].x);
+    swap(&partida.ultimasCapturas[0].y, &partida.ultimasCapturas[1].y);
+
+    partida.ultimasCapturas[1].turno = partida.turno;
+    partida.ultimasCapturas[1].x = x;
+    partida.ultimasCapturas[1].y = y;
+}
+
 // saca las fichas capturadas y otorgar puntaje correspondiente
 void eliminarCapturadas() {
     for (int posX = 0; posX < partida.size; posX++) {
@@ -485,12 +501,36 @@ void eliminarCapturadas() {
                 partida.puntajeJugador++;
             else
                 partida.puntajeOponente++;
+
+            guardarCaptura(posX, posY);
         }
     }
 }
 
 bool ko(int x, int y) {
-    return false;
+    const int turno = partida.turno;
+    const Captura captura1 = partida.ultimasCapturas[0];
+    const Captura captura2 = partida.ultimasCapturas[1];
+    if (captura1.turno == -1 || captura2.turno == -1 || captura1.turno != turno - 2 || captura2.turno != turno - 1)
+        return false;
+
+    const int size = partida.size;
+    char antiguo[size][size];
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            antiguo[i][j] = partida.tablero[i][j];
+
+    capturas(CELDA_NEGRA, CELDA_BLANCA);
+    capturas(CELDA_BLANCA, CELDA_NEGRA);
+
+    const celda_t capturada = partida.tablero[captura1.x][captura1.y];
+    const bool esKO = capturada == CELDA_NEGRA_CAPT || capturada == CELDA_BLANCA_CAPT;
+
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            partida.tablero[i][j] = antiguo[i][j];
+
+    return esKO;
 }
 
 bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {

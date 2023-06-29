@@ -15,9 +15,9 @@ const char *rutaConfig = "./config.bin";
 const char *rutaPartidas = "./partidas.bin";
 const char *rutaPartidasTemp = "./.temp.partidas.bin";
 
-const int configSize = sizeof(GoConfig);
-const int partidaSize = sizeof(GoPartida);
-GoConfig config;
+const int configSize = sizeof(Config);
+const int partidaSize = sizeof(Partida);
+Config config;
 
 void setupDatos() {
     FILE *archivoConfig = fopen(rutaConfig, LEER);
@@ -59,8 +59,8 @@ bool validarNombre(const char *nombre) {
     return true;
 }
 
-GoPartida *obtenerUltimaPartida() {
-    GoPartida *ultimaPartida = malloc(partidaSize);
+Partida *obtenerUltimaPartida() {
+    Partida *ultimaPartida = malloc(partidaSize);
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
     if (fseek(archivoPartidas, -partidaSize, SEEK_END) != 0)
         return NULL;
@@ -80,7 +80,7 @@ void borrarUltimaPartida() {
 
     long cursor = 0;
     while (cursor < max) {
-        GoPartida partida;
+        Partida partida;
         fread(&partida, partidaSize, 1, archivoPartidas);
         cursor += partidaSize;
         fwrite(&partida, partidaSize, 1, archivoTemp);
@@ -92,7 +92,7 @@ void borrarUltimaPartida() {
     rename(rutaPartidasTemp, rutaPartidas);
 }
 
-void guardarPartida(const GoPartida partida, bool reemplazarUltima) {
+void guardarPartida(const Partida partida, bool reemplazarUltima) {
     FILE *archivoPartidas = fopen(rutaPartidas, LEER_ESCRIBIR);
     const long cursor = reemplazarUltima ? -partidaSize : 0;
     fseek(archivoPartidas, cursor, SEEK_END);
@@ -105,8 +105,8 @@ void guardarPartida(const GoPartida partida, bool reemplazarUltima) {
     fclose(archivoPartidas);
 }
 
-TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas) {
-    TodasGoPartidas todasPartidas = {0};
+TodasPartidas obtenerTodasPartidas(bool soloTerminadas) {
+    TodasPartidas todasPartidas = {0};
     todasPartidas.partidas = malloc(partidaSize);
     unsigned long int size = 0;
     FILE *archivoPartidas = fopen(rutaPartidas, LEER);
@@ -116,7 +116,7 @@ TodasGoPartidas obtenerTodasPartidas(bool soloTerminadas) {
     const long max = ftell(archivoPartidas);
     fseek(archivoPartidas, 0, SEEK_SET);
     while (size < max) {
-        GoPartida partida;
+        Partida partida;
         fread(&partida, partidaSize, 1, archivoPartidas);
         size += partidaSize;
         if (soloTerminadas && !partida.terminada) continue;

@@ -99,7 +99,7 @@ void obtenerNombreOponente(char *oponente);
 
 const MenuOrden ejecutarMenuJugar() {
     MenuOrden orden = {VOLVER, L""};
-    GoPartida *partidaGuardada = obtenerUltimaPartida();
+    Partida *partidaGuardada = obtenerUltimaPartida();
 
     if (partidaGuardada && !partidaGuardada->terminada) {
         wprintf(L"Se detectó una partida guardada:\n\n");
@@ -240,13 +240,13 @@ const MenuOrden ejecutarMenuConfig() {
 }
 
 int compararPartidas(const void *a, const void *b);
-void printStats(const TodasGoPartidas todasPartidas, int page);
+void printStats(const TodasPartidas todasPartidas, int page);
 
 const MenuOrden ejecutarMenuStats() {
-    const TodasGoPartidas todasPartidas = obtenerTodasPartidas(true);
+    const TodasPartidas todasPartidas = obtenerTodasPartidas(true);
     const int numero = todasPartidas.numero;
     const int pages = numero == STATS_POR_PAGE ? 1 : numero / STATS_POR_PAGE + 1;
-    qsort(todasPartidas.partidas, numero, sizeof(GoPartida), compararPartidas);
+    qsort(todasPartidas.partidas, numero, sizeof(Partida), compararPartidas);
 
     if (numero > 0)
         printStats(todasPartidas, 0);
@@ -296,8 +296,8 @@ const MenuOrden ejecutarMenuStats() {
 }
 
 int compararPartidas(const void *a, const void *b) {
-    const GoPartida partida1 = *(GoPartida *)a;
-    const GoPartida partida2 = *(GoPartida *)b;
+    const Partida partida1 = *(Partida *)a;
+    const Partida partida2 = *(Partida *)b;
 
     if (pNeto(partida1) > pNeto(partida2)) return -1;
     if (pNeto(partida1) < pNeto(partida2)) return 1;
@@ -314,9 +314,9 @@ int compararPartidas(const void *a, const void *b) {
     return 0;
 }
 
-void printStats(const TodasGoPartidas todasPartidas, int page) {
+void printStats(const TodasPartidas todasPartidas, int page) {
     const int numero = todasPartidas.numero;
-    const GoPartida *partidas = todasPartidas.partidas;
+    const Partida *partidas = todasPartidas.partidas;
 
     const int inicio = page * STATS_POR_PAGE;
     const int fin = inicio + STATS_POR_PAGE;
@@ -328,7 +328,7 @@ void printStats(const TodasGoPartidas todasPartidas, int page) {
     wprintf(L"\n");
 
     for (int i = inicio; i < numero && i < fin; i++) {
-        GoPartida partida = partidas[i];
+        Partida partida = partidas[i];
         char tablero[6];
         snprintf(tablero, 6, "%dx%d", partida.size, partida.size);
         wchar_t *oponente = partida.oponente[0] == '\0' ? L"Máquina" : strtowcs(partida.oponente);
