@@ -427,9 +427,9 @@ bool tieneCeldaAlrededor(int x, int y, celda_t tipo) {
 }
 
 // busca y recorre los grupos de fichas, los marca como que tienen o no libertades
-void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_MAX][TABLERO_MAX], bool *tieneLibertades, int grupo[TABLERO_MAX][TABLERO_MAX]) {
+void DFS(int posX, int posY, celda_t celdaJugador, celda_t celdaOponente, bool visitado[TABLERO_MAX][TABLERO_MAX], bool *tieneLibertades, bool grupo[TABLERO_MAX][TABLERO_MAX]) {
     visitado[posX][posY] = true;
-    grupo[posX][posY] = 1;
+    grupo[posX][posY] = true;
 
     for (int i = 0; i < 4; i++) {
         const int nx = posX + dx[i];
@@ -458,17 +458,17 @@ void capturas(celda_t celdaJugador, celda_t celdaOponente) {
             if (partida.tablero[posX][posY] != celdaJugador || visitado[posX][posY]) continue;
 
             bool tieneLibertades = false;
-            int grupo[TABLERO_MAX][TABLERO_MAX];
+            bool grupo[TABLERO_MAX][TABLERO_MAX];
             for (int i = 0; i < partida.size; i++)
                 for (int j = 0; j < partida.size; j++)
-                    grupo[i][j] = 0;
+                    grupo[i][j] = false;
 
             DFS(posX, posY, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
             if (tieneLibertades) continue;
 
             for (int i = 0; i < partida.size; i++) {
                 for (int j = 0; j < partida.size; j++) {
-                    if (grupo[i][j] != 1) continue;
+                    if (!grupo[i][j]) continue;
                     // marca la ficha como capturada
                     partida.tablero[i][j] = celdaOponente == CELDA_NEGRA ? CELDA_BLANCA_CAPT : CELDA_NEGRA_CAPT;
                     // actualiza el estado de 'ocupado'
@@ -534,20 +534,67 @@ bool ko(int x, int y) {
     return esKO;
 }
 
+void encontrarBordeGrupo(bool grupo[TABLERO_MAX][TABLERO_MAX], int *px, int *py) {
+    const int size = partida.size;
+    const int x = *px;
+    const int y = *py;
+    for (int i = x; i < size; i++) {
+        bool encontrado = false;
+        for (int j = y + 1; j < size; j++) {
+            if (grupo[i][j]) continue;
+            encontrado = true;
+            *px = i;
+            *py = j;
+            break;
+        }
+        if (encontrado) return;
+    }
+
+    for (int i = x; i >= 0; i--) {
+        bool encontrado = false;
+        for (int j = y - 1; j >= 0; j--) {
+            if (grupo[i][j]) continue;
+            encontrado = true;
+            *px = i;
+            *py = j;
+            break;
+        }
+        if (encontrado) return;
+    }
+}
+
 bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
+    const int size = partida.size;
     bool tieneLibertades = false;
     bool visitado[TABLERO_MAX][TABLERO_MAX];
-    int grupo[TABLERO_MAX][TABLERO_MAX];
-    for (int i = 0; i < partida.size; i++)
-        for (int j = 0; j < partida.size; j++)
+    bool grupo[TABLERO_MAX][TABLERO_MAX];
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             visitado[i][j] = false;
-    for (int i = 0; i < partida.size; i++)
-        for (int j = 0; j < partida.size; j++)
-            grupo[i][j] = 0;
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            grupo[i][j] = false;
 
     const celda_t previo = partida.tablero[x][y];
     partida.tablero[x][y] = celdaJugador;
     DFS(x, y, celdaJugador, celdaOponente, visitado, &tieneLibertades, grupo);
     partida.tablero[x][y] = previo;
-    return !tieneLibertades;
+
+    if (tieneLibertades) return false;
+
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            visitado[i][j] = false;
+
+    int bordeX = x, bordeY = y;
+    encontrarBordeGrupo(grupo, &bordeX, &bordeY);
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            grupo[i][j] = false;
+
+    partida.tablero[x][y] = celdaJugador;
+    DFS(bordeX, bordeY, celdaOponente, celdaJugador, visitado, &tieneLibertades, grupo);
+    partida.tablero[x][y] = previo;
+
+    return tieneLibertades;
 }
