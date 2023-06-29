@@ -293,7 +293,7 @@ void jugarMaquina(int *px, int *py) {
     do {
         x = rand() % size;
         y = rand() % size;
-    } while (!estaEnTablero(x, y) || ocupadas[x][y] == true);
+    } while (!estaEnTablero(x, y) || ocupadas[x][y] == true || ko(x, y, CELDA_BLANCA, CELDA_NEGRA) || suicidio(x, y, CELDA_BLANCA, CELDA_NEGRA));
     *px = x;
     *py = y;
 }
@@ -513,8 +513,7 @@ void eliminarCapturadas() {
 }
 
 bool ko(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
-    const int turno = partida.turno;
-    if (turno <= 2) return false;
+    if (partida.turno <= 2) return false;
 
     const int size = partida.size;
     char previo[size][size];
