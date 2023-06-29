@@ -516,6 +516,8 @@ bool ko(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
     if (partida.turno <= 2) return false;
 
     const int size = partida.size;
+    const int puntajeJugador = partida.puntajeJugador;
+    const int puntajeOponente = partida.puntajeOponente;
     char previo[size][size];
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
@@ -538,6 +540,8 @@ bool ko(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
             partida.tablero[i][j] = previo[i][j];
+    partida.puntajeJugador = puntajeJugador;
+    partida.puntajeOponente = puntajeOponente;
 
     return esKo;
 }
