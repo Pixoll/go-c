@@ -136,7 +136,6 @@ bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente);
 
 void jugarPartida(bool cargada) {
     printTablero();
-    const int size = partida.size;
     const wchar_t *nombreOponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
 
     bool terminar = false, guardar = false, primerTurno = !cargada;
@@ -144,6 +143,9 @@ void jugarPartida(bool cargada) {
         wchar_t turnoTexto[TURNO_LEN];
         swprintf(turnoTexto, TURNO_LEN, L"Turno de %ls\n", par(partida.turno) ? strtowcs(config.nombre) : nombreOponente);
         wprintCentro(turnoTexto, TITULO_LEN);
+
+        const celda_t jugador = par(partida.turno) ? CELDA_NEGRA : CELDA_BLANCA;
+        const celda_t oponente = jugador == CELDA_NEGRA ? CELDA_BLANCA : CELDA_NEGRA;
 
         int x, y;
         if (esMaquina() && !par(partida.turno)) {
@@ -179,15 +181,16 @@ void jugarPartida(bool cargada) {
                     continue;
                 }
 
-                if (suicidio(x, y, CELDA_NEGRA, CELDA_BLANCA) || suicidio(x, y, CELDA_BLANCA, CELDA_NEGRA)) {
+                if (suicidio(x, y, jugador, oponente)) {
                     wprintf(L"! Colocar una ficha acá sería SUICIDIO.\n");
                     continue;
                 }
 
-                if (ko(x, y)) {
-                    wprintf(L"! Colocar una ficha acá causaría un KO. Espera al menos un turno para poner una ficha aquí.\n");
-                    continue;
-                }
+                // TODO: regla de suicidio debe estar bien implementada antes de usar el ko
+                // if (ko(x, y)) {
+                //     wprintf(L"! Colocar una ficha acá causaría un KO. Espera al menos un turno para poner una ficha aquí.\n");
+                //     continue;
+                // }
 
                 break;
             }
@@ -198,11 +201,9 @@ void jugarPartida(bool cargada) {
         const bool terminoSolicitado = terminar;
         if (!terminar) {
             ocupadas[x][y] = true;
-            partida.tablero[x][y] = par(partida.turno) ? CELDA_NEGRA : CELDA_BLANCA;
+            partida.tablero[x][y] = jugador;
 
-            // Chequeo de capturas
-            capturas(CELDA_NEGRA, CELDA_BLANCA);
-            capturas(CELDA_BLANCA, CELDA_NEGRA);
+            capturas(oponente, jugador);
             eliminarCapturadas();
         } else {
             if (primerTurno) break;
