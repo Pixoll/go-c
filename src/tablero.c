@@ -559,7 +559,6 @@ bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
             previo[i][j] = partida.tablero[i][j];
 
     partida.tablero[x][y] = celdaJugador;
-
     const bool realizaCaptura = capturas(celdaOponente, celdaJugador);
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
@@ -567,6 +566,7 @@ bool suicidio(int x, int y, celda_t celdaJugador, celda_t celdaOponente) {
 
     if (realizaCaptura) return false;
 
+    partida.tablero[x][y] = celdaJugador;
     const bool fueCapturado = capturas(celdaJugador, celdaOponente);
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
