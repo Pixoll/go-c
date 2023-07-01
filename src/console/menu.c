@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "datos.h"
+#include "../common/datos.h"
+#include "../common/tablero.h"
+#include "../common/util.h"
 #include "tablero.h"
 #include "util.h"
-
-#define pNeto(partida) (partida.puntajeJugador - partida.puntajeOponente)
 
 const char *rutaReglas = "./reglas.txt";
 
@@ -239,7 +239,6 @@ const MenuOrden ejecutarMenuConfig() {
     return orden;
 }
 
-int compararPartidas(const void *a, const void *b);
 void printStats(const TodasPartidas todasPartidas, int page);
 
 const MenuOrden ejecutarMenuStats() {
@@ -293,25 +292,6 @@ const MenuOrden ejecutarMenuStats() {
 
     const MenuOrden orden = {VOLVER, L""};
     return orden;
-}
-
-int compararPartidas(const void *a, const void *b) {
-    const Partida partida1 = *(Partida *)a;
-    const Partida partida2 = *(Partida *)b;
-
-    if (pNeto(partida1) > pNeto(partida2)) return -1;
-    if (pNeto(partida1) < pNeto(partida2)) return 1;
-
-    if (partida1.puntajeJugador > partida2.puntajeJugador) return -1;
-    if (partida1.puntajeJugador < partida2.puntajeJugador) return 1;
-
-    if (partida1.size > partida2.size) return -1;
-    if (partida1.size < partida2.size) return 1;
-
-    if (partida1.fecha > partida2.fecha) return -1;
-    if (partida1.fecha < partida2.fecha) return 1;
-
-    return 0;
 }
 
 void printStats(const TodasPartidas todasPartidas, int page) {

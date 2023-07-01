@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#include "datos.h"
+#include "../common/datos.h"
 #include "menu.h"
 #include "util.h"
 

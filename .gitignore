@@ -1,4 +1,5 @@
 /.vscode
-/go.exe
+/go-console.exe
+/go-sdl.exe
 /config.bin
 /partidas.bin

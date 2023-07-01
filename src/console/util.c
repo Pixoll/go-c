@@ -4,77 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
 #include <wchar.h>
 
+#include "../common/util.h"
+
 #define TITULO_PAD TITULO_LEN / 2 - 2
-#define YEAR_0 1900
-
-const char meses[12][4] = {
-    "Ene",
-    "Feb",
-    "Mar",
-    "Abr",
-    "May",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dic",
-};
-
-char *strrepeat(char fill, int size) {
-    char *buffer = malloc(size + 1);
-    for (int i = 0; i < size; i++)
-        buffer[i] = fill;
-    buffer[size] = '\0';
-    return buffer;
-}
-
-char *strempty(char *buffer) {
-    const int size = strlen(buffer);
-    for (int i = 0; i < size; i++)
-        buffer[i] = '\0';
-    return buffer;
-}
-
-wchar_t *strtowcs(const char *buffer) {
-    const int size = strlen(buffer);
-    wchar_t *transformado = malloc((size + 1) * sizeof(wchar_t));
-    int nuevoSize = 0;
-    for (int i = 0; i < size; i++) {
-        const char c = buffer[i];
-        if (c == '\b') break;
-        if (c >= 0) {
-            transformado[nuevoSize++] = c;
-            continue;
-        }
-
-        const unsigned char next = buffer[++i];
-        const wchar_t real = next == 166 ? next : next + 0100;
-        transformado[nuevoSize++] = real;
-    }
-
-    transformado[nuevoSize] = '\0';
-    return transformado;
-}
-
-wchar_t *wcslower(const wchar_t *buffer) {
-    const int size = wcslen(buffer);
-    wchar_t *resultado = malloc((size + 1) * sizeof(wchar_t));
-    for (int i = 0; i < size; i++) {
-        const wchar_t c = buffer[i];
-        if (c < 'A' || c > 'Z')
-            resultado[i] = c;
-        else
-            resultado[i] = c + ('a' - 'A');
-    }
-    resultado[size] = '\0';
-    return resultado;
-}
 
 void printTitulo() {
     const char *fila = strrepeat('#', TITULO_LEN);
@@ -155,14 +90,6 @@ bool getInt(int *n) {
     return true;
 }
 
-int intDigits(int n) {
-    char *buffer = malloc(INT_STR_MAX);
-    snprintf(buffer, INT_STR_MAX, "%d", n);
-    const int digits = strlen(buffer);
-    free(buffer);
-    return digits;
-}
-
 void limpiarConsola() {
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
     system("clear");
@@ -171,20 +98,6 @@ void limpiarConsola() {
 #if defined(_WIN32) || defined(_WIN64)
     system("cls");
 #endif
-}
-
-// Para no tener que pedir <time.h>
-long long now() {
-    return time(0);
-}
-
-// Si ms 0 devuelve fecha actual
-char *obtenerFecha(long long ms) {
-    const time_t tms = ms == 0 ? now() : ms;
-    struct tm *tiempo = localtime(&tms);
-    char *fecha = malloc(12);
-    snprintf(fecha, 12, "%d %s %d", tiempo->tm_mday, meses[tiempo->tm_mon], YEAR_0 + tiempo->tm_year);
-    return fecha;
 }
 
 bool confirmar(const wchar_t *action, bool predeterminado) {
@@ -206,10 +119,4 @@ bool confirmar(const wchar_t *action, bool predeterminado) {
 void esperar(unsigned int segundos) {
     fflush(stdout);
     sleep(segundos);
-}
-
-void swap(int *px, int *py) {
-    const int temp = *px;
-    *px = *py;
-    *py = temp;
 }
