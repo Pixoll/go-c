@@ -23,6 +23,6 @@ for /f "tokens=*" %%f in ('dir src\sdl\*.c /s/b') do (
     set files_sdl=!files_sdl! "%%f"
 )
 
-set command_sdl=gcc -g !files_sdl! -lSDL2 -o "!exename!-sdl.exe"
+set command_sdl=gcc !files_sdl! -I.\WIN_SDL2\include -L.\WIN_SDL2\lib -Wall -lmingw32 -lSDL2main -lSDL2 -o "!exename!-sdl.exe"
 echo Running: %command_sdl%
-command_sdl%
+%command_sdl%

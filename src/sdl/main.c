@@ -30,7 +30,7 @@ int checkCar();
 
 void checkBox(int xMouse, int yMouse, int* xIndex, int* yIndex);
 
-int main() {
+int main(int argc, char *argv[]) {
     if (!initSDL()) {
         printf("Fallo al iniciar\n");
         return 0;

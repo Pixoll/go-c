@@ -69,7 +69,7 @@ bool estaOcupada(int x, int y) {
     return ocupadas[x][y];
 }
 
-bool marcarOcupada(int x, int y) {
+void marcarOcupada(int x, int y) {
     ocupadas[x][y] = true;
 }
 

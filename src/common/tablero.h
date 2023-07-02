@@ -23,7 +23,7 @@ void crearPartida(int size, char *oponente);
 void cargarPartida(Partida *guardada);
 bool esMaquina();
 bool estaOcupada(int x, int y);
-bool marcarOcupada(int x, int y);
+void marcarOcupada(int x, int y);
 void jugarMaquina(int *px, int *py);
 void puntajePorCantidad();
 void puntajePorArea();
