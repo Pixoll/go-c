@@ -7,8 +7,8 @@
 SDL_Window* window = NULL;          // ventana principal
 SDL_Surface* screenSurface = NULL;  // superficie principal.
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 1280;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 640;
 const int numBox = 9;
 const int widthBox = (float)SCREEN_WIDTH / (float)numBox;
 const int heightBox = (float)SCREEN_HEIGHT / (float)numBox;
@@ -30,7 +30,7 @@ int checkCar();
 
 void checkBox(int xMouse, int yMouse, int* xIndex, int* yIndex);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (!initSDL()) {
         printf("Fallo al iniciar\n");
         return 0;
