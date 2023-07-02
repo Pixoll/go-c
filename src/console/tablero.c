@@ -1,10 +1,11 @@
+#include "../common/tablero.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../common/datos.h"
-#include "../common/tablero.h"
 #include "../common/util.h"
 #include "util.h"
 
@@ -68,13 +69,14 @@ bool confirmarTerminoPartida(const wchar_t *oponente);
 void jugarPartida(bool cargada) {
     printTablero();
     const int size = partida.size;
-    const wchar_t *nombreOponente = esMaquina() ? L"máquina" : strtowcs(partida.oponente);
+    const wchar_t *nombreOponente = esMaquina() ? L"Máquina" : strtowcs(partida.oponente);
 
     char anterior[size][size];
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
             anterior[i][j] = partida.anterior[i][j];
 
+    int ultimoX = -1, ultimoY = -1;
     bool terminar = false, guardar = false, primerTurno = !cargada;
     while (!terminar) {
         const celda_t jugador = par(partida.turno) ? CELDA_NEGRA : CELDA_BLANCA;
@@ -85,6 +87,13 @@ void jugarPartida(bool cargada) {
                  par(partida.turno) ? strtowcs(config.nombre) : nombreOponente,
                  celdas[jugador]);
         wprintCentro(turnoTexto, TITULO_LEN);
+
+        if (ultimoX != -1 && ultimoY != -1) {
+            wprintf(L"%ls (%lc) jugó %c%d\n",
+                    par(partida.turno) ? nombreOponente : strtowcs(config.nombre),
+                    celdas[oponente],
+                    'A' + ultimoY, ultimoX + 1);
+        }
 
         int x, y;
         if (esMaquina() && !par(partida.turno)) {
@@ -157,6 +166,8 @@ void jugarPartida(bool cargada) {
         if (terminoSolicitado) continue;
         partida.turno++;
         primerTurno = false;
+        ultimoX = x;
+        ultimoY = y;
 
         if (partida.turno - 2 >= 0) {
             for (int i = 0; i < partida.size; i++)
