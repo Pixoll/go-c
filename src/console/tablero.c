@@ -189,6 +189,9 @@ void jugarPartida(bool cargada) {
 
     if (!terminar)
         wprintf(L"\nLa partida ha sido guardada y la podrás acceder nuevamente en el menú de Jugar.");
+    else
+        wprintf(partida.puntajeJugador != partida.puntajeOponente ? L"¡\n%ls ganó!\n" : L"\n¡Empate!\n",
+                partida.puntajeJugador > partida.puntajeOponente ? strtowcs(config.nombre) : nombreOponente);
 
     wprintf(L"\nPresiona ENTER para volver al menú principal.");
     char c = 0;
