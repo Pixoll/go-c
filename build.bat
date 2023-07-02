@@ -18,11 +18,11 @@ set command_console=gcc -g !files_console! -o "!exename!-console.exe"
 echo Running: %command_console%
 %command_console%
 
-rem set files_sdl=!files_common!
-rem for /f "tokens=*" %%f in ('dir src\sdl\*.c /s/b') do (
-rem     set files_sdl=!files_sdl! "%%f"
-rem )
+set files_sdl=!files_common!
+for /f "tokens=*" %%f in ('dir src\sdl\*.c /s/b') do (
+    set files_sdl=!files_sdl! "%%f"
+)
 
-rem set command_sdl=gcc -g !files_sdl! -o "!exename!-sdl.exe"
-rem echo Running: %command_sdl%
-rem command_sdl%
+set command_sdl=gcc -g !files_sdl! -lSDL2 -o "!exename!-sdl.exe"
+echo Running: %command_sdl%
+command_sdl%

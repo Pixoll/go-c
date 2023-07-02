@@ -19,10 +19,11 @@ command_console="gcc -g $files_console -o $exename-console.exe"
 echo Running \(console version\): $command_console
 eval $command_console
 
-# files_sdl=$files_common
-# for file in `find ./src/sdl -type f -name "*.c"`; do
-#     files_sdl="$files_sdl \"$file\"" 
-# done
+files_sdl=$files_common
+for file in `find ./src/sdl -type f -name "*.c"`; do
+    files_sdl="$files_sdl \"$file\"" 
+done
 
-# command_sdl="gcc -g $files_sdl -o $exename-sdl.exe"
-# echo Running \(SDL version\): $command_sdl
+command_sdl="gcc -g $files_sdl -o $exename-sdl.exe -lSDL2"
+echo Running \(SDL version\): $command_sdl
+eval $command_sdl
