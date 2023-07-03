@@ -15,7 +15,7 @@ for /f "tokens=*" %%f in ('dir src\console\*.c /s/b') do (
 )
 
 set command_console=gcc -g !files_console! -o "!exename!-console.exe"
-echo Running: %command_console%
+echo Running (console version): %command_console%
 %command_console%
 
 set files_sdl=!files_common!
@@ -24,5 +24,5 @@ for /f "tokens=*" %%f in ('dir src\sdl\*.c /s/b') do (
 )
 
 set command_sdl=gcc !files_sdl! -I.\WIN_SDL2\include -L.\WIN_SDL2\lib -Wall -lmingw32 -lSDL2main -lSDL2 -o "!exename!-sdl.exe"
-echo Running: %command_sdl%
+echo Running (SDL version): %command_sdl%
 %command_sdl%
