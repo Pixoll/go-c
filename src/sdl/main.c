@@ -9,7 +9,7 @@
 void initSDL();
 void closeSDL();
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
     setupDatos();
     initSDL();
 
