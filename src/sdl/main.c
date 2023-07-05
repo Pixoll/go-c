@@ -50,12 +50,14 @@ void initSDL() {
     }
 
     // Crear ventana
-    ventana = SDL_CreateWindow("Go", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 640,
-                               SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED);
+    ventana = SDL_CreateWindow("Go", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 640,
+                               SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
     if (ventana == NULL) {
         printf("Ventana no pudo ser creada. SDL Error: %s\n", SDL_GetError());
         exit(1);
     }
+
+    SDL_SetWindowResizable(ventana, false);
 }
 
 void closeSDL() {
