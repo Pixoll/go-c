@@ -41,6 +41,22 @@ char *strempty(char *buffer) {
     return buffer;
 }
 
+// substring desde "inicio" hasta (pero no incluyendo) "fin"
+char *substr(char *buffer, unsigned int inicio, unsigned int fin) {
+    const int ogSize = strlen(buffer);
+    const int start = min(inicio, fin);
+    const int end = min(max(fin, inicio), ogSize);
+    if (start >= ogSize || start == end)
+        return "";
+
+    const int size = end - start + 1;
+    char *resultado = malloc(size);
+    for (int i = 0; i < size - 1; i++)
+        resultado[i] = buffer[start + i];
+    resultado[size - 1] = '\0';
+    return resultado;
+}
+
 wchar_t *strtowcs(const char *buffer) {
     const int size = strlen(buffer);
     wchar_t *transformado = malloc((size + 1) * sizeof(wchar_t));
