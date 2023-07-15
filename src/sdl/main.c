@@ -14,16 +14,23 @@ void dibujarMenuPrincipal();
 int main(int argc, char *argv[]) {
     setupDatos();
     initSDL();
-    dibujarMenuPrincipal();
 
     SDL_Event evento;
     bool quit = false;
     while (!quit) {
         while (SDL_PollEvent(&evento) != 0) {
-            if (evento.type == SDL_QUIT) {
-                quit = true;
+            printf("\nevento: %d\n", evento.type);
+
+            switch (evento.type) {
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                default:
+                    break;
             }
         }
+
+        dibujarMenuPrincipal();
     }
 
     closeSDL();
@@ -43,15 +50,8 @@ void initSDL() {
         exit(1);
     }
 
-    SDL_SetWindowResizable(ventana, false);
-
     SDL_Event evento;
     SDL_PollEvent(&evento);
-
-    SDL_Surface *superficie = SDL_GetWindowSurface(ventana);
-    Uint32 color = SDL_MapRGB(superficie->format, 0xFF, 0xFF, 0xAA);
-    SDL_FillRect(superficie, NULL, color);
-    SDL_UpdateWindowSurface(ventana);
 
     obtenerVentanaDimension();
 }
@@ -62,8 +62,11 @@ void closeSDL() {
 }
 
 void dibujarMenuPrincipal() {
-    const SDL_Rect banner = crearRect(50, 50, ventanaW - 100, 150);
     SDL_Surface *superficie = SDL_GetWindowSurface(ventana);
+    SDL_FillRect(superficie, NULL, mapRBG(superficie, "ffffaa"));
+
+    const SDL_Rect banner = crearRect(50, 50, ventanaW - 100, 150);
     SDL_FillRect(superficie, &banner, mapRBG(superficie, "eca742"));
+
     SDL_UpdateWindowSurface(ventana);
 }
